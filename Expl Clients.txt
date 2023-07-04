@@ -1,0 +1,290 @@
+Client 1:
+
+Catégorie client: VIP
+Valeur Commerciale: 1
+Engagement contractuel: Période d'engagement
+Valeur Commerciale: 0
+Offre: XDSL
+Valeur Commerciale: 0.5
+Débit: 100
+Valeur Commerciale: 1
+Engagement client:
+Ancienneté: 2 ans et plus
+Valeur Commerciale: 1
+Suspension: < 2 fois par an
+Valeur Commerciale: 1
+Montant de l'encours: < 2 factures impayées
+Valeur Commerciale: 1
+Engagement TOPNET:
+Nombre de réclamations par an > 4
+Valeur Commerciale: 1
+Délai de traitement de réclamation: > Délai théorique de traitement de réclamation
+Valeur Commerciale: 1
+Comportement client:
+Délai moyen de paiement < 30 jours
+Valeur Commerciale: 1
+Incident de paiement (Rejet): Non
+Valeur Commerciale: 1
+Contentieux: Non
+Valeur Commerciale: 1
+Client 2:
+
+Catégorie client: Standard
+Valeur Commerciale: 0
+Engagement contractuel: Non engagé
+Valeur Commerciale: 1
+Offre: HD
+Valeur Commerciale: 1
+Débit: 50
+Valeur Commerciale: 0.9
+Engagement client:
+Ancienneté: 1 an < Ancienneté < 2 ans
+Valeur Commerciale: 0.5
+Suspension: > 2 fois par an
+Valeur Commerciale: 0
+Montant de l'encours: Une facture impayée
+Valeur Commerciale: 0.5
+Engagement TOPNET:
+Nombre de réclamations par an < 2
+Valeur Commerciale: 0
+Délai de traitement de réclamation: < Délai théorique de traitement de réclamation
+Valeur Commerciale: 0
+Comportement client:
+Délai moyen de paiement > 30 jours
+Valeur Commerciale: 0
+Incident de paiement (Rejet): Oui
+Valeur Commerciale: 0
+Contentieux: Oui
+Valeur Commerciale: 0
+Client 3:
+
+Catégorie client: VIP
+Valeur Commerciale: 1
+Engagement contractuel: Période d'engagement
+Valeur Commerciale: 0
+Offre: XDSL
+Valeur Commerciale: 0.5
+Débit: 30
+Valeur Commerciale: 0.8
+Engagement client:
+Ancienneté: < 1 an
+Valeur Commerciale: 0
+Suspension: < 2 fois par an
+Valeur Commerciale: 1
+Montant de l'encours: Aucune facture impayée
+Valeur Commerciale: 0
+Engagement TOPNET:
+Nombre de réclamations par an < 2
+Valeur Commerciale: 0
+Délai de traitement de réclamation: < Délai théorique de traitement de réclamation
+Valeur Commerciale: 0
+Comportement client:
+Délai moyen de paiement < 30 jours
+Valeur Commerciale: 1
+Incident de paiement (Rejet): Non
+Valeur Commerciale: 1
+Contentieux: Non
+Valeur Commerciale: 1
+Client 4:
+
+Catégorie client: Standard
+Valeur Commerciale: 0
+Engagement contractuel: Période d'engagement
+Valeur Commerciale: 0
+Offre: HD
+Valeur Commerciale: 1
+Débit: 20
+Valeur Commerciale: 0.7
+Engagement client:
+Ancienneté: 1 an < Ancienneté < 2 ans
+Valeur Commerciale: 0.5
+Suspension: > 2 fois par an
+Valeur Commerciale: 0
+Montant de l'encours: Une facture impayée
+Valeur Commerciale: 0.5
+Engagement TOPNET:
+Nombre de réclamations par an < 2
+Valeur Commerciale: 0
+Délai de traitement de réclamation: > Délai théorique de traitement de réclamation
+Valeur Commerciale: 1
+Comportement client:
+Délai moyen de paiement > 30 jours
+Valeur Commerciale: 0
+Incident de paiement (Rejet): Non
+Valeur Commerciale: 1
+Contentieux: Oui
+Valeur Commerciale: 0
+Client 5:
+
+Catégorie client: VIP
+Valeur Commerciale: 1
+Engagement contractuel: Non engagé
+Valeur Commerciale: 1
+Offre: XDSL
+Valeur Commerciale: 0.5
+Débit: 12
+Valeur Commerciale: 0.6
+Engagement client:
+Ancienneté: 2 ans et plus
+Valeur Commerciale: 1
+Suspension: < 2 fois par an
+Valeur Commerciale: 1
+Montant de l'encours: Aucune facture impayée
+Valeur Commerciale: 0
+Engagement TOPNET:
+Nombre de réclamations par an > 4
+Valeur Commerciale: 1
+Délai de traitement de réclamation: < Délai théorique de traitement de réclamation
+Valeur Commerciale: 0
+Comportement client:
+Délai moyen de paiement < 30 jours
+Valeur Commerciale: 1
+Incident de paiement (Rejet): Oui
+Valeur Commerciale: 0
+Contentieux: Non
+Valeur Commerciale: 1
+Client 6:
+
+Catégorie client: Standard
+Valeur Commerciale: 0
+Engagement contractuel: Période d'engagement
+Valeur Commerciale: 0
+Offre: HD
+Valeur Commerciale: 1
+Débit: 50
+Valeur Commerciale: 0.9
+Engagement client:
+Ancienneté: 1 an < Ancienneté < 2 ans
+Valeur Commerciale: 0.5
+Suspension: < 2 fois par an
+Valeur Commerciale: 1
+Montant de l'encours: Une facture impayée
+Valeur Commerciale: 0.5
+Engagement TOPNET:
+Nombre de réclamations par an < 2
+Valeur Commerciale: 0
+Délai de traitement de réclamation: > Délai théorique de traitement de réclamation
+Valeur Commerciale: 1
+Comportement client:
+Délai moyen de paiement > 30 jours
+Valeur Commerciale: 0
+Incident de paiement (Rejet): Non
+Valeur Commerciale: 1
+Contentieux: Oui
+Valeur Commerciale: 0
+Client 7:
+
+Catégorie client: VIP
+Valeur Commerciale: 1
+Engagement contractuel: Période d'engagement
+Valeur Commerciale: 0
+Offre: XDSL
+Valeur Commerciale: 0.5
+Débit: 100
+Valeur Commerciale: 1
+Engagement client:
+Ancienneté: 2 ans et plus
+Valeur Commerciale: 1
+Suspension: < 2 fois par an
+Valeur Commerciale: 1
+Montant de l'encours: < 2 factures impayées
+Valeur Commerciale: 1
+Engagement TOPNET:
+Nombre de réclamations par an < 2
+Valeur Commerciale: 0
+Délai de traitement de réclamation: < Délai théorique de traitement de réclamation
+Valeur Commerciale: 0
+Comportement client:
+Délai moyen de paiement < 30 jours
+Valeur Commerciale: 1
+Incident de paiement (Rejet): Non
+Valeur Commerciale: 1
+Contentieux: Non
+Valeur Commerciale: 1
+Client 8:
+
+Catégorie client: Standard
+Valeur Commerciale: 0
+Engagement contractuel: Non engagé
+Valeur Commerciale: 1
+Offre: HD
+Valeur Commerciale: 1
+Débit: 30
+Valeur Commerciale: 0.8
+Engagement client:
+Ancienneté: < 1 an
+Valeur Commerciale: 0
+Suspension: > 2 fois par an
+Valeur Commerciale: 0
+Montant de l'encours: Aucune facture impayée
+Valeur Commerciale: 0
+Engagement TOPNET:
+Nombre de réclamations par an < 2
+Valeur Commerciale: 0
+Délai de traitement de réclamation: > Délai théorique de traitement de réclamation
+Valeur Commerciale: 1
+Comportement client:
+Délai moyen de paiement > 30 jours
+Valeur Commerciale: 0
+Incident de paiement (Rejet): Oui
+Valeur Commerciale: 0
+Contentieux: Oui
+Valeur Commerciale: 0
+Client 9:
+
+Catégorie client: VIP
+Valeur Commerciale: 1
+Engagement contractuel: Période d'engagement
+Valeur Commerciale: 0
+Offre: XDSL
+Valeur Commerciale: 0.5
+Débit: 20
+Valeur Commerciale: 0.7
+Engagement client:
+Ancienneté: < 1 an
+Valeur Commerciale: 0
+Suspension: < 2 fois par an
+Valeur Commerciale: 1
+Montant de l'encours: Une facture impayée
+Valeur Commerciale: 0.5
+Engagement TOPNET:
+Nombre de réclamations par an > 4
+Valeur Commerciale: 1
+Délai de traitement de réclamation: < Délai théorique de traitement de réclamation
+Valeur Commerciale: 0
+Comportement client:
+Délai moyen de paiement < 30 jours
+Valeur Commerciale: 1
+Incident de paiement (Rejet): Oui
+Valeur Commerciale: 0
+Contentieux: Non
+Valeur Commerciale: 1
+Client 10:
+
+Catégorie client: Standard
+Valeur Commerciale: 0
+Engagement contractuel: Période d'engagement
+Valeur Commerciale: 0
+Offre: HD
+Valeur Commerciale: 1
+Débit: 100
+Valeur Commerciale: 1
+Engagement client:
+Ancienneté: 1 an < Ancienneté < 2 ans
+Valeur Commerciale: 0.5
+Suspension: > 2 fois par an
+Valeur Commerciale: 0
+Montant de l'encours: Une facture impayée
+Valeur Commerciale: 0.5
+Engagement TOPNET:
+Nombre de réclamations par an < 2
+Valeur Commerciale: 0
+Délai de traitement de réclamation: < Délai théorique de traitement de réclamation
+Valeur Commerciale: 0
+Comportement client:
+Délai moyen de paiement > 30 jours
+Valeur Commerciale: 0
+Incident de paiement (Rejet): Non
+Valeur Commerciale: 1
+Contentieux: Oui
+Valeur Commerciale: 0
