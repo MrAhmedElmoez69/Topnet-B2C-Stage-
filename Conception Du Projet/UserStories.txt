@@ -1,0 +1,43 @@
+En tant qu'administrateur, je souhaite accéder aux informations sur les clients :
+
+Tâche 1 : Créer une interface d'administration pour afficher les informations clients.
+
+---------------
+
+En tant qu'administrateur, je souhaite consulter les données pertinentes pour évaluer la valeur commerciale des clients :
+Tâche 2 : Intégrer la catégorie client dans le système.
+Tâche 3 : Intégrer les offres disponibles.
+Tâche 4 : Intégrer les débits disponibles.
+Tâche 5 : Intégrer l'engagement contractuel des clients.
+---------------
+
+En tant qu'administrateur, je souhaite consulter les données d'engagement des clients :
+
+Tâche 6 : Intégrer l'ancienneté des clients.
+Tâche 7 : Intégrer les suspensions de service.
+Tâche 8 : Intégrer le montant de l'encours des clients.
+---------------
+
+En tant qu'administrateur, je souhaite consulter les données sur l'engagement TOPNET des clients :
+
+Tâche 9 : Intégrer le nombre de réclamations des clients.
+Tâche 10 : Intégrer le délai de traitement des réclamations.
+---------------
+
+En tant qu'administrateur, je souhaite consulter les données sur le comportement des clients :
+
+Tâche 11 : Intégrer le délai moyen de paiement des clients.
+Tâche 12 : Intégrer les incidents de paiement des clients.
+Tâche 13 : Intégrer les contentieux des clients.
+
+---------------
+
+En tant qu'administrateur, je souhaite calculer le score global en utilisant les poids et les données des clients :
+
+Tâche 14 : Implémenter la logique de calcul du score global.
+En tant qu'administrateur, je souhaite déterminer le niveau de risque des clients en fonction du score global :
+
+Tâche 15 : Définir les seuils pour chaque niveau de risque.
+En tant qu'administrateur, je souhaite attribuer une classe (niveau 4, niveau 3, niveau 2, niveau 1) à chaque client en fonction de son niveau de risque :
+
+Tâche 16 : Mettre en place la logique d'attribution de classe.
