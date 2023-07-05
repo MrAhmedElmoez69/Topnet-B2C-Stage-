@@ -1,0 +1,7 @@
+- Verifier la simulation manuelle du modele
+- Verifier le backlog 
+- verifier les diagrammes
+- Répartition des backlogs de sprints *************
+- Preparation de PPt
+- faire un video de demo pour la presentation
+- choisire une template ppt 
