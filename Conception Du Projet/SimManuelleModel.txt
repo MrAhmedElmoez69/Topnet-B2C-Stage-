@@ -85,4 +85,22 @@ Score d'Engagement TOPNET: 0
 Score de Comportement Client: 0
 Score global total: 1.50%
 Niveau de risque: 4
+-------------------
+Offre (XDSL: 0.5, HD: 1): 0.5
+Débit (100: 1, 50: 0.9, 30: 0.8, 20: 0.7, 12: 0.6, 10: 0.4, 8: 0.2, 4: 0): 0.4
+Engagement contractuel (Période d'engagement: 0, Non engagé: 1): 0
+Ancienneté (en années): 1
+Suspension (<2 fois par an: 1, >2 fois par an: 0): 0
+Montant de l'encours (<2 factures impayées: 1, Aucune facture: 0, Une facture: 0.5): 0.5
+Nombre de réclamations par an: 2
+Délai de traitement de réclamation (supérieur au délai théorique: 1, inférieur au délai théorique: 0): 0
+Délai moyen de paiement (en jours): 10
+Incident de paiement (OUI: 0, Non: 1): 0
+Contentieux (oui: 0, non: 1): 0
+Score de la Valeur Commerciale: 0.23
+Score d'Engagement Client: 0.35
+Score d'Engagement TOPNET: 1
+Score de Comportement Client: 2
+Score global total: 35.80%
+Niveau de risque: 3
 
