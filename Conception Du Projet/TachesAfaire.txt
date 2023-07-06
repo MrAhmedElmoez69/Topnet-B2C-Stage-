@@ -2,6 +2,22 @@
 - Verifier le backlog 
 - verifier les diagrammes
 - Répartition des backlogs de sprints *************
+- Backlog produit (Priorisé / Estimé) ************
 - Preparation de PPt
 - faire un video de demo pour la presentation
 - choisire une template ppt 
+
+Backlog produit :
+
+Le backlog produit est une liste hiérarchisée de toutes les fonctionnalités, améliorations et tâches à réaliser pour le produit ou le projet dans son ensemble.
+Il représente les besoins, les objectifs et les exigences du produit du point de vue du client, de l'utilisateur et de l'équipe de développement.
+Le backlog produit est géré par le Product Owner, qui est responsable de son maintien, de sa priorisation et de sa mise à jour en fonction des besoins changeants.
+Les éléments du backlog produit sont généralement décrits sous forme de user stories ou de fonctionnalités et peuvent être estimés en termes de taille, de complexité ou d'effort.
+
+Sprint backlog :
+
+Le sprint backlog est une sélection spécifique d'éléments du backlog produit qui ont été choisis pour être livrés pendant un sprint donné.
+Il est créé lors de la planification de sprint, où l'équipe de développement sélectionne les éléments du backlog produit en fonction de leur priorité et de leur capacité à être terminés dans le cadre du sprint.
+Le sprint backlog est composé de user stories ou de tâches plus détaillées qui décrivent les fonctionnalités spécifiques à développer pendant le sprint.
+Les éléments du sprint backlog sont estimés en termes de temps ou d'effort nécessaires pour les accomplir, et ils sont attribués aux membres de l'équipe de développement.
+Le sprint backlog est géré par l'équipe de développement, qui est responsable de sa réalisation pendant le sprint.
