@@ -2,11 +2,12 @@
 
 05/07/2023 : Initiation de Digramme De Classe / Digramme De Cas D'utilisation Generale et Backlogs 
 
-06/07/2023 : Developpement D'un Model De Simulation Pour Tester Qlqs Model en C++
+06/07/2023 : Developpement D'un Model De Simulation Pour Tester Qlqs Model en C++ 
 
-07/07/2023 : Répartition des backlogs de sprints
+07/07/2023 : Répartition des backlogs de sprints / Preparation Du Video Demo Du Simulation Du Model /  Preparation de PPt Pour La 
+Validation
 
-08/07/2023 : Preparation de PPt 
+08/07/2023 :  
 
 09/07/2023 : 
 	
