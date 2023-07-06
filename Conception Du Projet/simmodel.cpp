@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 
 int main()
 {
@@ -72,6 +73,11 @@ int main()
                               scoreEngagementTOPNET +
                               scoreComportementClient;
 
+    double pourcentageScore = (scoreGlobalTotal / 10.0) * 100.0;
+if (pourcentageScore > 100.0) {
+    pourcentageScore = 100.0;
+}
+
     if (scoreGlobalTotal <= 10.0)
     {
         int niveauRisque;
@@ -100,7 +106,7 @@ int main()
         std::cout << "Score d'Engagement Client: " << scoreEngagementClient << std::endl;
         std::cout << "Score d'Engagement TOPNET: " << scoreEngagementTOPNET << std::endl;
         std::cout << "Score de Comportement Client: " << scoreComportementClient << std::endl;
-        std::cout << "Score global total: " << scoreGlobalTotal << std::endl;
+        std::cout << "Score global total: " << std::fixed << std::setprecision(2) << pourcentageScore << "%" << std::endl;
         if (niveauRisque != -1)
         {
             std::cout << "Niveau de risque: " << niveauRisque << std::endl;
@@ -110,6 +116,7 @@ int main()
             std::cout << "Erreur: impossible de déterminer le niveau de risque." << std::endl;
         }
     }
+
 
     return 0;
 }
