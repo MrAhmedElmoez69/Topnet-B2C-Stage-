@@ -1,0 +1,63 @@
+je suis ravi de vous présenter aujourd'hui l'étude de projet
+
+passons à la présentation détaillée du backlog produit, qui regroupe les fonctionnalités clés et les user stories prioritaires pour la réalisation de notre solution.
+
+Ce backlog représente les fonctionnalités clés que nous prévoyons 
+Le backlog est organisé en plusieurs thèmes, chacun correspondant à un aspect spécifique 
+ Nous avons identifié les épics et les user stories qui constituent ce backlog, en les priorisant en fonction de leur importance pour l'entreprise. Chaque user story est accompagnée d'une estimation de priorité, de complexité et de la valeur qu'elle apporte.
+
+
+Dans le thème de la valeur commerciale, nous avons l'épic de la catégorie client, où nous définirons les critères pour classer les clients en catégories VIP ou Standard en fonction de leur valeur commerciale. Nous avons également l'épic de l'offre,debit et engagement contractuelle  où nous établirons ces derniers pour évaluer la valeur commerciale des clients.
+
+Dans le thème de l'engagement client, nous avons l'épic de l'ancienneté du client, où nous spécifierons les critères d'ancienneté pour évaluer l'engagement des clients envers l'entreprise. De plus, nous avons l'épic de la suspension du service, où nous identifierons les critères d'engagement client liés aux suspensions de service.
+
+
+Dans le thème de l'engagement TOPNET, nous avons l'épic des réclamations clients, où nous définirons les critères d'engagement basés sur le délai de traitement des réclamations. Cela nous permettra d'évaluer l'engagement des clients vis-à-vis du service clientèle. De plus, nous avons l'épic du délai de traitement des réclamations, où nous établirons les critères d'engagement en fonction du respect du délai théorique de traitement des réclamations.
+
+Enfin, dans le thème du comportement client, nous avons l'épic du délai moyen de paiement, où nous spécifierons les critères de délai moyen de paiement pour évaluer le comportement de paiement des clients. Nous aurons également l'épic de l'incident de paiement, où nous identifierons les critères d'incident de paiement pour évaluer le comportement de paiement des clients.
+
+
+Ce backlog produit est le fruit d'une analyse approfondie des besoins de l'entreprise et de nos objectifs en termes d'évaluation de la valeur commerciale des clients. Nous avons pris en compte les priorités de l'entreprise, ainsi que les estimations de complexité pour planifier les sprints à venir.
+
+Backlog Proudit
+-------------------------------------------------
+Sprint Backlog 
+
+Maintenant permetter moi vous expliquer en détail ce Sprint Backlog
+Ce tableau du Sprint Backlog est un outil puissant pour notre équipe technique. Il nous permet de suivre et de gérer efficacement notre travail de développement, de prioriser les tâches en fonction de leur importance et de garantir que nous livrons les fonctionnalités les plus critiques en premier.
+
+Ces user stories sont essentielles pour évaluer et classer les clients , Ces explications donnent un aperçu des fonctionnalités que nous devons développer dans le cadre du Sprint actuel. En nous concentrant sur ces user stories et en respectant les priorités et les estimations de charge de travail, nous progresserons vers l'achèvement réussi de notre projet.
+
+
+En conclusion, ce tableau du Sprint Backlog est un élément clé de notre méthodologie Agile. Il nous aide à organiser et à planifier notre travail de développement de manière efficace. En travaillant ensemble en tant qu'équipe technique, nous pouvons atteindre nos objectifs et livrer un produit de grande qualité.
+
+-------------------------------------------------
+
+Diagramme De Cas d'utilisation : 
+Le diagramme de cas d'utilisation représente les interactions entre les différents acteurs et le système dans le cadre de notre projet.
+
+*Le client peut consulter le score global, qui est calculé en fonction de différents critères
+*Le client peut également consulter le niveau correspondant à son score global, ce qui lui donne une indication sur son niveau de risque probable.
+
+L'administrateur a la possibilité d'ajouter, modifier et réinitialiser le score de toutes les axes 
+
+L'authentification est nécessaire pour accéder à certaines fonctionnalités, garantissant ainsi la sécurité et la confidentialité des informations.
+
+Ce diagramme de cas d'utilisation nous offre une vue globale des interactions 
+
+--------------------
+Digramme De Classe : 
+
+Dans Ce Projet , On a 5 Tables représentent les entités et les attributs , Les relations entre les tables sont établies via des clés étrangères .
+
+Ces classes et leurs attributs représentent la structure des objets et les relations entre eux dans votre système. Ils servent de base pour la modélisation et la représentation des entités et de leurs caractéristiques dans un langage de programmation orienté objet.
+----------
+Simulation : 
+Ce test nous permet d'évaluer nos axes pour un client en fonction de plusieurs critères et de déterminer son niveau de risque . 
+
+----
+
+Maquette : 
+L'analyse de la maquette a permis de définir un système de notation et d'évaluation des clients en fonction de différents critères. Ces informations sont essentielles pour la prise de décision stratégique et la gestion des risques . 
+nous avons identifié plusieurs axes clés
+Chaque axe a été pondéré en fonction de son importance dans le calcul du score global Sachant que ces axes sont des varibales et peuvent se changer a tous moment meme pour les criteres 
