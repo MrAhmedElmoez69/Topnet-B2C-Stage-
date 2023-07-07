@@ -1,0 +1,35 @@
+je suis ravi de vous présenter aujourd'hui l'étude de projet
+
+passons à la présentation détaillée du backlog produit, qui regroupe les fonctionnalités clés et les user stories prioritaires pour la réalisation de notre solution.
+
+Ce backlog représente les fonctionnalités clés que nous prévoyons 
+Le backlog est organisé en plusieurs thèmes, chacun correspondant à un aspect spécifique 
+ Nous avons identifié les épics et les user stories qui constituent ce backlog, en les priorisant en fonction de leur importance pour l'entreprise. Chaque user story est accompagnée d'une estimation de priorité, de complexité et de la valeur qu'elle apporte.
+
+
+Le premier epic, "Catégorie client", consiste à définir les critères permettant de classer les clients en catégories VIP ou Standard en fonction de leur valeur commerciale. Par exemple, nous établirons des seuils de dépenses annuelles spécifiques pour chaque catégorie. Cette classification aidera à mieux comprendre et gérer la valeur commerciale de chaque client.
+
+Le deuxième epic, "Offre", se concentre sur l'évaluation de la valeur commerciale en prenant en compte les critères d'offre. Nous définirons les critères pertinents, tels que le type de service (XDSL, HD), qui permettront d'évaluer la valeur commerciale d'un client en fonction des services qu'il utilise. Cette fonctionnalité contribuera à affiner notre évaluation globale de la valeur commerciale.
+
+Le troisième epic, "Débit", portera sur l'établissement des critères de débit pour évaluer la valeur commerciale d'un client en fonction de sa connexion. Nous définirons différents niveaux de débit (100, 50, 30, 20, 12, 10, 8, 4) qui serviront de référence pour attribuer un score à chaque client en fonction de sa connexion. Cette évaluation nous permettra de mieux comprendre l'impact du débit sur la valeur commerciale.
+
+Enfin, l'épic "Engagement contractuel" consistera à identifier les critères d'engagement contractuel qui contribuent à évaluer la valeur commerciale d'un client. Nous prendrons en compte des éléments tels que la période d'engagement et le statut d'engagement (engagé ou non engagé) pour évaluer l'impact de ces facteurs sur la valeur commerciale.
+
+L'ensemble de ces épic constitue notre backlog produit pour le projet de valorisation commerciale. Chaque épic représente une fonctionnalité clé qui sera développée dans le cadre du premier sprint. Nous sommes ravis de vous présenter ces évolutions et sommes impatients de vous montrer les résultats de notre travail.
+
+Backlog Proudit
+----------------
+
+Le Sprint Backlog est un tableau qui regroupe les différentes tâches et fonctionnalités à développer lors du sprint en cours. Chaque fonctionnalité est représentée par une User Story, qui décrit une action spécifique que l'administrateur doit être capable d'accomplir. Ce tableau nous aide à organiser notre travail et à nous assurer que nous sommes alignés sur les objectifs du projet.
+
+Dans le thème de la valeur commerciale, nous avons identifié quatre User Stories importantes pour ce sprint :
+
+Catégorie client (VC-US-1) : En tant qu'administrateur, je peux définir les critères pour la catégorie client. Cette fonctionnalité nous permettra de déterminer si un client est classé en tant que VIP ou Standard en fonction de sa valeur commerciale. Par exemple, nous pourrions définir des seuils de dépenses annuelles pour chaque catégorie. Cette User Story a une priorité de 4 et une estimation de charge de travail de 60.
+
+Offre (VC-US-2) : En tant qu'administrateur, je peux définir les critères d'offre pour évaluer la valeur commerciale. Cette fonctionnalité nous permettra de prendre en compte les critères d'offre, tels que le type de service (XDSL, HD), pour évaluer la valeur commerciale d'un client. Cette User Story a une priorité de 3 et une estimation de charge de travail de 40.
+
+Débit (VC-US-3) : En tant qu'administrateur, je peux établir les critères de débit pour évaluer la valeur commerciale. Cette fonctionnalité nous permettra de définir différents critères de débit (100, 50, 30, 20, 12, 10, 8, 4) pour évaluer la valeur commerciale d'un client en fonction de sa connexion. Cette User Story a une priorité de 2 et une estimation de charge de travail de 50.
+
+Engagement contractuel (VC-US-4) : En tant qu'administrateur, je peux identifier les critères d'engagement contractuel pour la valeur commerciale. Cette fonctionnalité nous permettra de prendre en compte les critères d'engagement contractuel, tels que la période d'engagement et le statut d'engagement (engagé ou non engagé), pour évaluer la valeur commerciale d'un client. Cette User Story a une priorité de 4 et une estimation de charge de travail de 70.
+
+Chacune de ces User Stories contribue à l'objectif global du sprint, qui est de développer les fonctionnalités liées à la valorisation commerciale. En priorisant ces User Stories en fonction de leur valeur commerciale et de leur impact, nous nous assurons de livrer les fonctionnalités les plus importantes en premier et de fournir une valeur ajoutée dès le début du projet.
