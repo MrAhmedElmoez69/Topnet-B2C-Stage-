@@ -1,11 +1,9 @@
-- Verifier la simulation manuelle du modele
-- Verifier le backlog 
-- verifier les diagrammes
-- Répartition des backlogs de sprints *************
-- Backlog produit (Priorisé / Estimé) ************
-- Preparation de PPt
-- faire un video de demo pour la presentation
-- choisire une template ppt 
+-faire une presentation de l'entreprise
+-faire une presentation du projet
+-valider puis mettre les diagrammes dans le ppt
+-conclusion
+-les speech
+-nbarvou 3leha
 
 Backlog produit :
 
