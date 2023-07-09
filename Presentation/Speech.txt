@@ -1,5 +1,7 @@
 je suis ravi de vous présenter aujourd'hui l'étude de projet
 
+Evaluation is creation: hear it, you creators! Evaluating is itself the most valuable treasure of all that we value. It is only through evaluation that value exists: and without evaluation the nut of existence would be hollow. Hear it, you creators!
+
 passons à la présentation détaillée du backlog produit, qui regroupe les fonctionnalités clés et les user stories prioritaires pour la réalisation de notre solution.
 
 Ce backlog représente les fonctionnalités clés que nous prévoyons 
