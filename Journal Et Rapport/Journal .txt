@@ -4,15 +4,15 @@
 
 06/07/2023 : Developpement D'un Model De Simulation Pour Tester Qlqs Model en C++  et Python / Preparation Du Product Backlog
 
-07/07/2023 : Répartition des backlogs de sprints / Preparation Du Video Demo Du Simulation Du Model / Preparation Sprintg Backlog  
+07/07/2023 : Répartition des backlogs de sprints / Preparation Du Video Demo Du Simulation Du Model / Preparation Sprintg Backlog  /  Mise en place de PPt et demo Pour la Validation
 
 08/07/2023 :  
 
 09/07/2023 : 
 	
-10/07/2023 : Mise en place de PPt et demo Pour la Validation
+10/07/2023 : Weekly : Validation Du Travail 
 	
-11/07/2023 : Weekly : Validation Du Travail 
+11/07/2023 : 
 
 12/07/2023 : 
 
