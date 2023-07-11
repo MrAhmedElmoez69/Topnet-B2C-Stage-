@@ -12,13 +12,13 @@
 	
 10/07/2023 : Weekly : Validation Du Travail 
 	
-11/07/2023 : 
+11/07/2023 : Correction Des Digaramme De Cas et De Classe / Correction Du Product Backlog
 
-12/07/2023 : 
+12/07/2023 : Ajouter Plus De Details a Sprint Backlog
 
 13/07/2023 : 
 
-14/07/2023
+14/07/2023 :
 
 15/07/2023
 
