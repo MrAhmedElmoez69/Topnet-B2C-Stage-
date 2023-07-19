@@ -26,9 +26,9 @@
 
 17/07/2023 : Fixation Du Presentation 
  
-18/07/2023 :
+18/07/2023 : Validation
 
-19/07/2023 : 
+19/07/2023 : Developpement et creation des tables de donnes
 
 20/07/2023 :
 
