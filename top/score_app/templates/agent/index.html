@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Agent | Score Rules{% endblock %}
+
+
+{% block content %}
+<html>
+<head>
+    <title>Gestion des règles de calcul de score</title>
+</head>
+<body>
+    <h1>Gestion des règles de calcul de score</h1>
+    <h2>Règles de calcul</h2>
+    <ul>
+        {% for rule in rules %}
+            <li>{{ rule.name }} - Poids: {{ rule.weight }}</li>
+            <ul>
+                {% for parameter in parameters %}
+                    {% if parameter.rule == rule %}
+                        <li>{{ parameter.parameter_name }} - Poids: {{ parameter.weight }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+{% endblock %}

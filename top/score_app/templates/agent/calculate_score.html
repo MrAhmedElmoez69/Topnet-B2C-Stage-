@@ -1,0 +1,18 @@
+
+<html>
+<head>
+    <title>Configurer les paramètres de score</title>
+</head>
+<body>
+    <h1>Configurer les paramètres de score</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% for param in parameters %}
+            <label for="param_{{ param.id }}">Paramètre {{ param.criteres }} - Poids: </label>
+            <input type="number" step="0.01" name="param_{{ param.id }}" value="{{ param.poids }}"> -
+            Objectif: <input type="number" step="0.01" name="objectif_{{ param.id }}" value="{{ param.objectif }}"><br>
+        {% endfor %}
+        <input type="submit" value="Enregistrer les paramètres">
+    </form>
+</body>
+</html>
