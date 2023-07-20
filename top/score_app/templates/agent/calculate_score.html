@@ -1,18 +1,143 @@
-
+<!DOCTYPE html>
 <html>
 <head>
     <title>Configurer les paramètres de score</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 80px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .submit-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+
+        .reset-button {
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+
+        .submit-button:hover, .reset-button:hover {
+            opacity: 0.8;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .navbar a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .navbar-logo {
+            float: left;
+            padding: 8px;
+        }
+
+        .navbar-logo img {
+            height: 40px; /* Set the height of the logo image */
+        }
+
+        /* Footer styles */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px 0;
+            background-color: #333;
+            color: white;
+            flex-shrink: 0;
+        }
+    </style>
 </head>
 <body>
-    <h1>Configurer les paramètres de score</h1>
-    <form method="post">
-        {% csrf_token %}
-        {% for param in parameters %}
-            <label for="param_{{ param.id }}">Paramètre {{ param.criteres }} - Poids: </label>
-            <input type="number" step="0.01" name="param_{{ param.id }}" value="{{ param.poids }}"> -
-            Objectif: <input type="number" step="0.01" name="objectif_{{ param.id }}" value="{{ param.objectif }}"><br>
-        {% endfor %}
-        <input type="submit" value="Enregistrer les paramètres">
-    </form>
+    <div class="navbar">
+        <div class="navbar-logo">
+            <img src="unnamed.png" alt="Logo">
+        </div>
+        <a href="#" class="active">Home</a>
+        <a href="#">Settings</a>
+        <a href="#">Help</a>
+        <!-- Add more navbar links as needed -->
+    </div>
+
+    <div class="container">
+        <h1>Configurer les paramètres de score</h1>
+        <form method="post">
+            {% csrf_token %}
+            {% for param in parameters %}
+                <label for="param_{{ param.id }}">Paramètre {{ param.criteres }} - Poids: </label>
+                <input type="number" step="0.01" name="param_{{ param.id }}" value="{{ param.poids }}"> -
+                Objectif: <input type="number" step="0.01" name="objectif_{{ param.id }}" value="{{ param.objectif }}"><br>
+            {% endfor %}
+            <div class="button-container">
+                <input type="submit" class="submit-button" value="Enregistrer les paramètres">
+            </div>
+        </form>
+    </div>
+
+    <div class="footer">
+        Topnet 2023
+    </div>
 </body>
 </html>
