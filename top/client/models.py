@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import RegexValidator,MaxLengthValidator
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from django import forms
+
 
 class ScoreParameters(models.Model):
     criteres = models.CharField(max_length=100)
@@ -45,3 +47,5 @@ def calculate_score(client):
     total_weight = sum(param.poids for param in score_parameters)
     score = sum((param.objectif / total_weight) * param.poids for param in score_parameters)
     return score
+
+
