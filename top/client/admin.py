@@ -9,6 +9,7 @@ class IsClient(admin.ModelAdmin):
         'last_name',
         'is_staff',
         'date_joined',
+        
     )
     search_fields = [
         'phone_number',
@@ -23,6 +24,7 @@ class IsClient(admin.ModelAdmin):
                     'username',
                     'first_name',
                     'last_name',
+                    'password',
                     'is_staff'
                 ),
             }

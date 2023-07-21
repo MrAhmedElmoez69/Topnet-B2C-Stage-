@@ -26,7 +26,7 @@ def login_view (request):
         user = authenticate(request,username=username,password=password)
         if user is not None:
             login(request,user)
-            return redirect('client:view_score')
+            return redirect('login')
     return render(request,'client/login.html',{'form':form})
 
 
@@ -40,7 +40,6 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('client:view_score')
+            return redirect('enter_score_parameters')
     
     return render(request,'client/login.html',{'form':form})
-

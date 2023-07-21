@@ -11,7 +11,6 @@ def configure_score_parameters(request):
             param.objectif = request.POST.get(f'objectif_{param.id}', 0)
             param.save()
       #  return redirect('client:view_score')
-
     return render(request, 'agent/calculate_score.html', {'parameters': parameters})
 
 

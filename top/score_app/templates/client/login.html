@@ -1,21 +1,8 @@
 {% extends 'base.html' %} 
 {% block content %}
-<div class="container mt-5">
-  <form method="POST" class="needs-validation" novalidate>
+<form method='POST'>
+    {{ form.as_p }}
     {% csrf_token %}
-    {% for field in form %}
-      <div class="form-group">
-        {{ field.label_tag }}
-        {{ field }}
-        <div class="invalid-feedback">
-          {{ field.errors.as_text }}
-        </div>
-      </div>
-    {% endfor %}
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-</div>
+    <button type="submit">Submit</button>
+</form>
 {% endblock content %}
-
-
-
