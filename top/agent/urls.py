@@ -4,5 +4,5 @@ from .views import configure_score_parameters
 
 
 urlpatterns = [
-    path('aa/', configure_score_parameters, name='configure_score_parameters'),
+    path('config/', configure_score_parameters, name='configure_score_parameters'),
 ]

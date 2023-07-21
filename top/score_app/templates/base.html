@@ -1,62 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Score App{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <!-- Navbar content -->
-        <div class="container">
-            <!-- Navbar branding/logo and links -->
-            <a class="navbar-brand" href="#">Score App</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <!-- Add your navigation links here -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'agent:index' %}">Agent</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'client:index' %}">Client</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <title>Configurer les paramètres de score</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-    <div class="container-fluid">
-        <div class="row">
-            <aside class="col-md-3 bg-light sidebar">
-                <!-- Sidebar content -->
-                <h4 class="mt-3">Sidebar</h4>
-                <ul class="list-group">
-                    <!-- Add your sidebar links here -->
-                    <li class="list-group-item"><a href="{% url 'agent:index' %}">Manage Score Rules</a></li>
-                    <li class="list-group-item"><a href="{% url 'agent:calculate_score' %}">Calculate Client's Score</a></li>
-                    <!-- Add more links if needed -->
-                </ul>
-            </aside>
-            <main class="col-md-9 mt-3">
-                {% block content %}{% endblock %}
-            </main>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 80px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .submit-button {
+            background-color: #007bff; /* Blue color */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+
+        .reset-button {
+            background-color: #ff6600; /* Orange color */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+
+        .submit-button:hover, .reset-button:hover {
+            opacity: 0.8;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: #007bff; /* Blue color */
+            overflow: hidden;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .navbar a.active {
+            background-color: #ff6600; /* Orange color */
+            color: white;
+        }
+
+        .navbar-logo {
+            float: left;
+            padding: 8px;
+        }
+
+        .navbar-logo img {
+            height: 40px; /* Set the height of the logo image */
+        }
+
+        /* Footer styles */
+        .footer {
+            text-align: center;
+            margin-top: auto; /* Move the footer to the bottom */
+            padding: 10px 0;
+            background-color: #333;
+            color: white;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+{% load static %}
+<body>
+    <div class="navbar">
+        <div class="navbar-logo">
+            <img src="{% static "unnamed.png" %}" alt="Logo">
         </div>
+        <a href="#" class="active">Home</a>
+        <a href="/settings/">Settings</a>
+        <a href="/help/">Help</a>
+        <!-- Add more navbar links as needed -->
     </div>
 
-    <footer class="footer mt-auto py-3 bg-dark text-white">
-        <div class="container text-center">
-            <!-- Footer content -->
-            <p>&copy; {% now "Y" %} Score App. All rights reserved.</p>
-        </div>
-    </footer>
+    {% block content %} {% endblock %}
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <div class="footer">
+        Topnet 2023
+    </div>
 </body>
 </html>
