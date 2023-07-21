@@ -99,6 +99,19 @@
             height: 40px; /* Set the height of the logo image */
         }
 
+        /* Responsive navbar styles */
+        @media screen and (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+            }
+
+            .navbar a {
+                float: none;
+                display: block;
+                text-align: center;
+            }
+        }
+
         /* Footer styles */
         .footer {
             text-align: center;
@@ -116,9 +129,9 @@
         <div class="navbar-logo">
             <img src="{% static "unnamed.png" %}" alt="Logo">
         </div>
-        <a href="#" class="active">Home</a>
-        <a href="/settings/">Settings</a>
-        <a href="/help/">Help</a>
+        <a href="/client/login/" data-link="home">Home</a>
+        <a href="/client/register/" data-link="register">Register</a>
+        <a href="/help/" data-link="help">Help</a>
         <!-- Add more navbar links as needed -->
     </div>
 
@@ -127,5 +140,27 @@
     <div class="footer">
         Topnet 2023
     </div>
+
+    <script>
+        // Get all the navbar links
+        const navbarLinks = document.querySelectorAll(".navbar a");
+
+        // Add click event listener to each link
+        navbarLinks.forEach(link => {
+            link.addEventListener("click", function (event) {
+                // Check if the link is already active
+                if (!this.classList.contains("active")) {
+                    // Remove active class from other links
+                    navbarLinks.forEach(link => link.classList.remove("active"));
+
+                    // Set this link as active
+                    this.classList.add("active");
+                } else {
+                    // If the link is already active, navigate to its href
+                    window.location.href = this.getAttribute("href");
+                }
+            });
+        });
+    </script>
 </body>
 </html>

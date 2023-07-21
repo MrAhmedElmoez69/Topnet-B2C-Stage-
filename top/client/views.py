@@ -17,16 +17,19 @@ def enter_score_parameters(request):
 
     return render(request, 'client/calculate_score.html')
 
-def login_view (request):
-    form = LoginForm
+def login_view(request):
+    form = LoginForm()
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request,username=username,password=password)
-        if user is not None:
-            login(request,user)
-            return redirect('client:view_score')
-    return render(request,'client/login.html',{'form':form})
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            phone_number = form.cleaned_data['phone_number']
+            CIN = form.cleaned_data['CIN']
+            user = authenticate(request, username=phone_number, password=CIN)
+            if user is not None:
+                login(request, user)
+
+    return render(request, 'client/login.html', {'form': form})
+
 
 def register(request):
     form = UserRegistrationForm()
@@ -40,3 +43,4 @@ def register(request):
             return redirect('client:view_score')
     
     return render(request,'client/login.html',{'form':form})
+
