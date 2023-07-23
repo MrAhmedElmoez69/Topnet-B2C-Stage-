@@ -7,15 +7,15 @@ from django.contrib.auth import authenticate, login
 
 @login_required
 def enter_score_parameters(request):
-    client = request.user.client
-    if request.method == 'POST':
-        # Récupérer les paramètres du score depuis le formulaire POST
-        # et les sauvegarder dans la base de données pour le client
-        # Exemple : 
-        client.score_parameters.set([1, 2, 3])  # Remplacez param1, param2, param3 par les objets ScoreParameters correspondants
-        return redirect('client:view_score')
+    client = request.user
+    score_parameters = ScoreParameters.objects.all()
 
-    return render(request, 'client/calculate_score.html')
+    if request.method == 'POST':
+        selected_parameters = request.POST.getlist('score_parameters')
+        client.score_parameters.set(selected_parameters)
+        return redirect('view_score')
+
+    return render(request, 'client/calculate_score.html', {'score_parameters': score_parameters})
 
 
 def login_view (request):
@@ -43,3 +43,26 @@ def register(request):
             return redirect('enter_score_parameters')
     
     return render(request,'client/login.html',{'form':form})
+
+@login_required
+def view_score(request):
+    client = request.user
+    score_parameters = client.score_parameters.all()
+    total_weight = sum(param.poids for param in score_parameters)
+    total_score = sum((param.objectif / total_weight) * param.poids for param in score_parameters)
+    niveau_classe = calculate_niveau_classe(total_score)
+    return render(request, 'client/view_score.html', {'score_parameters': score_parameters, 'total_score': total_score, 'niveau_classe': niveau_classe})
+
+
+def calculate_niveau_classe(total_score):
+    # Define the mapping of total scores to niveau/classe
+    niveau_classe_mapping = {
+        (0, 20): 'classe 4. Signaux clairs de failles. Risque avéré.',
+        (21, 40): 'niveau 3. Quelques alertes ont été remontées. Risque probable.',
+        (41, 70): 'niveau 2. Bonne santé dans l’ensemble. Risque limité.',
+        (71, 100): 'niveau 1. Excellente santé financière. Risque très peu probable.',
+    }
+    for (lower, upper), niveau_classe in niveau_classe_mapping.items():
+        if lower <= total_score <= upper:
+            return niveau_classe
+    return 'Niveau indéterminé'

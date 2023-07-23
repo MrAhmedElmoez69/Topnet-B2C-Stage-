@@ -1,29 +1,24 @@
+
 {% extends 'base.html' %}
 
 {% block title %}Client | Calculated Score{% endblock %}
 
 {% block content %}
-<html>
-<head>
-    <title>Calcul du score</title>
-</head>
-<body>
-    <h1>Calcul du score pour un client spécifique</h1>
+
+
+
+    <h1>Enter Score Parameters</h1>
     <form method="post">
         {% csrf_token %}
-        <label for="client_id">Sélectionner un client :</label>
-        <select name="client_id" id="client_id">
-            {% for client in clients %}
-                <option value="{{ client.id }}">{{ client.username }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <h2>Entrer les paramètres de score pour le client :</h2>
-        <!-- Display the score parameters for the selected client -->
-        <!-- You can use the same approach as shown in the previous template -->
-        <br>
-        <input type="submit" value="Calculer le score">
+        {% for score_parameter in score_parameters %}
+        <label>
+            <input type="checkbox" name="score_parameters" value="{{ score_parameter.pk }}">
+            {{ score_parameter.criteres }} (Poids: {{ score_parameter.poids }}, Objectif: {{ score_parameter.objectif }})
+        </label><br>
+        {% endfor %}
+        <input type="submit" value="Submit">
     </form>
-</body>
-</html>
+
+
+
 {% endblock %}
