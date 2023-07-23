@@ -30,17 +30,17 @@
 
 19/07/2023 : Developpement et creation des tables de donnes
 
-20/07/2023 :
+20/07/2023 : Developpement Du Authentifcation
 
-21/07/2023 :
+21/07/2023 : Fix Authentification
 
 22/07/2023 : ///
  
 23/07/2023 : ///
 
-24/07/2023
+24/07/2023 : Developpemnt du regle de calcul de Score pour les diff axes / Fixed Login / Fixed Register 
 
-25/07/2023
+25/07/2023 : Jour Freiéé
 
 26/07/2023
 
