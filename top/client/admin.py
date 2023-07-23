@@ -54,7 +54,7 @@ class ClientAdmin(admin.ModelAdmin):
     search_fields = ['username', 'CIN', 'phone_number']
     list_filter = ['is_staff', 'date_joined']
     actions = ['calculate_and_save_score']
-    form = ClientForm
+    form = ClientCreationForm
 
     def calculate_and_save_score(self, request, queryset):
         for client in queryset:

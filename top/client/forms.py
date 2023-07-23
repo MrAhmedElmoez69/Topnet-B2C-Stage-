@@ -37,3 +37,13 @@ class ClientForm(forms.ModelForm):
             self.fields['engagement_contractuel'].widget = forms.Select()
         elif criteres == 'engagement_client':
             self.fields['anciennete'].widget = forms.Select()
+
+# forms.py
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from .models import Client
+
+class ClientCreationForm(UserCreationForm):
+    class Meta:
+        model = Client
+        fields = ('username', 'CIN', 'phone_number', 'first_name', 'last_name', 'is_staff', 'password1', 'password2')
