@@ -196,6 +196,12 @@
         .sun-icon:before {
             content: "\f185";
         }
+
+        .dark-mode {
+            /* Define your dark mode styles here */
+            color: white;
+            background-color: #333;
+        }
     </style>
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
 
@@ -270,23 +276,18 @@
       
         function setTheme() {
             const body = document.body;
-            const formBox = document.querySelector(".form-box");
             const moonIcon = document.getElementById("moonIcon");
             const sunIcon = document.getElementById("sunIcon");
-    
+        
             const isDarkMode = localStorage.getItem("darkMode") === "true";
             if (isDarkMode) {
                 body.classList.add("dark-mode");
                 body.style.setProperty("--background-color", "#333");
-                formBox.style.setProperty("--form-box-bg-color", "#444");
-                formBox.style.color = "white";
                 moonIcon.style.display = "none";
                 sunIcon.style.display = "inline";
             } else {
                 body.classList.remove("dark-mode");
                 body.style.removeProperty("--background-color");
-                formBox.style.removeProperty("--form-box-bg-color");
-                formBox.style.color = "black";
                 moonIcon.style.display = "inline";
                 sunIcon.style.display = "none";
             }
@@ -299,11 +300,12 @@
             localStorage.setItem("darkMode", isDarkMode.toString());
             setTheme(); // Update the theme immediately
         }
-    
+        document.addEventListener("DOMContentLoaded", function() {
+            setTheme();
+        });
         // Call the setTheme function when the page loads to set the theme based on user preference
         window.onload = setTheme;
     </script>
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
 
 </body>
 </html>
