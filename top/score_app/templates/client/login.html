@@ -48,18 +48,45 @@
     button[type="submit"]:hover {
         opacity: 0.8;
     }
+
+    .login-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .login-form {
+        flex: 1;
+    }
+
+    .login-image {
+        flex: 1;
+        margin-left: 30px;
+    }
+
+    .login-image img {
+        max-width: 100%;
+        border-radius: 8px;
+    }
 </style>
 
 
-<div class="form-box">
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
+<div class="login-container">
+    <div class="login-form">
+        <div class="form-box">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div class="login-image">
+        {% load static %}
+        <!-- Add your login image or animation here -->
+        <img src="{% static 'marketing.png' %}" alt="Login Image">
+    </div>
 </div>
 
-<script>
-
-</script>
 {% endblock content %}
