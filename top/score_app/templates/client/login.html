@@ -4,6 +4,7 @@
     body {
         font-family: "Arial", sans-serif;
         background-color: var(--background-color, #f2f2f2); /* Set a light background color */
+        color: var(--font-color, #333); /* Set the default font color */
     }
 
     .form-box {
@@ -13,6 +14,13 @@
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+    }
+
+    /* Add styles for the dark mode */
+    body.dark-mode {
+        --background-color: #333; /* Dark background color */
+        --form-box-bg-color: #444; /* Dark background color for the form box */
+        --font-color: #fff; /* White font color for dark mode */
     }
 
     form {
