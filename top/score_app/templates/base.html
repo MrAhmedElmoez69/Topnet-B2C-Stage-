@@ -136,6 +136,33 @@
           .logout-button:hover {
             background-color: #0056b3;
           }
+
+          .toggle-button {
+            display: none; /* Hide the button by default */
+            margin: 10px auto;
+            background-color: #007bff; /* Blue color */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        
+        @media screen and (max-width: 600px) {
+            /* Show the toggle button and hide the links container on small screens */
+            .toggle-button {
+                display: block;
+            }
+        
+            .toggle-links {
+                display: none;
+            }
+        
+            .toggle-links.hidden {
+                display: block; /* Override the display for the hidden class */
+            }
+        }
     </style>
 </head>
 {% load static %}
@@ -145,19 +172,22 @@
             <img src="{% static "unnamed.png" %}" alt="Logo">
         </div>
         
-        {% if not user.is_authenticated %}
-            <a href="/client/login/" data-link="home">Login</a>
-            <a href="/client/register/" data-link="register">Register</a>
-        {% else %}
-            <p>Weclome Dear {{user.username}} ! </p>
-            <a href="/client/view-score/" data-link="view_score">View Score</a>
-        {% endif %}
+        <div class="toggle-links"> <!-- Add a container for the links -->
+            {% if not user.is_authenticated %}
+                <a href="/client/login/" data-link="home">Login</a>
+                <a href="/client/register/" data-link="register">Register</a>
+            {% else %}
+                <p>Weclome Dear {{user.username}} ! </p>
+                <a href="/client/view-score/" data-link="view_score">View Score</a>
+            {% endif %}
+            
+            {% if user.is_authenticated %}
+            <a class="logout-button" href="{% url 'logout' %}">Logout</a>
+            {% endif %} 
+        </div>
         
-        {% if user.is_authenticated %}
-        <a class="logout-button" href="{% url 'logout' %}">Logout</a>
-        {% endif %} 
+        <button class="toggle-button" onclick="toggleLinks()">Menu</button> <!-- Change the button text to "Menu" -->
     </div>
-    
 
     
     
@@ -165,10 +195,16 @@
     {% block content %} {% endblock %}
 
     <div class="footer">
-        Topnet 2023
+        Topnet 2023 All Right Reserved 
     </div>
 
     <script>
+
+        function toggleLinks() {
+            const linksContainer = document.querySelector(".toggle-links");
+            linksContainer.classList.toggle("hidden"); // Toggle the 'hidden' class
+        }
+
         // Get all the navbar links
         const navbarLinks = document.querySelectorAll(".navbar a");
 
