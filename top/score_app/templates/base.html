@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <title>Configurer les paramètres de score</title>
     <style>
+        
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -69,6 +72,8 @@
         .navbar {
             background-color: #007bff; /* Blue color */
             overflow: hidden;
+            display: flex;
+            justify-content: space-between; /* Add this property to align items to the right */
         }
 
         .navbar a {
@@ -163,7 +168,37 @@
                 display: block; /* Override the display for the hidden class */
             }
         }
+
+
+      
+        /* New styles for the theme change button */
+        .theme-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: white;
+            margin-right: 16px; /* Add some right margin to separate it from the logo */
+        }
+        
+        .moon-icon:before,
+        .sun-icon:before {
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            font-size: 24px;
+            line-height: 1;
+        }
+        
+        .moon-icon:before {
+            content: "\f186";
+        }
+        
+        .sun-icon:before {
+            content: "\f185";
+        }
     </style>
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+
 </head>
 {% load static %}
 <body>
@@ -185,6 +220,10 @@
             <a class="logout-button" href="{% url 'logout' %}">Logout</a>
             {% endif %} 
         </div>
+        <button class="theme-button" onclick="toggleTheme()">
+            <i class="fas fa-moon" id="moonIcon"></i>
+            <i class="fas fa-sun" id="sunIcon" style="display: none;"></i>
+        </button>
         
         <button class="toggle-button" onclick="toggleLinks()">Menu</button> <!-- Change the button text to "Menu" -->
     </div>
@@ -199,6 +238,7 @@
     </div>
 
     <script>
+        
 
         function toggleLinks() {
             const linksContainer = document.querySelector(".toggle-links");
@@ -226,23 +266,30 @@
         });
 
 
+      
         function toggleTheme() {
             const body = document.body;
             const formBox = document.querySelector(".form-box");
-    
+            const moonIcon = document.getElementById("moonIcon");
+            const sunIcon = document.getElementById("sunIcon");
+
             const isDarkMode = body.classList.toggle("dark-mode");
             if (isDarkMode) {
                 body.style.setProperty("--background-color", "#333"); /* Dark mode background color */
                 formBox.style.setProperty("--form-box-bg-color", "#444"); /* Dark mode form box background color */
                 formBox.style.color = "white"; /* Dark mode text color */
+                moonIcon.style.display = "none";
+                sunIcon.style.display = "inline";
             } else {
                 body.style.removeProperty("--background-color"); /* Remove dark mode background color */
                 formBox.style.removeProperty("--form-box-bg-color"); /* Remove dark mode form box background color */
                 formBox.style.color = "black"; /* Light mode text color */
+                moonIcon.style.display = "inline";
+                sunIcon.style.display = "none";
             }
         }
     </script>
-    <button onclick="toggleTheme()">Change Theme</button>
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
 
 </body>
 </html>
