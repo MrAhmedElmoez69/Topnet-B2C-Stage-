@@ -224,6 +224,25 @@
                 }
             });
         });
+
+
+        function toggleTheme() {
+            const body = document.body;
+            const formBox = document.querySelector(".form-box");
+    
+            const isDarkMode = body.classList.toggle("dark-mode");
+            if (isDarkMode) {
+                body.style.setProperty("--background-color", "#333"); /* Dark mode background color */
+                formBox.style.setProperty("--form-box-bg-color", "#444"); /* Dark mode form box background color */
+                formBox.style.color = "white"; /* Dark mode text color */
+            } else {
+                body.style.removeProperty("--background-color"); /* Remove dark mode background color */
+                formBox.style.removeProperty("--form-box-bg-color"); /* Remove dark mode form box background color */
+                formBox.style.color = "black"; /* Light mode text color */
+            }
+        }
     </script>
+    <button onclick="toggleTheme()">Change Theme</button>
+
 </body>
 </html>

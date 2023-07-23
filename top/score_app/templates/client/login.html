@@ -1,8 +1,65 @@
 {% extends 'base.html' %} 
 {% block content %}
-<form method='POST'>
-    {{ form.as_p }}
-    {% csrf_token %}
-    <button type="submit">Submit</button>
-</form>
+<style>
+    body {
+        font-family: "Arial", sans-serif;
+        background-color: var(--background-color, #f2f2f2); /* Set a light background color */
+    }
+
+    .form-box {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: var(--form-box-bg-color, #fff); /* Set a white background for the form box */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select {
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    button[type="submit"] {
+        background-color: #007bff; /* Blue color */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 4px;
+    }
+
+    button[type="submit"]:hover {
+        opacity: 0.8;
+    }
+</style>
+
+
+<div class="form-box">
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<script>
+
+</script>
 {% endblock content %}
