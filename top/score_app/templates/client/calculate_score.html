@@ -1,24 +1,10 @@
-
-{% extends 'base.html' %}
-
-{% block title %}Client | Calculated Score{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
-
-
-
-    <h1>Enter Score Parameters</h1>
-    <form method="post">
-        {% csrf_token %}
-        {% for score_parameter in score_parameters %}
-        <label>
-            <input type="checkbox" name="score_parameters" value="{{ score_parameter.pk }}">
-            {{ score_parameter.criteres }} (Poids: {{ score_parameter.poids }}, Objectif: {{ score_parameter.objectif }})
-        </label><br>
-        {% endfor %}
-        <input type="submit" value="Submit">
-    </form>
-
-
-
+  <h1>Score Parameters</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save">
+  </form>
 {% endblock %}

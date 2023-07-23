@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import ScoreParameters, Client
-
+from .forms import *
 
 class IsClient(admin.ModelAdmin):
     list_display = (
@@ -49,45 +49,35 @@ class IsClient(admin.ModelAdmin):
     total_score.short_description = 'Total Score'
     niveau_classe.short_description = 'Niveau/Classe'
 
-
 class ClientAdmin(admin.ModelAdmin):
     list_display = ['username', 'CIN', 'phone_number', 'first_name', 'last_name', 'is_staff', 'date_joined']
     search_fields = ['username', 'CIN', 'phone_number']
     list_filter = ['is_staff', 'date_joined']
     actions = ['calculate_and_save_score']
+    form = ClientForm
 
     def calculate_and_save_score(self, request, queryset):
         for client in queryset:
             scores = client.calculate_score()
-            client.total_score = scores
-            client.niveau_classe = client.calculate_niveau_classe()
+            client.total_score = scores['total_score']
+            client.niveau_classe = scores['niveau_classe']
             client.save()
 
     calculate_and_save_score.short_description = 'Calculate and Save Score'
 
-    fieldsets = (
-        ('Personal Info', {
-            'fields': ('username', 'password', 'first_name', 'last_name', 'phone_number', 'CIN')
-        }),
-        ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'groups', 'user_permissions'),
-        }),
-        ('Important dates', {
-            'fields': ('last_login', 'date_joined'),
-        })
-    )
+    def get_form(self, request, obj=None, **kwargs):
+        # Get the default form and pass the 'criteres' value if available
+        form = super().get_form(request, obj, **kwargs)
+        criteres = request.POST.get('criteres') if request.POST else (obj.criteres if obj else None)
 
-    def total_score(self, obj):
-        scores = obj.calculate_score()  # Calculate the scores using the calculate_score method of the Client model
-        return scores
+        if criteres:
+            # Show relevant fields based on the selected value of 'criteres'
+            form = form(request.POST, instance=obj) if obj else form(request.POST)
+            form.show_fields_for_criteres(criteres)
 
-    def niveau_classe(self, obj):
-        total_score = self.total_score(obj)
-        return obj.calculate_niveau_classe(total_score)
+        return form
 
-    total_score.short_description = 'Total Score'
-    niveau_classe.short_description = 'Niveau/Classe'
+admin.site.register(Client, ClientAdmin)
 
 
 admin.site.register(ScoreParameters)
-admin.site.register(Client, ClientAdmin)

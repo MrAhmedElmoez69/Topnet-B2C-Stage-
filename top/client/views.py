@@ -11,11 +11,13 @@ def enter_score_parameters(request):
     score_parameters = ScoreParameters.objects.all()
 
     if request.method == 'POST':
-        selected_parameters = request.POST.getlist('score_parameters')
-        client.score_parameters.set(selected_parameters)
-        return redirect('view_score')
-
-    return render(request, 'client/calculate_score.html', {'score_parameters': score_parameters})
+        form = ClientForm(request.POST, instance=client)
+        if form.is_valid():
+            form.save()
+            return redirect('view_score')
+    else:
+        form = ClientForm(instance=client)
+    return render(request, 'client/calculate_score.html', {"form": form})
 
 
 def login_view (request):
@@ -26,7 +28,7 @@ def login_view (request):
         user = authenticate(request,username=username,password=password)
         if user is not None:
             login(request,user)
-            return redirect('login')
+            return redirect('view_score')
     return render(request,'client/login.html',{'form':form})
 
 

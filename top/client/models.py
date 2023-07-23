@@ -46,7 +46,13 @@ class ScoreParameters(models.Model):
         (8, 0.2),
         (4, 0),
     ]
+    ANCIENNETE_CHOICES = [
+        (1, '< 1 an'),
+        (2, '1 an < ancienneté < 2 ans'),
+        (3, '2 ans et plus'),
+    ]
 
+    anciennete = models.IntegerField(choices=ANCIENNETE_CHOICES, default=None, null=True, blank=True)
     criteres = models.CharField(max_length=100, choices=CRITERES_CHOICES)
     poids = models.DecimalField(max_digits=5, decimal_places=2)
     objectif = models.DecimalField(max_digits=5, decimal_places=2)

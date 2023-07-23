@@ -121,6 +121,21 @@
             color: white;
             flex-shrink: 0;
         }
+
+        .logout-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+          }
+        
+          .logout-button:hover {
+            background-color: #0056b3;
+          }
     </style>
 </head>
 {% load static %}
@@ -129,11 +144,23 @@
         <div class="navbar-logo">
             <img src="{% static "unnamed.png" %}" alt="Logo">
         </div>
-        <a href="/client/login/" data-link="home">Home</a>
-        <a href="/client/register/" data-link="register">Register</a>
-        <a href="/help/" data-link="help">Help</a>
-        <!-- Add more navbar links as needed -->
+        
+        {% if not user.is_authenticated %}
+            <a href="/client/login/" data-link="home">Login</a>
+            <a href="/client/register/" data-link="register">Register</a>
+        {% else %}
+            <p>Weclome Dear {{user.username}} ! </p>
+            <a href="/client/view-score/" data-link="view_score">View Score</a>
+        {% endif %}
+        
+        {% if user.is_authenticated %}
+        <a class="logout-button" href="{% url 'logout' %}">Logout</a>
+        {% endif %} 
     </div>
+    
+
+    
+    
 
     {% block content %} {% endblock %}
 

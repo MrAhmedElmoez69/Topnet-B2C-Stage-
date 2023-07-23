@@ -133,3 +133,6 @@ MEDIA_ROOT = BASE_DIR /'media/'
 MEDIA_URL = 'media/'
 
 AUTH_USER_MODEL = "client.Client"
+
+LOGOUT_REDIRECT_URL = "login"
+LOGIN_REDIRECT_URL = "enter-score-parameters/"
