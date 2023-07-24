@@ -1,3 +1,5 @@
+Week 1
+
 04/07/2023 : Repartition Des Taches/Interpretation et Analyse de La Maquette Scoring 
 
 05/07/2023 : Initiation de Digramme De Classe / Digramme De Cas D'utilisation Generale et Backlogs 
@@ -6,9 +8,12 @@
 
 07/07/2023 : Répartition des backlogs de sprints / Preparation Du Video Demo Du Simulation Du Model / Preparation Sprintg Backlog  /  Mise en place de PPt et demo Pour la Validation
 
-08/07/2023 :  //
 
-09/07/2023 : //
+
+///////////////////////////////////////////////////
+
+Week 2
+
 	
 10/07/2023 : Weekly : Validation Du Travail 
 	
@@ -20,9 +25,10 @@
 
 14/07/2023 : Correction Du Premier Spirnt + Preparation du Tableau de mesure 
  
-15/07/2023 :  ///
 
-16/07/2023 : ///
+///////////////////////////////////////////////////
+
+Week 3
 
 17/07/2023 : Fixation Du Presentation 
  
@@ -34,23 +40,26 @@
 
 21/07/2023 : Fix Authentification
 
-22/07/2023 : ///
- 
-23/07/2023 : ///
 
-24/07/2023 : Developpemnt du regle de calcul de Score pour les diff axes / Fixed Login / Fixed Register 
+///////////////////////////////////////////////////
 
-25/07/2023 : Jour Freiéé
+Week 4
 
-26/07/2023
 
-27/07/2023
+24/07/2023 : Developpemnt du L interface Du Site Web Scoring 
 
-28/07/2023
+25/07/2023 : Jour Freié
 
-29/07/2023
+26/07/2023 : Validation
 
-30/07/2023
+27/07/2023 : 
+
+28/07/2023 : 
+
+///////////////////////////////////////////////////
+
+Week 5
+
 
 31/07/2023
 
@@ -62,9 +71,11 @@
 
 04/08/2023
 
-05/08/2023
 
-06/08/2023
+
+///////////////////////////////////////////////////
+
+Week 6
 
 07/08/2023
 
@@ -76,9 +87,11 @@
 
 11/08/2023
 
-12/08/2023
 
-13/08/2023
+
+///////////////////////////////////////////////////
+
+Week 7 
 
 14/08/2023
 
@@ -90,9 +103,9 @@
 
 18/08/2023
 
-19/08/2023
 
-20/08/2023
+///////////////////////////////////////////////////
+Week 8
 
 21/08/2023
 
@@ -104,9 +117,11 @@
 
 25/08/2023
 
-26/08/2023
 
-27/08/2023
+
+///////////////////////////////////////////////////
+
+Week 9
 
 28/08/2023
 
@@ -118,8 +133,7 @@
 
 01/09/2023
 
-02/09/2023
-
-03/09/2023
-
 04/09/2023
+
+///////////////////////////////////////////////////
+

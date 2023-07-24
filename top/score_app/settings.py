@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'agent',
     'client',
     'contrat',
+    'reclamation',
+    'facture',
+
 ]
 
 MIDDLEWARE = [

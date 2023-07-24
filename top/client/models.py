@@ -66,8 +66,8 @@ class ScoreParameters(models.Model):
 
 class Client(AbstractUser):
     phone_regex = RegexValidator(
-        regex=r'^\+216 \d{2} \d{3} \d{3}$',
-        message="Le numéro de téléphone doit être au format +216 00 000 000."
+        regex=r'^\d{8}$',
+        message="Le numéro de téléphone doit être au format  71000000."
     )
     phone_number = models.CharField(validators=[phone_regex], max_length=17)
     CIN = models.CharField("CIN", max_length=250, validators=[RegexValidator(regex='^[0-9]{8}$', message="Numbers Only!")])
