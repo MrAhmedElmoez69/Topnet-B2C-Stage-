@@ -5,14 +5,18 @@
 {% block content %}
     <h1>View Score</h1>
     {% if total_score is not None %}
-        <h2>Total Score: {{ total_score }}</h2>
-        <h2>Niveau/Classe: {{ niveau_classe }}</h2>
-        <h3>Score Parameters:</h3>
-        <ul>
-            {% for score_parameter in score_parameters %}
-                <li>{{ score_parameter.criteres }}: {{ score_parameter.poids }} (Poids) - {{ score_parameter.objectif }} (Objectif)</li>
-            {% endfor %}
-        </ul>
+        {% if total_score == 0 %}
+            <h2>No Score Available Yet, The Result will be added soon . </h2>
+        {% else %}
+            <h2>Total Score: {{ total_score }}</h2>
+            <h2>Niveau/Classe: {{ niveau_classe }}</h2>
+            <h3>Score Parameters:</h3>
+            <ul>
+                {% for score_parameter in score_parameters %}
+                    <li>{{ score_parameter.criteres }}: {{ score_parameter.poids }} (Poids) - {{ score_parameter.objectif }} (Objectif)</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     {% else %}
         <p>The result will be added soon.</p>
     {% endif %}
