@@ -4,6 +4,7 @@ from .models import Client
 from django.db import models
 from .forms import *
 from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 @login_required
 def enter_score_parameters(request):
@@ -20,18 +21,21 @@ def enter_score_parameters(request):
     return render(request, 'client/calculate_score.html', {"form": form})
 
 
-def login_view (request):
-    form = LoginForm
+from django.contrib import messages
+
+def login_view(request):
+    form = LoginForm()
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(request,username=username,password=password)
+        user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request,user)
+            login(request, user)
             return redirect('view_score')
-    return render(request,'client/login.html',{'form':form})
+        else:
+            messages.error(request, 'Incorrect username or password. Please try again.')
 
-
+    return render(request, 'client/login.html', {'form': form})
 
 def register(request):
     form = UserRegistrationForm()

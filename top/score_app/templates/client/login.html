@@ -77,15 +77,36 @@
         max-width: 100%;
         border-radius: 8px;
     }
+  
+    .eye-icon {
+        display: none;
+    }
 </style>
-
 
 <div class="login-container">
     <div class="login-form">
         <div class="form-box">
+            <h2>Welcome!</h2>
+            {% if messages %}
+                <div style="color: red;">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             <form method="POST">
                 {% csrf_token %}
-                {{ form.as_p }}
+                <div style="position: relative;">
+                    <label for="{{ form.username.id_for_label }}">Username:</label>
+                    {{ form.username }}
+                </div>
+                <div style="position: relative;">
+                    <label for="{{ form.password.id_for_label }}">Password:</label>
+                    <input type="password" name="password" id="{{ form.password.id_for_label }}">
+                    <!-- Add the eye icon for password visibility -->
+                    <i class="fas fa-eye-slash eye-icon" onclick="togglePasswordVisibility()"></i>
+                </div>
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -97,4 +118,20 @@
     </div>
 </div>
 
-{% endblock content %}
+{% endblock %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+<script>
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById("id_password");
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            document.querySelector(".eye-icon").classList.remove("fa-eye-slash");
+            document.querySelector(".eye-icon").classList.add("fa-eye");
+        } else {
+            passwordInput.type = 'password';
+            document.querySelector(".eye-icon").classList.remove("fa-eye");
+            document.querySelector(".eye-icon").classList.add("fa-eye-slash");
+        }
+    }
+</script>
