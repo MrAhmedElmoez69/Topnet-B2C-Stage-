@@ -11,8 +11,8 @@ class IsClient(admin.ModelAdmin):
         'last_name',
         'is_staff',
         'date_joined',
-        'total_score',  # Display the total score in the admin list view
-        'niveau_classe',  # Display the niveau/classe in the admin list view
+        'total_score',  
+        'niveau_classe',  
     )
     search_fields = [
         'phone_number',
@@ -39,7 +39,7 @@ class IsClient(admin.ModelAdmin):
     )
 
     def total_score(self, obj):
-        scores = obj.calculate_score()  # Calculate the scores using the calculate_score method of the Client model
+        scores = obj.calculate_score()  
         return scores['total_score']
 
     def niveau_classe(self, obj):
@@ -66,28 +66,24 @@ class ClientAdmin(admin.ModelAdmin):
     calculate_and_save_score.short_description = 'Calculate and Save Score'
 
     def get_form(self, request, obj=None, **kwargs):
-        # Get the default form and pass the 'criteres' value if available
         form = super().get_form(request, obj, **kwargs)
         criteres = request.POST.get('criteres') if request.POST else (obj.criteres if obj else None)
 
         if criteres:
-            # Show relevant fields based on the selected value of 'criteres'
             form = form(request.POST, instance=obj) if obj else form(request.POST)
             form.show_fields_for_criteres(criteres)
 
         return form
     
 
-#Data To a unique user 
 class ScoreParametersInline(admin.TabularInline):
     model = ScoreParameters
 
 class ScoreParametersAdmin(admin.ModelAdmin):
-    list_display = ['criteres', 'client']  # Add 'client' to the list display for ScoreParameters
-    list_filter = ['client']  # Add 'client' to the list filter for ScoreParameters
+    list_display = ['criteres', 'client']  
+    list_filter = ['client']  
 
     def get_queryset(self, request):
-        # Filter the ScoreParameters instances based on the currently logged-in client
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
@@ -104,7 +100,7 @@ class EngagementClientAdmin(admin.ModelAdmin):
 
     def get_anciennete(self, obj):
         today = datetime.date.today()
-        if obj.client.contrats.exists():  # Access contrat_set using the reverse relationship
+        if obj.client.contrats.exists():  
             last_contrat = obj.client.contrats.latest('date_debut')
             difference = today - last_contrat.date_debut
             if difference.days >= 730:
@@ -117,7 +113,7 @@ class EngagementClientAdmin(admin.ModelAdmin):
     get_anciennete.short_description = 'Anciennete'
 
     def get_nombre_suspension(self, obj):
-        if obj.client.contrats.exists():  # Access contrat_set using the reverse relationship
+        if obj.client.contrats.exists():  
             nombre_suspension = obj.client.contrats.aggregate(models.Max('nombre_suspension'))['nombre_suspension__max']
             if nombre_suspension < 2:
                 return 1
@@ -127,7 +123,7 @@ class EngagementClientAdmin(admin.ModelAdmin):
     get_nombre_suspension.short_description = 'Nombre Suspension'
 
     def get_montant_en_cours(self, obj):
-        if obj.client.contrats.exists():  # Access contrat_set using the reverse relationship
+        if obj.client.contrats.exists():  
             montant_en_cours = obj.client.contrats.aggregate(models.Max('montant_en_cours'))['montant_en_cours__max']
             if montant_en_cours < 2:
                 return 1
@@ -161,12 +157,11 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
             delai_traitement_total = datetime.timedelta()
 
             for reclamation in reclamations:
-                # Ensure date_fin is not before date_debut
                 if reclamation.date_fin >= reclamation.date_debut:
                     delai_traitement_total += reclamation.date_fin - reclamation.date_debut
 
             delai_moyen_traitement = delai_traitement_total / reclamations.count()
-            delai_theorique_traitement = datetime.timedelta(days=365)  # Replace this with the desired value for the theoretical processing time in days per year
+            delai_theorique_traitement = datetime.timedelta(days=365)  
 
             if delai_moyen_traitement > delai_theorique_traitement:
                 return 1

@@ -61,7 +61,6 @@ def view_score(request):
 
 
 def calculate_niveau_classe(total_score):
-    # Define the mapping of total scores to niveau/classe
     niveau_classe_mapping = {
         (0, 20): 'classe 4. Signaux clairs de failles. Risque avéré.',
         (21, 40): 'niveau 3. Quelques alertes ont été remontées. Risque probable.',

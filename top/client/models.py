@@ -151,7 +151,7 @@ class EngagementClient(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='engagement_client', null=True, blank=True, default=None)
 
     def calculate_anciennete(self):
-        if self.client.contrats.exists():  # Access contrat_set using the reverse relationship
+        if self.client.contrats.exists():  
             today = datetime.date.today()
             last_contrat = self.client.contrats.latest('date_debut')
             difference = today - last_contrat.date_debut
@@ -165,7 +165,7 @@ class EngagementClient(models.Model):
                 self.anciennete = None
 
     def calculate_nombre_suspension(self):
-        if self.client.contrats.exists():  # Access contrat_set using the reverse relationship
+        if self.client.contrats.exists():  
             nombre_suspension = self.client.contrats.aggregate(models.Max('nombre_suspension'))['nombre_suspension__max']
             if nombre_suspension < 2:
                 self.nombre_suspension = 1
@@ -173,7 +173,7 @@ class EngagementClient(models.Model):
                 self.nombre_suspension = 0
 
     def calculate_montant_en_cours(self):
-        if self.client.contrats.exists():  # Access contrat_set using the reverse relationship
+        if self.client.contrats.exists(): 
             montant_en_cours = self.client.contrats.aggregate(models.Max('montant_en_cours'))['montant_en_cours__max']
             if montant_en_cours < 2:
                 self.montant_en_cours = 1
@@ -209,12 +209,11 @@ class EngagementTopnet(models.Model):
             delai_traitement_total = datetime.timedelta()
 
             for reclamation in reclamations:
-                # Ensure date_fin is not before date_debut
                 if reclamation.date_fin >= reclamation.date_debut:
                     delai_traitement_total += reclamation.date_fin - reclamation.date_debut
 
             delai_moyen_traitement = delai_traitement_total / reclamations.count()
-            delai_theorique_traitement = datetime.timedelta(days=365)  # Replace this with the desired value for the theoretical processing time in days per year
+            delai_theorique_traitement = datetime.timedelta(days=365)  
 
             if delai_moyen_traitement > delai_theorique_traitement:
                 self.delai_traitement = 1

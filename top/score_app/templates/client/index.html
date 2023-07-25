@@ -3,14 +3,10 @@
 {% block title %}Client | Score Parameters{% endblock %}
 
 {% block content %}
-    <!-- Add your content here for managing score parameters -->
     <div class="container">
         <h1 class="mt-3">Client's Score Parameters</h1>
-        <!-- Add your form to manage score parameters here -->
         <form method="post">
             {% csrf_token %}
-            <!-- Add form fields for client's score parameters here -->
-            <!-- Replace the input fields below with your actual score parameters -->
             <div class="form-group">
                 <label for="param1">Parameter 1:</label>
                 <input type="text" class="form-control" id="param1" name="param1">
@@ -19,7 +15,6 @@
                 <label for="param2">Parameter 2:</label>
                 <input type="text" class="form-control" id="param2" name="param2">
             </div>
-            <!-- Add more fields for other parameters -->
 
             <button type="submit" class="btn btn-primary">Save Parameters</button>
         </form>

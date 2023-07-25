@@ -18,7 +18,6 @@ class Facture(models.Model):
     Id_facture = models.AutoField(primary_key=True)
     montant_encours = models.DecimalField(max_digits=10, decimal_places=2, help_text="Montant en Dinar Tunisien")
 
-    # Choices for the type_paiement field
     ESPECE = 'Espece'
     CREDIT_CARD = 'CreditCard'
     CHEQUE = 'Cheque'
@@ -32,7 +31,6 @@ class Facture(models.Model):
     date_du_facture = models.DateField(default=timezone.now)
     date_a_payer_avant = models.DateField(validators=[validate_date_a_payer_avant])
 
-    # Choices for the statut_paiement field
     REJET = 'rejet'
     NON = 'non'
     STATUT_PAIEMENT_CHOICES = [

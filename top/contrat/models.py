@@ -1,8 +1,8 @@
 from django.db import models
-from client.models import Client  # Make sure to replace 'score_app' with the actual name of your app
+from client.models import Client  
 
 class Contrat(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='contrats') # Specify related_name
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='contrats') 
 
     id_contrat = models.AutoField(primary_key=True)
     date_debut = models.DateField()

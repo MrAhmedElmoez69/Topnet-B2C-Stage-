@@ -16,11 +16,10 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
     }
 
-    /* Add styles for the dark mode */
     body.dark-mode {
-        --background-color: #333; /* Dark background color */
-        --form-box-bg-color: #444; /* Dark background color for the form box */
-        --font-color: #fff; /* White font color for dark mode */
+        --background-color: #333; 
+        --form-box-bg-color: #444;
+        --font-color: #fff; 
     }
 
     form {
@@ -44,7 +43,7 @@
     }
 
     button[type="submit"] {
-        background-color: #007bff; /* Blue color */
+        background-color: #007bff; 
         color: white;
         padding: 10px 20px;
         border: none;
@@ -108,7 +107,6 @@
                 <div style="position: relative;">
                     <label for="{{ form.password.id_for_label }}">Password:</label>
                     <input type="password" name="password" id="{{ form.password.id_for_label }}">
-                    <!-- Add the eye icon for password visibility -->
                     <i class="fas fa-eye-slash eye-icon" onclick="togglePasswordVisibility()"></i>
                 </div>
                 <button type="submit">Submit</button>
@@ -117,7 +115,6 @@
     </div>
     <div class="login-image">
         {% load static %}
-        <!-- Add your login image or animation here -->
         <img src="{% static 'marketing.png' %}" alt="Login Image">
     </div>
 </div>
