@@ -93,8 +93,12 @@ class ScoreParametersAdmin(admin.ModelAdmin):
             return qs
         return qs.filter(client=request.user)
 
+class EngagementClientInline(admin.StackedInline):
+    model = EngagementClient
+    can_delete = False
+
+
 admin.site.register(Client, ClientAdmin)
-
-
 admin.site.register(ScoreParameters)
 admin.site.register(ValeurCommerciale)
+admin.site.register(EngagementClient)
