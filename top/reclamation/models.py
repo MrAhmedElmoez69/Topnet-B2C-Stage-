@@ -7,6 +7,8 @@ class Reclamation(models.Model):
     Id_reclamation = models.AutoField(primary_key=True)
     date_debut = models.DateField(default=timezone.now)
     date_fin = models.DateField(default=timezone.now)
+    nombre_reclamation = models.PositiveIntegerField(default=0)
+
 
     def __str__(self):
         return f"Reclamation {self.Id_reclamation} - Contrat: {self.contrat.id_contrat}"
