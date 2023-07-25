@@ -6,18 +6,102 @@
     <h1>View Score</h1>
     {% if total_score is not None %}
         {% if total_score == 0 %}
-            <h2>No Score Available Yet, The Result will be added soon . </h2>
+            <div style="text-align: center;">
+                <h2>No Score Available Yet</h2>
+                <p>The Result will be added soon.</p>
+            </div>
         {% else %}
             <h2>Total Score: {{ total_score }}</h2>
             <h2>Niveau/Classe: {{ niveau_classe }}</h2>
             <h3>Score Parameters:</h3>
-            <ul>
-                {% for score_parameter in score_parameters %}
-                    <li>{{ score_parameter.criteres }}: {{ score_parameter.poids }} (Poids) - {{ score_parameter.objectif }} (Objectif)</li>
-                {% endfor %}
-            </ul>
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #ccc;">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid #ccc;">Criteria</th>
+                        <th style="border: 1px solid #ccc;">Poids</th>
+                        <th style="border: 1px solid #ccc;">Objectif</th>
+                        {% if score_parameters.0.categorie_client %}
+                            <th style="border: 1px solid #ccc;">Categorie Client</th>
+                        {% endif %}
+                        {% if score_parameters.0.engagement_contractuel %}
+                            <th style="border: 1px solid #ccc;">Engagement Contractuel</th>
+                        {% endif %}
+                        {% if score_parameters.0.offre %}
+                            <th style="border: 1px solid #ccc;">Offre</th>
+                        {% endif %}
+                        {% if score_parameters.0.debit %}
+                            <th style="border: 1px solid #ccc;">Debit</th>
+                        {% endif %}
+                        {% if score_parameters.0.anciennete %}
+                            <th style="border: 1px solid #ccc;">Ancienneté</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for score_parameter in score_parameters %}
+                        <tr>
+                            <td style="border: 1px solid #ccc;">
+                                {% for choice, label in score_parameter.CRITERES_CHOICES %}
+                                    {% if choice == score_parameter.criteres %}
+                                        {{ label }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td style="border: 1px solid #ccc;">{{ score_parameter.poids }}</td>
+                            <td style="border: 1px solid #ccc;">{{ score_parameter.objectif }}</td>
+                            {% if score_parameters.0.categorie_client %}
+                                <td style="border: 1px solid #ccc;">
+                                    {% for choice, label in score_parameter.CATEGORIE_CHOICES %}
+                                        {% if choice == score_parameter.categorie_client %}
+                                            {{ label }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endif %}
+                            {% if score_parameters.0.engagement_contractuel %}
+                                <td style="border: 1px solid #ccc;">
+                                    {% for choice, label in score_parameter.ENGAGEMENT_CHOICES %}
+                                        {% if choice == score_parameter.engagement_contractuel %}
+                                            {{ label }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endif %}
+                            {% if score_parameters.0.offre %}
+                                <td style="border: 1px solid #ccc;">
+                                    {% for choice, label in score_parameter.OFFRE_CHOICES %}
+                                        {% if choice == score_parameter.offre %}
+                                            {{ label }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endif %}
+                            {% if score_parameters.0.debit %}
+                                <td style="border: 1px solid #ccc;">
+                                    {% for choice, label in score_parameter.DEBIT_CHOICES %}
+                                        {% if choice == score_parameter.debit %}
+                                            {{ label }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endif %}
+                            {% if score_parameters.0.anciennete %}
+                                <td style="border: 1px solid #ccc;">
+                                    {% for choice, label in score_parameter.ANCIENNETE_CHOICES %}
+                                        {% if choice == score_parameter.anciennete %}
+                                            {{ label }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         {% endif %}
     {% else %}
-        <p>The result will be added soon.</p>
+        <div style="text-align: center;">
+            <p>The result will be added soon.</p>
+        </div>
     {% endif %}
 {% endblock %}
