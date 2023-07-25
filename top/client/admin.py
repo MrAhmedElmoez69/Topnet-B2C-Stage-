@@ -76,6 +76,22 @@ class ClientAdmin(admin.ModelAdmin):
             form.show_fields_for_criteres(criteres)
 
         return form
+    
+
+#Data To a unique user 
+class ScoreParametersInline(admin.TabularInline):
+    model = ScoreParameters
+
+class ScoreParametersAdmin(admin.ModelAdmin):
+    list_display = ['criteres', 'client']  # Add 'client' to the list display for ScoreParameters
+    list_filter = ['client']  # Add 'client' to the list filter for ScoreParameters
+
+    def get_queryset(self, request):
+        # Filter the ScoreParameters instances based on the currently logged-in client
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(client=request.user)
 
 admin.site.register(Client, ClientAdmin)
 

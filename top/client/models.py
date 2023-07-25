@@ -4,6 +4,15 @@ from django.core.validators import RegexValidator,MaxLengthValidator
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django import forms
 
+class Client(AbstractUser):
+    phone_regex = RegexValidator(
+        regex=r'^\d{8}$',
+        message="Le numéro de téléphone doit être au format  71000000."
+    )
+    phone_number = models.CharField(validators=[phone_regex], max_length=17)
+    CIN = models.CharField("CIN", max_length=250, validators=[RegexValidator(regex='^[0-9]{8}$', message="Numbers Only!")])
+
+    #score_parameters = models.ManyToManyField(ScoreParameters)
 
 class ScoreParameters(models.Model):
     CRITERES_CHOICES = [
@@ -61,18 +70,12 @@ class ScoreParameters(models.Model):
     engagement_contractuel = models.IntegerField(choices=ENGAGEMENT_CHOICES, default=None, null=True, blank=True)
     offre = models.DecimalField(choices=OFFRE_CHOICES, max_digits=3, decimal_places=1, default=None, null=True, blank=True)
     debit = models.PositiveIntegerField(choices=DEBIT_CHOICES, default=None, null=True, blank=True)
+    
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='score_parameters', null=True, blank=True, default=None)
 
 
 
-class Client(AbstractUser):
-    phone_regex = RegexValidator(
-        regex=r'^\d{8}$',
-        message="Le numéro de téléphone doit être au format  71000000."
-    )
-    phone_number = models.CharField(validators=[phone_regex], max_length=17)
-    CIN = models.CharField("CIN", max_length=250, validators=[RegexValidator(regex='^[0-9]{8}$', message="Numbers Only!")])
 
-    score_parameters = models.ManyToManyField(ScoreParameters)
 
     def calculate_score(self):
         score_parameters = self.score_parameters.all()

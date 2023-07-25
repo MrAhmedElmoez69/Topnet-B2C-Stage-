@@ -239,7 +239,7 @@
         <div class="toggle-links"> <!-- Add a container for the links -->
             {% if not user.is_authenticated %}
                 <a href="/client/login/" data-link="home">Login</a>
-                <a href="/client/register/" data-link="register">Register</a>
+                {% comment %} <a href="/client/register/" data-link="register">Register</a> {% endcomment %}
             {% else %}
                 <q>Welcome Dear {{user.username}} ! </q>
                 <a href="/client/view-score/" data-link="view_score">View Score</a>

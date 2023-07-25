@@ -67,4 +67,5 @@ def calculate_niveau_classe(total_score):
     for (lower, upper), niveau_classe in niveau_classe_mapping.items():
         if lower <= total_score <= upper:
             return niveau_classe
-    return 'Niveau indéterminé'
+    return None
+
