@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import RegexValidator,MaxLengthValidator
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser
 from django import forms
 import datetime
-
+from reclamation.models import *
 class Client(AbstractUser):
     phone_regex = RegexValidator(
         regex=r'^\d{8}$',
@@ -188,3 +188,40 @@ class EngagementClient(models.Model):
         self.calculate_montant_en_cours()
         super().save(*args, **kwargs)
 
+class EngagementTopnet(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='engagement_topnet', null=True, blank=True, default=None)
+
+    def calculate_nombre_reclamations(self):
+        if self.client.contrats.exists():
+            reclamations = Reclamation.objects.filter(contrat__in=self.client.contrats.all(), date_debut__year=datetime.date.today().year)
+            nombre_reclamations_par_an = reclamations.count()
+
+            if nombre_reclamations_par_an > 4:
+                self.nombre_reclamation = 1
+            elif 2 < nombre_reclamations_par_an < 4:
+                self.nombre_reclamation = 0.5
+            else:
+                self.nombre_reclamation = 0
+
+    def calculate_delai_traitement(self):
+        if self.client.contrats.exists():
+            reclamations = Reclamation.objects.filter(contrat__in=self.client.contrats.all(), date_debut__year=datetime.date.today().year)
+            delai_traitement_total = datetime.timedelta()
+
+            for reclamation in reclamations:
+                # Ensure date_fin is not before date_debut
+                if reclamation.date_fin >= reclamation.date_debut:
+                    delai_traitement_total += reclamation.date_fin - reclamation.date_debut
+
+            delai_moyen_traitement = delai_traitement_total / reclamations.count()
+            delai_theorique_traitement = datetime.timedelta(days=365)  # Replace this with the desired value for the theoretical processing time in days per year
+
+            if delai_moyen_traitement > delai_theorique_traitement:
+                self.delai_traitement = 1
+            else:
+                self.delai_traitement = 0
+
+    def save(self, *args, **kwargs):
+        self.calculate_nombre_reclamations()
+        self.calculate_delai_traitement()
+        super().save(*args, **kwargs)
