@@ -105,3 +105,43 @@ def calculate_score(client):
     return score
 
 
+class ValeurCommerciale(models.Model):
+    
+    # Add a default choice to represent "unspecified" option
+    CATEGORIE_CHOICES = [
+        (None, 'Unspecified'),
+        (0, 'Standard'),
+        (1, 'VIP'),
+    ]
+
+    # Add a default choice to represent "unspecified" option
+    ENGAGEMENT_CHOICES = [
+        (None, 'Unspecified'),
+        (0, 'Engagé'),
+        (1, 'Non Engagé'),
+    ]
+
+    # Add a default choice to represent "unspecified" option
+    OFFRE_CHOICES = [
+        (None, 'Unspecified'),
+        (0.5, 'XDSL'),
+        (1, 'HD'),
+    ]
+
+    # Add a default choice to represent "unspecified" option
+    DEBIT_CHOICES = [
+        (None, 'Unspecified'),
+        (100, 1),
+        (50, 0.9),
+        (30, 0.8),
+        (20, 0.7),
+        (12, 0.6),
+        (10, 0.4),
+        (8, 0.2),
+        (4, 0),
+    ]
+    categorie_client = models.IntegerField(choices=CATEGORIE_CHOICES, default=None, null=True, blank=True)
+    engagement_contractuel = models.IntegerField(choices=ENGAGEMENT_CHOICES, default=None, null=True, blank=True)
+    offre = models.DecimalField(choices=OFFRE_CHOICES, max_digits=3, decimal_places=1, default=None, null=True, blank=True)
+    debit = models.PositiveIntegerField(choices=DEBIT_CHOICES, default=None, null=True, blank=True)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='ValeurCommerciale', null=True, blank=True, default=None)

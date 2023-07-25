@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ScoreParameters, Client
+from .models import *
 from .forms import *
 
 class IsClient(admin.ModelAdmin):
@@ -97,3 +97,4 @@ admin.site.register(Client, ClientAdmin)
 
 
 admin.site.register(ScoreParameters)
+admin.site.register(ValeurCommerciale)
