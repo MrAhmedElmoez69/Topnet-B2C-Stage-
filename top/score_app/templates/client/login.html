@@ -79,7 +79,11 @@
     }
   
     .eye-icon {
-        display: none;
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        cursor: pointer;
     }
 </style>
 
@@ -118,8 +122,6 @@
     </div>
 </div>
 
-{% endblock %}
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 <script>
     function togglePasswordVisibility() {
@@ -135,3 +137,4 @@
         }
     }
 </script>
+{% endblock %}
