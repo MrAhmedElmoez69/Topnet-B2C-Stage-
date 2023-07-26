@@ -1,10 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from contrat.models import Contrat
 from django.core.exceptions import ValidationError
-
-
-
 
 def validate_date_a_payer_avant(value):
     today = timezone.now().date()
@@ -12,9 +8,8 @@ def validate_date_a_payer_avant(value):
     if value > max_allowed_date:
         raise ValidationError("La date ne doit pas dépasser 10 jours à partir d'aujourd'hui.")
 
-
 class Facture(models.Model):
-    contrat = models.ForeignKey(Contrat, on_delete=models.CASCADE, related_name='factures')
+    contrat = models.ForeignKey('contrat.Contrat', on_delete=models.CASCADE, related_name='factures')
     Id_facture = models.AutoField(primary_key=True)
     montant_encours = models.DecimalField(max_digits=10, decimal_places=2, help_text="Montant en Dinar Tunisien")
 
@@ -39,5 +34,12 @@ class Facture(models.Model):
     ]
     statut_paiement = models.CharField(max_length=10, choices=STATUT_PAIEMENT_CHOICES, default=NON)
 
+
+    CONTENTIEUX_CHOICES = [
+        (False, 1), 
+        (True, 0),    
+    ]
+    contentieux = models.BooleanField(default=False, choices=CONTENTIEUX_CHOICES)    
+
     def __str__(self):
-        return f"Facture {self.Id_facture} - Contrat: {self.contrat.id_contrat}"
+        return f"Facture {self.Id_facture} - Contrat: {self.contrat.id_contrat} - Continu: {self.contentieux}"

@@ -170,6 +170,23 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
         return None
     get_delai_traitement.short_description = 'Délai de Traitement'
 
+class ComportementClientAdmin(admin.ModelAdmin):
+    list_display = ['client', 'calculate_delai_moyen_paiement', 'incident_de_paiement', 'contentieux']
+
+    
+
+    def get_delai_moyen_paiement(self, obj):
+        return obj.calculate_delai_moyen_paiement()
+    get_delai_moyen_paiement.short_description = 'Delai moyen de paiement'
+
+    def get_incident_de_paiement(self, obj):
+        return obj.incident_de_paiement()
+    get_incident_de_paiement.short_description = 'Incident de paiement'
+
+    def get_contentieux(self, obj):
+        return obj.contentieux()
+    get_contentieux.short_description = 'Contentieux'
+
 
 
 admin.site.register(EngagementTopnet, EngagementTopnetAdmin)
@@ -177,4 +194,4 @@ admin.site.register(EngagementClient, EngagementClientAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(ScoreParameters)
 admin.site.register(ValeurCommerciale)
-
+admin.site.register(ComportementClient, ComportementClientAdmin)

@@ -5,6 +5,9 @@ from django.contrib.auth.models import AbstractUser
 from django import forms
 import datetime
 from reclamation.models import *
+from facture.models import *
+
+
 class Client(AbstractUser):
     phone_regex = RegexValidator(
         regex=r'^\d{8}$',
@@ -224,3 +227,37 @@ class EngagementTopnet(models.Model):
         self.calculate_nombre_reclamations()
         self.calculate_delai_traitement()
         super().save(*args, **kwargs)
+
+class ComportementClient(models.Model):
+    client = models.ForeignKey('client.Client', on_delete=models.CASCADE, related_name='ComportementClient', null=True, blank=True, default=None)
+    facture = models.ForeignKey('facture.Facture', on_delete=models.CASCADE, related_name='ComportementClient', null=True, blank=True, default=None)
+
+    def calculate_delai_moyen_paiement(self):
+        if self.client and self.client.contrats.exists():  
+            factures = Facture.objects.filter(contrat__in=self.client.contrats.all(), date_a_payer_avant__year=datetime.date.today().year)
+            delai_paiement_total = datetime.timedelta()
+
+            for facture in factures:
+                if facture.date_a_payer_avant >= facture.date_du_facture:
+                    delai_paiement_total += facture.date_a_payer_avant - facture.date_du_facture
+
+            delai_moyen_paiement = delai_paiement_total / factures.count()
+            delai_theorique_paiement = datetime.timedelta(days=30)
+
+            if delai_moyen_paiement <= delai_theorique_paiement:
+                return 1
+            else:
+                return 0
+
+    def incident_de_paiement(self):
+        if self.facture:
+            return self.facture.statut_paiement == Facture.REJET
+        return False 
+
+    def contentieux(self):
+        return "True" if self.facture and self.facture.contentieux else "False"
+
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
