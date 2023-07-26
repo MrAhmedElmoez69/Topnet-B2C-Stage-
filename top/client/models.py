@@ -6,6 +6,7 @@ from django import forms
 import datetime
 from reclamation.models import *
 from facture.models import *
+from decimal import Decimal, ROUND_HALF_UP
 
 
 class Client(AbstractUser):
@@ -110,45 +111,42 @@ def calculate_score(client):
 
 
 class ValeurCommerciale(models.Model):
-    
-    # Add a default choice to represent "unspecified" option
     CATEGORIE_CHOICES = [
         (None, 'Unspecified'),
         (0, 'Standard'),
         (1, 'VIP'),
     ]
 
-    # Add a default choice to represent "unspecified" option
     ENGAGEMENT_CHOICES = [
         (None, 'Unspecified'),
         (0, 'Engagé'),
         (1, 'Non Engagé'),
     ]
 
-    # Add a default choice to represent "unspecified" option
     OFFRE_CHOICES = [
         (None, 'Unspecified'),
         (0.5, 'XDSL'),
         (1, 'HD'),
     ]
 
-    # Add a default choice to represent "unspecified" option
     DEBIT_CHOICES = [
         (None, 'Unspecified'),
-        (1, 100),
-        (0.9, 50),
-        (0.8, 30),
-        (0.7, 20),
-        (0.6, 12),
-        (0.4, 10),
-        (0.2, 8),
-        (0, 4),
+        (Decimal('1'), '100'),
+        (Decimal('0.9'), '50'),
+        (Decimal('0.8'), '30'),
+        (Decimal('0.7'), '20'),
+        (Decimal('0.6'), '12'),
+        (Decimal('0.4'), '10'),
+        (Decimal('0.2'), '8'),
+        (Decimal('0'), '4'),
     ]
+
     categorie_client = models.IntegerField(choices=CATEGORIE_CHOICES, default=None, null=True, blank=True)
     engagement_contractuel = models.IntegerField(choices=ENGAGEMENT_CHOICES, default=None, null=True, blank=True)
     offre = models.DecimalField(choices=OFFRE_CHOICES, max_digits=3, decimal_places=1, default=None, null=True, blank=True)
-    debit = models.PositiveIntegerField(choices=DEBIT_CHOICES, default=None, null=True, blank=True)
+    debit = models.DecimalField(choices=DEBIT_CHOICES, max_digits=2, decimal_places=1, default=None, null=True, blank=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='ValeurCommerciale', null=True, blank=True, default=None)
+
 
 class EngagementClient(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='engagement_client', null=True, blank=True, default=None)
