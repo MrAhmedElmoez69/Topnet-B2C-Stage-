@@ -171,9 +171,14 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
     get_delai_traitement.short_description = 'Délai de Traitement'
 
 class ComportementClientAdmin(admin.ModelAdmin):
-    list_display = ['client', 'calculate_delai_moyen_paiement', 'incident_de_paiement', 'contentieux']
+    list_display = ['get_client_name','calculate_delai_moyen_paiement', 'incident_de_paiement', 'contentieux']
 
-    
+    def get_client_name(self, obj):
+        if obj.facture and obj.facture.client:
+            return obj.facture.client.username
+        return 'No Client'
+    get_client_name.short_description = 'Client Name'
+
 
     def get_delai_moyen_paiement(self, obj):
         return obj.calculate_delai_moyen_paiement()

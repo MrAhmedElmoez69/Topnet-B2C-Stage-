@@ -228,13 +228,13 @@ class EngagementTopnet(models.Model):
         self.calculate_delai_traitement()
         super().save(*args, **kwargs)
 
+
 class ComportementClient(models.Model):
-    client = models.ForeignKey('client.Client', on_delete=models.CASCADE, related_name='ComportementClient', null=True, blank=True, default=None)
     facture = models.ForeignKey('facture.Facture', on_delete=models.CASCADE, related_name='ComportementClient', null=True, blank=True, default=None)
 
     def calculate_delai_moyen_paiement(self):
-        if self.client and self.client.contrats.exists():  
-            factures = Facture.objects.filter(contrat__in=self.client.contrats.all(), date_a_payer_avant__year=datetime.date.today().year)
+        if self.facture and self.facture.contrat.client.contrats.exists():  
+            factures = Facture.objects.filter(contrat__in=self.facture.contrat.client.contrats.all(), date_a_payer_avant__year=datetime.date.today().year)
             delai_paiement_total = datetime.timedelta()
 
             for facture in factures:
@@ -256,8 +256,11 @@ class ComportementClient(models.Model):
 
     def contentieux(self):
         return "True" if self.facture and self.facture.contentieux else "False"
-
+    
+    def __str__(self):
+        if self.facture and self.facture.client:
+            return f"Client: {self.facture.client.username} - Facture {self.facture.Id_facture}"
+        return f"Facture {self.facture.Id_facture} - No Client"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-

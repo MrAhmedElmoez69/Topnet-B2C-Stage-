@@ -9,6 +9,7 @@ def validate_date_a_payer_avant(value):
         raise ValidationError("La date ne doit pas dépasser 10 jours à partir d'aujourd'hui.")
 
 class Facture(models.Model):
+    client = models.ForeignKey('client.Client', on_delete=models.CASCADE, related_name='factures', null=True, blank=True, default=None)
     contrat = models.ForeignKey('contrat.Contrat', on_delete=models.CASCADE, related_name='factures')
     Id_facture = models.AutoField(primary_key=True)
     montant_encours = models.DecimalField(max_digits=10, decimal_places=2, help_text="Montant en Dinar Tunisien")
