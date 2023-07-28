@@ -34,7 +34,7 @@ Week 3
  
 18/07/2023 : Validation
 
-19/07/2023 : Developpement et creation des tables de donnes
+19/07/2023 : Schema du projet : preparation des tables
 
 20/07/2023 : Developpement Du Authentifcation
 
@@ -48,28 +48,28 @@ Week 4
 
 24/07/2023 : Developpemnt du L interface Du Site Web Scoring 
 
-25/07/2023 : Jour Freié
+25/07/2023 : -Jour Férié : * REPUBLIC DAY *
 
-26/07/2023 : Validation 1 : Sprint 1 
+26/07/2023 : -project management app : conception du projet 
 
 27/07/2023 : Validation 2 : Sprint 1 
 
-28/07/2023 : 
+28/07/2023 : -mise a jour de Journale du stage + commancer le rapport du stage 
 
 ///////////////////////////////////////////////////
 
 Week 5
 
 
-31/07/2023
+31/07/2023 : configurer l'acces les paramateres de projets 
 
-01/08/2023
+01/08/2023 : configurer l'acces des agents 
 
-02/08/2023
+02/08/2023 : 
 
-03/08/2023
-
-04/08/2023
+03/08/2023 :
+ 
+04/08/2023 : 
 
 
 
@@ -133,7 +133,7 @@ Week 9
 
 01/09/2023
 
-04/09/2023
+04/09/2023 : 
 
 ///////////////////////////////////////////////////
 
