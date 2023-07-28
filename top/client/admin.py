@@ -174,12 +174,12 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
     get_date_fin.short_description = 'Date Fin Contrat'
     def get_nombre_reclamations(self, obj):
         return obj.calculate_nombre_reclamations()
-    get_nombre_reclamations.short_description = 'nombre_reclamation'
+    get_nombre_reclamations.short_description = 'Taux Du nombre reclamation par an'
 
     def get_delai_traitement(self, obj):
         obj.calculate_delai_traitement()
         return obj.delai_traitement
-    get_delai_traitement.short_description = 'calculate_delai_traitement'
+    get_delai_traitement.short_description = 'delai traitement'
 
 
 class ComportementClientAdmin(admin.ModelAdmin):
