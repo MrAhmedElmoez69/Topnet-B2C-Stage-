@@ -95,7 +95,8 @@ class EngagementTopnetInline(admin.StackedInline):
     readonly_fields = ['nombre_reclamation', 'delai_traitement']
 
 class EngagementClientAdmin(admin.ModelAdmin):
-    list_display = ['client', 'get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours']
+    list_display = ['client', 'get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours', 'get_contrat' ,'get_date_debut_contrat', 'get_date_fin_contrat']
+    list_display_links = ['client','get_contrat']
     readonly_fields = ['get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours']
 
     def get_anciennete(self, obj):
@@ -124,60 +125,92 @@ class EngagementClientAdmin(admin.ModelAdmin):
 
     def get_montant_en_cours(self, obj):
         if obj.client.contrats.exists():  
-            montant_en_cours = obj.client.contrats.aggregate(models.Max('montant_en_cours'))['montant_en_cours__max']
-            if montant_en_cours < 2:
-                return 1
-            elif montant_en_cours == 0:
-                return 0
-            else:
-                return 0.5
+            montant_en_cours = obj.client.contrats.aggregate(models.Sum('montant_en_cours'))['montant_en_cours__sum']
+            return montant_en_cours
         return None
-    get_montant_en_cours.short_description = 'Montant en Cours'
+    get_montant_en_cours.short_description = 'Montant en cours'
+
+    def get_contrat(self, obj):
+        if obj.client.contrats.exists():  
+            return obj.client.contrats.latest('date_debut').id_contrat
+        return None
+    get_contrat.short_description = 'Contrat'
+
+    def get_date_debut_contrat(self, obj):
+        if obj.client.contrats.exists():  
+            date_debut_contrat = obj.client.contrats.earliest('date_debut').date_debut
+            return date_debut_contrat
+        return None
+    get_date_debut_contrat.short_description = 'Date Debut Contrat'
+
+    def get_date_fin_contrat(self, obj):
+        if obj.client.contrats.exists():  
+            date_fin_contrat = obj.client.contrats.latest('date_fin').date_fin
+            return date_fin_contrat
+        return None
+    get_date_fin_contrat.short_description = 'Date Fin Contrat'
+
 class EngagementTopnetAdmin(admin.ModelAdmin):
-    list_display = ['client', 'get_nombre_reclamations', 'get_delai_traitement']
-    readonly_fields = ['get_nombre_reclamations', 'get_delai_traitement']
+    list_display = ['client', 'get_nombre_reclamations','get_contrat_id', 'get_date_debut', 'get_date_fin', 'get_delai_traitement']
+    list_display_links = ['client','get_contrat_id']
+    readonly_fields = ['client','get_nombre_reclamations', 'get_delai_traitement']
 
-    def get_nombre_reclamations(self, obj):
+    def get_contrat_id(self, obj):
         if obj.client.contrats.exists():
-            reclamations = Reclamation.objects.filter(contrat__in=obj.client.contrats.all(), date_debut__year=datetime.date.today().year)
-            nombre_reclamations_par_an = reclamations.count()
+            return obj.client.contrats.latest('date_debut').id_contrat
+        return 'No Contract'
+    get_contrat_id.short_description = 'Contrat '
 
-            if nombre_reclamations_par_an > 4:
-                return 1
-            elif 2 < nombre_reclamations_par_an < 4:
-                return 0.5
-            else:
-                return 0
+    def get_date_debut(self, obj):
+        if obj.client.contrats.exists():
+            return obj.client.contrats.latest('date_debut').date_debut
         return None
-    get_nombre_reclamations.short_description = 'Nombre de Réclamations'
+    get_date_debut.short_description = 'Date Debut Contrat'
+
+    def get_date_fin(self, obj):
+        if obj.client.contrats.exists():
+            return obj.client.contrats.latest('date_debut').date_fin
+        return None
+    get_date_fin.short_description = 'Date Fin Contrat'
+    def get_nombre_reclamations(self, obj):
+        return obj.calculate_nombre_reclamations()
+    get_nombre_reclamations.short_description = 'nombre_reclamation'
 
     def get_delai_traitement(self, obj):
-        if obj.client.contrats.exists():
-            reclamations = Reclamation.objects.filter(contrat__in=obj.client.contrats.all(), date_debut__year=datetime.date.today().year)
-            delai_traitement_total = datetime.timedelta()
+        obj.calculate_delai_traitement()
+        return obj.delai_traitement
+    get_delai_traitement.short_description = 'calculate_delai_traitement'
 
-            for reclamation in reclamations:
-                if reclamation.date_fin >= reclamation.date_debut:
-                    delai_traitement_total += reclamation.date_fin - reclamation.date_debut
-
-            delai_moyen_traitement = delai_traitement_total / reclamations.count()
-            delai_theorique_traitement = datetime.timedelta(days=365)  
-
-            if delai_moyen_traitement > delai_theorique_traitement:
-                return 1
-            else:
-                return 0
-        return None
-    get_delai_traitement.short_description = 'Délai de Traitement'
 
 class ComportementClientAdmin(admin.ModelAdmin):
-    list_display = ['get_client_name','calculate_delai_moyen_paiement', 'incident_de_paiement', 'contentieux']
+    list_display = ['get_client_name','get_contrat', 'get_date_debut', 'get_date_fin','calculate_delai_moyen_paiement', 'incident_de_paiement', 'contentieux']
+    list_display_links = ['get_client_name','get_contrat']
+
 
     def get_client_name(self, obj):
         if obj.facture and obj.facture.client:
             return obj.facture.client.username
         return 'No Client'
     get_client_name.short_description = 'Client Name'
+    
+    
+    def get_contrat(self, obj):
+        if obj.facture and obj.facture.contrat:
+            return obj.facture.contrat.id_contrat
+        return 'No Contract'
+    get_contrat.short_description = 'Contrat'
+
+    def get_date_debut(self, obj):
+        if obj.facture and obj.facture.contrat:
+            return obj.facture.contrat.date_debut
+        return None
+    get_date_debut.short_description = 'Date Debut Contrat'
+
+    def get_date_fin(self, obj):
+        if obj.facture and obj.facture.contrat:
+            return obj.facture.contrat.date_fin
+        return None
+    get_date_fin.short_description = 'Date Fin Contrat'
 
 
     def get_delai_moyen_paiement(self, obj):

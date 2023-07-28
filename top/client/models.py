@@ -191,18 +191,19 @@ class EngagementClient(models.Model):
 
 class EngagementTopnet(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='engagement_topnet', null=True, blank=True, default=None)
+    delai_traitement = models.FloatField(default=0)    # Using FloatField to allow decimal values (e.g., 0.5)
 
     def calculate_nombre_reclamations(self):
         if self.client.contrats.exists():
-            reclamations = Reclamation.objects.filter(contrat__in=self.client.contrats.all(), date_debut__year=datetime.date.today().year)
+            reclamations = Reclamation.objects.filter(contrat__in=self.client.contrats.all(), date_debut__year=timezone.now().year)
             nombre_reclamations_par_an = reclamations.count()
 
             if nombre_reclamations_par_an > 4:
-                self.nombre_reclamation = 1
-            elif 2 < nombre_reclamations_par_an < 4:
-                self.nombre_reclamation = 0.5
+                return 1
+            elif 2 < nombre_reclamations_par_an <= 4:
+                return 0.5
             else:
-                self.nombre_reclamation = 0
+                return 0
 
     def calculate_delai_traitement(self):
         if self.client.contrats.exists():
