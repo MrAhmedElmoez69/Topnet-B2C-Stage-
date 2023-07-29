@@ -78,19 +78,13 @@ class ClientAdmin(admin.ModelAdmin):
 
     #     return form
     
-
-class ScoreParametersInline(admin.TabularInline):
-    model = ScoreParameters
-
 class ScoreParametersAdmin(admin.ModelAdmin):
-    list_display = ['criteres', 'client']  
-    list_filter = ['client']  
+    list_display = ('id', 'valeur_commerciale_weight', 'engagement_client_weight', 'engagement_topnet_weight', 'comportement_client_weight')
+    list_filter = ()
+    search_fields = ()
+    ordering = ('id',)
 
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(client=request.user)
+admin.site.register(ScoreParameters, ScoreParametersAdmin)
 
 class EngagementTopnetInline(admin.StackedInline):
     model = EngagementTopnet
@@ -246,6 +240,5 @@ class ComportementClientAdmin(admin.ModelAdmin):
 admin.site.register(EngagementTopnet, EngagementTopnetAdmin)
 admin.site.register(EngagementClient, EngagementClientAdmin)
 admin.site.register(Client, ClientAdmin)
-admin.site.register(ScoreParameters)
 admin.site.register(ValeurCommerciale)
 admin.site.register(ComportementClient, ComportementClientAdmin)
