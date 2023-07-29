@@ -1,6 +1,9 @@
 from django.contrib import admin
 from .models import *
 from .forms import *
+from django.urls import reverse
+from django.utils.html import format_html
+
 
 class IsClient(admin.ModelAdmin):
     list_display = (
@@ -95,8 +98,8 @@ class EngagementTopnetInline(admin.StackedInline):
     readonly_fields = ['nombre_reclamation', 'delai_traitement']
 
 class EngagementClientAdmin(admin.ModelAdmin):
-    list_display = ['client', 'get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours', 'get_contrat' ,'get_date_debut_contrat', 'get_date_fin_contrat']
-    list_display_links = ['client','get_contrat']
+    list_display = ['client', 'get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours', 'contrat_link', 'get_date_debut_contrat', 'get_date_fin_contrat']
+    list_display_links = ['client', 'contrat_link']
     readonly_fields = ['get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours']
 
     def get_anciennete(self, obj):
@@ -132,9 +135,21 @@ class EngagementClientAdmin(admin.ModelAdmin):
 
     def get_contrat(self, obj):
         if obj.client.contrats.exists():  
-            return obj.client.contrats.latest('date_debut').id_contrat
+            return obj.client.contrats.latest('date_debut')
         return None
     get_contrat.short_description = 'Contrat'
+
+    
+    
+    def contrat_link(self, obj):
+        contract = self.get_contrat(obj)
+        if contract:
+            pk_field_name = contract._meta.pk.name  # Get the name of the primary key field
+            url = reverse('admin:%s_%s_change' % (contract._meta.app_label, contract._meta.model_name),  args=[getattr(contract, pk_field_name)])
+            return format_html('<a href="{}">{}</a>', url, getattr(contract, pk_field_name))
+        return None
+    contrat_link.short_description = 'Contrat'
+    contrat_link.admin_order_field = 'client__contrats__contract_id'  # If you want to make the column sortable
 
     def get_date_debut_contrat(self, obj):
         if obj.client.contrats.exists():  
@@ -182,23 +197,26 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
     get_delai_traitement.short_description = 'delai traitement'
 
 
+
 class ComportementClientAdmin(admin.ModelAdmin):
-    list_display = ['get_client_name','get_contrat', 'get_date_debut', 'get_date_fin','calculate_delai_moyen_paiement', 'incident_de_paiement', 'contentieux']
-    list_display_links = ['get_client_name','get_contrat']
+    list_display = ['client_name_link', 'contrat_link', 'get_date_debut', 'get_date_fin', 'get_delai_moyen_paiement', 'get_incident_de_paiement', 'get_contentieux']
+    list_display_links = ['client_name_link', 'contrat_link']
 
-
-    def get_client_name(self, obj):
+    def client_name_link(self, obj):
         if obj.facture and obj.facture.client:
-            return obj.facture.client.username
+            client = obj.facture.client
+            url = reverse('admin:%s_%s_change' % (client._meta.app_label, client._meta.model_name),  args=[client.pk])
+            return format_html('<a href="{}">{}</a>', url, client.username)
         return 'No Client'
-    get_client_name.short_description = 'Client Name'
-    
-    
-    def get_contrat(self, obj):
+    client_name_link.short_description = 'Client Name'
+
+    def contrat_link(self, obj):
         if obj.facture and obj.facture.contrat:
-            return obj.facture.contrat.id_contrat
+            contrat = obj.facture.contrat
+            url = reverse('admin:%s_%s_change' % (contrat._meta.app_label, contrat._meta.model_name),  args=[contrat.pk])
+            return format_html('<a href="{}">{}</a>', url, contrat.id_contrat)
         return 'No Contract'
-    get_contrat.short_description = 'Contrat'
+    contrat_link.short_description = 'Contrat'
 
     def get_date_debut(self, obj):
         if obj.facture and obj.facture.contrat:
@@ -212,7 +230,6 @@ class ComportementClientAdmin(admin.ModelAdmin):
         return None
     get_date_fin.short_description = 'Date Fin Contrat'
 
-
     def get_delai_moyen_paiement(self, obj):
         return obj.calculate_delai_moyen_paiement()
     get_delai_moyen_paiement.short_description = 'Delai moyen de paiement'
@@ -224,7 +241,6 @@ class ComportementClientAdmin(admin.ModelAdmin):
     def get_contentieux(self, obj):
         return obj.contentieux()
     get_contentieux.short_description = 'Contentieux'
-
 
 
 admin.site.register(EngagementTopnet, EngagementTopnetAdmin)
