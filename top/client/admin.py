@@ -68,15 +68,15 @@ class ClientAdmin(admin.ModelAdmin):
 
     calculate_and_save_score.short_description = 'Calculate and Save Score'
 
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        criteres = request.POST.get('criteres') if request.POST else (obj.criteres if obj else None)
+    # def get_form(self, request, obj=None, **kwargs):
+    #     form = super().get_form(request, obj, **kwargs)
+    #     criteres = request.POST.get('criteres') if request.POST else (obj.criteres if obj else None)
 
-        if criteres:
-            form = form(request.POST, instance=obj) if obj else form(request.POST)
-            form.show_fields_for_criteres(criteres)
+    #     if criteres:
+    #         form = form(request.POST, instance=obj) if obj else form(request.POST)
+    #         form.show_fields_for_criteres(criteres)
 
-        return form
+    #     return form
     
 
 class ScoreParametersInline(admin.TabularInline):

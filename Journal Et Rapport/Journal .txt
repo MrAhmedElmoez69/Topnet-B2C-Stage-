@@ -61,7 +61,7 @@ Week 4
 Week 5
 
 
-31/07/2023 : configurer l'acces les paramateres de projets 
+31/07/2023 : configurer les paramateres de projets 
 
 01/08/2023 : configurer l'acces des agents 
 
