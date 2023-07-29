@@ -160,36 +160,24 @@ class EngagementClientAdmin(admin.ModelAdmin):
     get_date_fin_contrat.short_description = 'Date Fin Contrat'
 
 class EngagementTopnetAdmin(admin.ModelAdmin):
-    list_display = ['client', 'get_nombre_reclamations','get_contrat_id', 'get_date_debut', 'get_date_fin', 'get_delai_traitement']
-    list_display_links = ['client','get_contrat_id']
-    readonly_fields = ['client','get_nombre_reclamations', 'get_delai_traitement']
+    list_display = ['client_name_link', 'get_calculated_nombre_reclamations', 'get_delai_traitement']
+    list_display_links = ['client_name_link']
 
-    def get_contrat_id(self, obj):
-        if obj.client.contrats.exists():
-            return obj.client.contrats.latest('date_debut').id_contrat
-        return 'No Contract'
-    get_contrat_id.short_description = 'Contrat '
+    def client_name_link(self, obj):
+        if obj.client:
+            client = obj.client
+            url = reverse('admin:%s_%s_change' % (client._meta.app_label, client._meta.model_name), args=[client.pk])
+            return format_html('<a href="{}">{}</a>', url, client.username)
+        return 'No Client'
+    client_name_link.short_description = 'Client Name'
 
-    def get_date_debut(self, obj):
-        if obj.client.contrats.exists():
-            return obj.client.contrats.latest('date_debut').date_debut
-        return None
-    get_date_debut.short_description = 'Date Debut Contrat'
-
-    def get_date_fin(self, obj):
-        if obj.client.contrats.exists():
-            return obj.client.contrats.latest('date_debut').date_fin
-        return None
-    get_date_fin.short_description = 'Date Fin Contrat'
-    def get_nombre_reclamations(self, obj):
-        return obj.calculate_nombre_reclamations()
-    get_nombre_reclamations.short_description = 'Taux Du nombre reclamation par an'
+    def get_calculated_nombre_reclamations(self, obj):
+        return obj.nombre_reclamations
+    get_calculated_nombre_reclamations.short_description = 'Calculated Nombre Reclamations'
 
     def get_delai_traitement(self, obj):
-        obj.calculate_delai_traitement()
         return obj.delai_traitement
-    get_delai_traitement.short_description = 'delai traitement'
-
+    get_delai_traitement.short_description = 'Délai de Traitement'
 
 
 class ComportementClientAdmin(admin.ModelAdmin):

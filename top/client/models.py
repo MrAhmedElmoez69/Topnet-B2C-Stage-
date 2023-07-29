@@ -9,6 +9,9 @@ from facture.models import *
 from decimal import Decimal, ROUND_HALF_UP
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Sum
 class ScoreParameters(models.Model):
     valeur_commerciale_weight = models.PositiveIntegerField(
         default=25,
@@ -157,45 +160,6 @@ class EngagementClient(models.Model):
         self.calculate_montant_en_cours()
         super().save(*args, **kwargs)
 
-class EngagementTopnet(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='engagement_topnet', null=True, blank=True, default=None)
-    delai_traitement = models.FloatField(default=0)    # Using FloatField to allow decimal values (e.g., 0.5)
-
-    def calculate_nombre_reclamations(self):
-        if self.client.contrats.exists():
-            reclamations = Reclamation.objects.filter(contrat__in=self.client.contrats.all(), date_debut__year=timezone.now().year)
-            nombre_reclamations_par_an = reclamations.count()
-
-            if nombre_reclamations_par_an > 4:
-                return 1
-            elif 2 < nombre_reclamations_par_an <= 4:
-                return 0.5
-            else:
-                return 0
-
-    def calculate_delai_traitement(self):
-        if self.client.contrats.exists():
-            reclamations = Reclamation.objects.filter(contrat__in=self.client.contrats.all(), date_debut__year=datetime.date.today().year)
-            delai_traitement_total = datetime.timedelta()
-
-            for reclamation in reclamations:
-                if reclamation.date_fin >= reclamation.date_debut:
-                    delai_traitement_total += reclamation.date_fin - reclamation.date_debut
-
-            delai_moyen_traitement = delai_traitement_total / reclamations.count()
-            delai_theorique_traitement = datetime.timedelta(days=365)  
-
-            if delai_moyen_traitement > delai_theorique_traitement:
-                self.delai_traitement = 1
-            else:
-                self.delai_traitement = 0
-
-    def save(self, *args, **kwargs):
-        self.calculate_nombre_reclamations()
-        self.calculate_delai_traitement()
-        super().save(*args, **kwargs)
-
-
 class ComportementClient(models.Model):
     facture = models.ForeignKey('facture.Facture', on_delete=models.CASCADE, related_name='ComportementClient', null=True, blank=True, default=None)
 
@@ -230,4 +194,48 @@ class ComportementClient(models.Model):
         return f"Facture {self.facture.Id_facture} - No Client"
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+
+class EngagementTopnet(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='engagement_topnet', null=True, blank=True, default=None)
+    nombre_reclamations = models.DecimalField(max_digits=3, decimal_places=1, default=0)
+    delai_traitement = models.FloatField(default=0)
+
+    def calculate_nombre_reclamations(self):
+        if self.client and self.client.contrats.exists():
+            current_year = timezone.now().year
+            reclamations = Reclamation.objects.filter(contrat__in=self.client.contrats.all(), date_debut__year=current_year)
+            nombre_reclamations_par_an = reclamations.aggregate(Sum('nombre_reclamation'))['nombre_reclamation__sum']
+
+            if nombre_reclamations_par_an is not None:
+                if nombre_reclamations_par_an > 4:
+                    self.nombre_reclamations = 1
+                elif 2 < nombre_reclamations_par_an <= 4:
+                    self.nombre_reclamations = 0.5
+                else:
+                    self.nombre_reclamations = 0
+            else:
+                self.nombre_reclamations = 0
+
+    def calculate_delai_traitement(self):
+        if self.client and self.client.contrats.exists():
+            reclamations = Reclamation.objects.filter(contrat__in=self.client.contrats.all())
+            delai_traitement_total = datetime.timedelta()
+
+            for reclamation in reclamations:
+                if reclamation.date_fin >= reclamation.date_debut:
+                    delai_traitement_total += reclamation.date_fin - reclamation.date_debut
+
+            delai_moyen_traitement = delai_traitement_total / reclamations.count()
+            delai_theorique_traitement = datetime.timedelta(days=15)
+
+            if delai_moyen_traitement > delai_theorique_traitement:
+                self.delai_traitement = 1
+            else:
+                self.delai_traitement = 0
+
+    def save(self, *args, **kwargs):
+        self.calculate_nombre_reclamations()
+        self.calculate_delai_traitement()
         super().save(*args, **kwargs)
