@@ -225,8 +225,20 @@ class ComportementClientAdmin(admin.ModelAdmin):
     get_contentieux.short_description = 'Contentieux'
 
 
+class ValeurCommercialeAdmin(admin.ModelAdmin):
+    list_display = ['client_name_link', 'categorie_client', 'engagement_contractuel', 'offre', 'debit']
+
+    def client_name_link(self, obj):
+        if obj.client:
+            client = obj.client
+            url = reverse('admin:%s_%s_change' % (client._meta.app_label, client._meta.model_name),  args=[client.pk])
+            return format_html('<a href="{}">{}</a>', url, client.username)
+        return 'No Client'
+    client_name_link.short_description = 'Client Name'
+
+
 admin.site.register(EngagementTopnet, EngagementTopnetAdmin)
 admin.site.register(EngagementClient, EngagementClientAdmin)
 admin.site.register(Client, ClientAdmin)
-admin.site.register(ValeurCommerciale)
+admin.site.register(ValeurCommerciale, ValeurCommercialeAdmin)
 admin.site.register(ComportementClient, ComportementClientAdmin)
