@@ -1,5 +1,6 @@
 from django import forms
-from .models import Client, ScoreParameters
+from .models import *
+from django.contrib.auth.forms import UserCreationForm
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=150)
@@ -39,11 +40,35 @@ class ClientForm(forms.ModelForm):
             self.fields['anciennete'].widget = forms.Select()
 
 # forms.py
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import Client
+
+
 
 class ClientCreationForm(UserCreationForm):
     class Meta:
         model = Client
         fields = ('username', 'CIN', 'phone_number', 'first_name', 'last_name', 'is_staff', 'password1', 'password2')
+
+
+class ValeurCommercialeInlineForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.client:
+            self.fields['valeur_commerciale'].queryset = ValeurCommerciale.objects.filter(client=self.instance.client)
+
+class EngagementTopnetInlineForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.client:
+            self.fields['engagement_topnet'].queryset = EngagementTopnet.objects.filter(client=self.instance.client)
+
+class EngagementClientInlineForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.client:
+            self.fields['engagement_client'].queryset = EngagementClient.objects.filter(client=self.instance.client)
+
+class ComportementClientInlineForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.client:
+            self.fields['comportement_client'].queryset = ComportementClient.objects.filter(client=self.instance.client)

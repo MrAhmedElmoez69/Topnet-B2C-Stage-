@@ -21,3 +21,5 @@ class Score(models.Model):
     client = models.ForeignKey('client.Client', on_delete=models.CASCADE)
     rule = models.ForeignKey(ScoreRule, on_delete=models.CASCADE)
     score = models.FloatField()
+
+    

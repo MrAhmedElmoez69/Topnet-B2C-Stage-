@@ -52,32 +52,7 @@ class IsClient(admin.ModelAdmin):
     total_score.short_description = 'Total Score'
     niveau_classe.short_description = 'Niveau/Classe'
 
-class ClientAdmin(admin.ModelAdmin):
-    list_display = ['username', 'CIN', 'phone_number', 'first_name', 'last_name', 'is_staff', 'date_joined']
-    search_fields = ['username', 'CIN', 'phone_number']
-    list_filter = ['is_staff', 'date_joined']
-    actions = ['calculate_and_save_score']
-    form = ClientCreationForm
 
-    def calculate_and_save_score(self, request, queryset):
-        for client in queryset:
-            scores = client.calculate_score()
-            client.total_score = scores['total_score']
-            client.niveau_classe = scores['niveau_classe']
-            client.save()
-
-    calculate_and_save_score.short_description = 'Calculate and Save Score'
-
-    # def get_form(self, request, obj=None, **kwargs):
-    #     form = super().get_form(request, obj, **kwargs)
-    #     criteres = request.POST.get('criteres') if request.POST else (obj.criteres if obj else None)
-
-    #     if criteres:
-    #         form = form(request.POST, instance=obj) if obj else form(request.POST)
-    #         form.show_fields_for_criteres(criteres)
-
-    #     return form
-    
 class ScoreParametersAdmin(admin.ModelAdmin):
     list_display = ('id', 'valeur_commerciale_weight', 'engagement_client_weight', 'engagement_topnet_weight', 'comportement_client_weight')
     list_filter = ()
@@ -86,10 +61,10 @@ class ScoreParametersAdmin(admin.ModelAdmin):
 
 admin.site.register(ScoreParameters, ScoreParametersAdmin)
 
-class EngagementTopnetInline(admin.StackedInline):
-    model = EngagementTopnet
-    can_delete = False
-    readonly_fields = ['nombre_reclamation', 'delai_traitement']
+# class EngagementTopnetInline(admin.StackedInline):
+#     model = EngagementTopnet
+#     can_delete = False
+#     readonly_fields = ['nombre_reclamation', 'delai_traitement']
 
 class EngagementClientAdmin(admin.ModelAdmin):
     list_display = ['client', 'get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours', 'contrat_link', 'get_date_debut_contrat', 'get_date_fin_contrat']
@@ -225,20 +200,61 @@ class ComportementClientAdmin(admin.ModelAdmin):
     get_contentieux.short_description = 'Contentieux'
 
 
-class ValeurCommercialeAdmin(admin.ModelAdmin):
-    list_display = ['client_name_link', 'categorie_client', 'engagement_contractuel', 'offre', 'debit']
 
-    def client_name_link(self, obj):
-        if obj.client:
-            client = obj.client
-            url = reverse('admin:%s_%s_change' % (client._meta.app_label, client._meta.model_name),  args=[client.pk])
-            return format_html('<a href="{}">{}</a>', url, client.username)
-        return 'No Client'
-    client_name_link.short_description = 'Client Name'
+class EngagementClientInline(admin.StackedInline):
+    model = EngagementClient
+
+class ComportementClientInline(admin.StackedInline):
+    model = ComportementClient
+
+class EngagementTopnetInline(admin.StackedInline):
+    model = EngagementTopnet
+
+class ValeurCommercialeInline(admin.StackedInline):
+    model = ValeurCommerciale
+class ClientAdmin(admin.ModelAdmin):
+    list_display = ['username', 'CIN', 'phone_number', 'first_name', 'last_name', 'is_staff', 'date_joined']
+    search_fields = ['username', 'CIN', 'phone_number']
+    list_filter = ['is_staff', 'date_joined']
+    actions = ['calculate_and_save_score']
+    inlines = [
+        EngagementClientInline,
+        ComportementClientInline,
+        EngagementTopnetInline,
+        ValeurCommercialeInline,
+    ]
+    form = ClientCreationForm
+
+    def calculate_and_save_score(self, request, queryset):
+        for client in queryset:
+            scores = client.calculate_score()
+            client.total_score = scores['total_score']
+            client.niveau_classe = scores['niveau_classe']
+            client.save()
+
+    calculate_and_save_score.short_description = 'Calculate and Save Score'
+
+    # def get_form(self, request, obj=None, **kwargs):
+    #     form = super().get_form(request, obj, **kwargs)
+    #     criteres = request.POST.get('criteres') if request.POST else (obj.criteres if obj else None)
+
+    #     if criteres:
+    #         form = form(request.POST, instance=obj) if obj else form(request.POST)
+    #         form.show_fields_for_criteres(criteres)
+
+    #     return form
+    
+
+class AxesAdmin(admin.ModelAdmin):
+    model = Axes
+
+    inlines = [ValeurCommercialeInline, EngagementTopnetInline, EngagementClientInline, ComportementClientInline]
+
 
 
 admin.site.register(EngagementTopnet, EngagementTopnetAdmin)
 admin.site.register(EngagementClient, EngagementClientAdmin)
 admin.site.register(Client, ClientAdmin)
-admin.site.register(ValeurCommerciale, ValeurCommercialeAdmin)
+admin.site.register(ValeurCommerciale)
 admin.site.register(ComportementClient, ComportementClientAdmin)
+admin.site.register(Axes)

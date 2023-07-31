@@ -12,6 +12,8 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Sum
+
+
 class ScoreParameters(models.Model):
     valeur_commerciale_weight = models.PositiveIntegerField(
         default=25,
@@ -63,20 +65,21 @@ class Client(AbstractUser):
     )
     phone_number = models.CharField(validators=[phone_regex], max_length=17)
     CIN = models.CharField("CIN", max_length=250, validators=[RegexValidator(regex='^[0-9]{8}$', message="Numbers Only!")])
-    score_parameters = models.ForeignKey(
-        ScoreParameters,
-        on_delete=models.CASCADE,
-        related_name='client_score_parameters',
-        null=True,
-        blank=True
-    )
-    #score_parameters = models.ManyToManyField(ScoreParameters)
-# Choices for the axes
-class AxisChoices(models.TextChoices):
-    VALEUR_COMMERCIALE = 'ValeurCommerciale', _('Valeur Commerciale')
-    ENGAGEMENT_CLIENT = 'EngagementClient', _('Engagement client')
-    ENGAGEMENT_TOPNET = 'EngagementTopnet', _('Engagement TOPNET')
-    COMPORTEMENT_CLIENT = 'ComportementClient', _('Comportement client')
+    
+#     score_parameters = models.ForeignKey(
+#         ScoreParameters,
+#         on_delete=models.CASCADE,
+#         related_name='client_score_parameters',
+#         null=True,
+#         blank=True
+#     )
+#     #score_parameters = models.ManyToManyField(ScoreParameters)
+# # Choices for the axes
+# class AxisChoices(models.TextChoices):
+#     VALEUR_COMMERCIALE = 'ValeurCommerciale', _('Valeur Commerciale')
+#     ENGAGEMENT_CLIENT = 'EngagementClient', _('Engagement client')
+#     ENGAGEMENT_TOPNET = 'EngagementTopnet', _('Engagement TOPNET')
+#     COMPORTEMENT_CLIENT = 'ComportementClient', _('Comportement client')
 
 
 
@@ -116,11 +119,13 @@ class ValeurCommerciale(models.Model):
     engagement_contractuel = models.IntegerField(choices=ENGAGEMENT_CHOICES, default=None, null=True, blank=True)
     offre = models.DecimalField(choices=OFFRE_CHOICES, max_digits=3, decimal_places=1, default=None, null=True, blank=True)
     debit = models.DecimalField(choices=DEBIT_CHOICES, max_digits=2, decimal_places=1, default=None, null=True, blank=True)
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='ValeurCommerciale', null=True, blank=True, default=None)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='valeur_commerciale', null=True, blank=True, default=None)
+    axes_relation = models.OneToOneField('client.Axes', on_delete=models.CASCADE, related_name='valeur_commerciale_relation', null=True, blank=True)
 
 
 class EngagementClient(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='engagement_client', null=True, blank=True, default=None)
+    axes_relation  = models.OneToOneField('client.Axes', on_delete=models.CASCADE, related_name='engagement_client_relation', null=True, blank=True)
 
     def calculate_anciennete(self):
         if self.client.contrats.exists():  
@@ -162,6 +167,8 @@ class EngagementClient(models.Model):
 
 class ComportementClient(models.Model):
     facture = models.ForeignKey('facture.Facture', on_delete=models.CASCADE, related_name='ComportementClient', null=True, blank=True, default=None)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='comportement_client', null=True, blank=True, default=None)
+    axes_relation = models.OneToOneField('client.Axes', on_delete=models.CASCADE, related_name='comportement_client_relation', null=True, blank=True)
 
     def calculate_delai_moyen_paiement(self):
         if self.facture and self.facture.contrat.client.contrats.exists():  
@@ -201,6 +208,7 @@ class EngagementTopnet(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='engagement_topnet', null=True, blank=True, default=None)
     nombre_reclamations = models.DecimalField(max_digits=3, decimal_places=1, default=0)
     delai_traitement = models.FloatField(default=0)
+    axes_relation = models.OneToOneField('client.Axes', on_delete=models.CASCADE, related_name='engagement_topnet_relation', null=True, blank=True)
 
     def calculate_nombre_reclamations(self):
         if self.client and self.client.contrats.exists():
@@ -239,3 +247,12 @@ class EngagementTopnet(models.Model):
         self.calculate_nombre_reclamations()
         self.calculate_delai_traitement()
         super().save(*args, **kwargs)
+
+
+class Axes(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='Axes')
+    valeur_commerciale = models.ForeignKey(ValeurCommerciale, on_delete=models.CASCADE, null=True, blank=True)
+    engagement_topnet = models.ForeignKey(EngagementTopnet, on_delete=models.CASCADE, null=True, blank=True)
+    engagement_client = models.ForeignKey(EngagementClient, on_delete=models.CASCADE, null=True, blank=True)
+    comportement_client = models.ForeignKey(ComportementClient, on_delete=models.CASCADE, null=True, blank=True)
+
