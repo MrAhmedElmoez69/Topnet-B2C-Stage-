@@ -1,8 +1,11 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from .models import *
 from .forms import *
 from django.urls import reverse
 from django.utils.html import format_html
+from django.core.exceptions import ValidationError
+from django import forms
+
 
 
 class IsClient(admin.ModelAdmin):
@@ -334,6 +337,29 @@ class AxesAdmin(admin.ModelAdmin):
     comportement_client_display.short_description = 'Comportement Client'
 
     def save_model(self, request, obj, form, change):
+        # Check if related objects belong to the same client
+        related_objects = [
+            ('valeur_commerciale', obj.valeur_commerciale),
+            ('engagement_topnet', obj.engagement_topnet),
+            ('engagement_client', obj.engagement_client),
+            ('comportement_client', obj.comportement_client),
+        ]
+
+        client = obj.client
+        related_objects_with_wrong_client = []
+
+        for related_obj_name, related_obj in related_objects:
+            if related_obj and related_obj.client != client:
+                related_objects_with_wrong_client.append(related_obj_name)
+
+        if related_objects_with_wrong_client:
+            error_message = "The following related objects do not belong to the same client: {}".format(
+                ", ".join(related_objects_with_wrong_client)
+            )
+            messages.error(request, error_message)
+            return
+
+        # Save the main object 'obj'
         super().save_model(request, obj, form, change)
 
         # Update the related objects with their corresponding Axes object and weights
@@ -342,9 +368,7 @@ class AxesAdmin(admin.ModelAdmin):
             ('engagement_topnet', obj.engagement_topnet, 'weight_engagement_topnet'),
             ('engagement_client', obj.engagement_client, 'weight_engagement_client'),
             ('comportement_client', obj.comportement_client, 'weight_comportement_client'),
-
         ]
-
 
         for related_obj_name, related_obj, weight_field_name in related_objects:
             if related_obj:
@@ -366,7 +390,7 @@ class AxesAdmin(admin.ModelAdmin):
             if related_object:
                 related_object.client = obj.client
                 related_object.save()
-        
+
 
 class ValeurCommercialeAdmin(admin.ModelAdmin):
     list_display = ['categorie_client', 'engagement_contractuel', 'offre', 'debit', 'client', 'get_weight_from_axes']
