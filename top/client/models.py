@@ -12,7 +12,8 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Sum
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class ScoreParameters(models.Model):
     valeur_commerciale_weight = models.PositiveIntegerField(
@@ -65,22 +66,6 @@ class Client(AbstractUser):
     )
     phone_number = models.CharField(validators=[phone_regex], max_length=17)
     CIN = models.CharField("CIN", max_length=250, validators=[RegexValidator(regex='^[0-9]{8}$', message="Numbers Only!")])
-    
-#     score_parameters = models.ForeignKey(
-#         ScoreParameters,
-#         on_delete=models.CASCADE,
-#         related_name='client_score_parameters',
-#         null=True,
-#         blank=True
-#     )
-#     #score_parameters = models.ManyToManyField(ScoreParameters)
-# # Choices for the axes
-# class AxisChoices(models.TextChoices):
-#     VALEUR_COMMERCIALE = 'ValeurCommerciale', _('Valeur Commerciale')
-#     ENGAGEMENT_CLIENT = 'EngagementClient', _('Engagement client')
-#     ENGAGEMENT_TOPNET = 'EngagementTopnet', _('Engagement TOPNET')
-#     COMPORTEMENT_CLIENT = 'ComportementClient', _('Comportement client')
-
 
 
 
@@ -255,4 +240,42 @@ class Axes(models.Model):
     engagement_topnet = models.ForeignKey(EngagementTopnet, on_delete=models.CASCADE, null=True, blank=True)
     engagement_client = models.ForeignKey(EngagementClient, on_delete=models.CASCADE, null=True, blank=True)
     comportement_client = models.ForeignKey(ComportementClient, on_delete=models.CASCADE, null=True, blank=True)
+    # Weight fields for each category
+    weight_valeur_commerciale = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    weight_engagement_topnet = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    weight_engagement_client = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    weight_comportement_client = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
+    def clean(self):
+        total_weight = self.weight_valeur_commerciale + self.weight_engagement_topnet + self.weight_engagement_client + self.weight_comportement_client
+
+        if total_weight != 100:
+            raise ValidationError(
+                _('The total weight must be equal to 100%.'),
+                code='invalid'
+            )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+@receiver(post_save, sender=ValeurCommerciale)
+@receiver(post_save, sender=EngagementTopnet)
+@receiver(post_save, sender=EngagementClient)
+@receiver(post_save, sender=ComportementClient)
+def update_axes_on_related_model_save(sender, instance, **kwargs):
+    # Get the related Axes object for the client
+    axes = Axes.objects.filter(client=instance.client).first()
+
+    if axes:
+        # Update the related field in Axes based on the instance's type
+        if isinstance(instance, ValeurCommerciale):
+            axes.valeur_commerciale = instance
+        elif isinstance(instance, EngagementTopnet):
+            axes.engagement_topnet = instance
+        elif isinstance(instance, EngagementClient):
+            axes.engagement_client = instance
+        elif isinstance(instance, ComportementClient):
+            axes.comportement_client = instance
+
+        axes.save()

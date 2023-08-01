@@ -135,16 +135,8 @@ class EngagementClientAdmin(admin.ModelAdmin):
     get_date_fin_contrat.short_description = 'Date Fin Contrat'
 
 class EngagementTopnetAdmin(admin.ModelAdmin):
-    list_display = ['client_name_link', 'get_calculated_nombre_reclamations', 'get_delai_traitement']
-    list_display_links = ['client_name_link']
-
-    def client_name_link(self, obj):
-        if obj.client:
-            client = obj.client
-            url = reverse('admin:%s_%s_change' % (client._meta.app_label, client._meta.model_name), args=[client.pk])
-            return format_html('<a href="{}">{}</a>', url, client.username)
-        return 'No Client'
-    client_name_link.short_description = 'Client Name'
+    list_display = ['client', 'get_calculated_nombre_reclamations', 'get_delai_traitement']
+    list_display_links = ['client']
 
     def get_calculated_nombre_reclamations(self, obj):
         return obj.nombre_reclamations
@@ -156,16 +148,10 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
 
 
 class ComportementClientAdmin(admin.ModelAdmin):
-    list_display = ['client_name_link', 'contrat_link', 'get_date_debut', 'get_date_fin', 'get_delai_moyen_paiement', 'get_incident_de_paiement', 'get_contentieux']
-    list_display_links = ['client_name_link', 'contrat_link']
+    list_display = ['client', 'contrat_link', 'get_date_debut', 'get_date_fin', 'get_delai_moyen_paiement', 'get_incident_de_paiement', 'get_contentieux']
+    list_display_links = ['client', 'contrat_link']
 
-    def client_name_link(self, obj):
-        if obj.facture and obj.facture.client:
-            client = obj.facture.client
-            url = reverse('admin:%s_%s_change' % (client._meta.app_label, client._meta.model_name),  args=[client.pk])
-            return format_html('<a href="{}">{}</a>', url, client.username)
-        return 'No Client'
-    client_name_link.short_description = 'Client Name'
+   
 
     def contrat_link(self, obj):
         if obj.facture and obj.facture.contrat:
@@ -200,6 +186,65 @@ class ComportementClientAdmin(admin.ModelAdmin):
     get_contentieux.short_description = 'Contentieux'
 
 
+class ValeurCommercialeFilter(admin.SimpleListFilter):
+    title = 'Valeur Commerciale'
+    parameter_name = 'valeur_commerciale'
+
+    def lookups(self, request, model_admin):
+        clients = Axes.objects.all().values_list('client__id', flat=True)
+        return ValeurCommerciale.objects.filter(client__id__in=clients).values_list('id', 'id')
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(valeur_commerciale__id=self.value())
+        return queryset
+
+
+class EngagementTopnetFilter(admin.SimpleListFilter):
+    title = 'Engagement Topnet'
+    parameter_name = 'engagement_topnet'
+
+    def lookups(self, request, model_admin):
+        clients = Axes.objects.all().values_list('client__id', flat=True)
+        return EngagementTopnet.objects.filter(client__id__in=clients).values_list('id', 'id')
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(engagement_topnet__id=self.value())
+        return queryset
+
+
+class EngagementClientFilter(admin.SimpleListFilter):
+    title = 'Engagement Client'
+    parameter_name = 'engagement_client'
+
+    def lookups(self, request, model_admin):
+        clients = Axes.objects.all().values_list('client__id', flat=True)
+        return EngagementClient.objects.filter(client__id__in=clients).values_list('id', 'id')
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(engagement_client__id=self.value())
+        return queryset
+
+
+class ComportementClientFilter(admin.SimpleListFilter):
+    title = 'Comportement Client'
+    parameter_name = 'comportement_client'
+
+    def lookups(self, request, model_admin):
+        clients = Axes.objects.all().values_list('client__id', flat=True)
+        return ComportementClient.objects.filter(client__id__in=clients).values_list('id', 'id')
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(comportement_client__id=self.value())
+        return queryset
+class ValeurCommercialeInline(admin.StackedInline):
+    model = ValeurCommerciale
+
+class EngagementTopnetInline(admin.StackedInline):
+    model = EngagementTopnet
 
 class EngagementClientInline(admin.StackedInline):
     model = EngagementClient
@@ -207,22 +252,18 @@ class EngagementClientInline(admin.StackedInline):
 class ComportementClientInline(admin.StackedInline):
     model = ComportementClient
 
-class EngagementTopnetInline(admin.StackedInline):
-    model = EngagementTopnet
 
-class ValeurCommercialeInline(admin.StackedInline):
-    model = ValeurCommerciale
 class ClientAdmin(admin.ModelAdmin):
     list_display = ['username', 'CIN', 'phone_number', 'first_name', 'last_name', 'is_staff', 'date_joined']
     search_fields = ['username', 'CIN', 'phone_number']
     list_filter = ['is_staff', 'date_joined']
     actions = ['calculate_and_save_score']
-    inlines = [
-        EngagementClientInline,
-        ComportementClientInline,
-        EngagementTopnetInline,
-        ValeurCommercialeInline,
-    ]
+    # inlines = [
+    #     EngagementClientInline,
+    #     ComportementClientInline,
+    #     EngagementTopnetInline,
+    #     ValeurCommercialeInline,
+    # ]
     form = ClientCreationForm
 
     def calculate_and_save_score(self, request, queryset):
@@ -246,15 +287,102 @@ class ClientAdmin(admin.ModelAdmin):
     
 
 class AxesAdmin(admin.ModelAdmin):
-    model = Axes
+    raw_id_fields = ['valeur_commerciale', 'engagement_topnet', 'engagement_client', 'comportement_client']
+    exclude = ['categorie_client', 'engagement_contractuel', 'offre', 'debit']
 
-    inlines = [ValeurCommercialeInline, EngagementTopnetInline, EngagementClientInline, ComportementClientInline]
+    list_display = ['client', 'valeur_commerciale_display', 'weight_valeur_commerciale', 
+                    'engagement_topnet_display', 'weight_engagement_topnet', 
+                    'engagement_client_display', 'weight_engagement_client', 
+                    'comportement_client_display', 'weight_comportement_client']
+
+    def valeur_commerciale_display(self, obj):
+        return str(obj.valeur_commerciale) if obj.valeur_commerciale else '-'
+
+    def engagement_topnet_display(self, obj):
+        return str(obj.engagement_topnet) if obj.engagement_topnet else '-'
+
+    def engagement_client_display(self, obj):
+        return str(obj.engagement_client) if obj.engagement_client else '-'
+
+    def comportement_client_display(self, obj):
+        return str(obj.comportement_client) if obj.comportement_client else '-'
+
+    def get_weight_in_axes(self, obj, related_obj_name):
+        try:
+            related_obj = getattr(obj, related_obj_name)
+            if related_obj:
+                return f"Weight: {getattr(obj, f'weight_{related_obj_name}'):.2f}"
+        except Axes._meta.get_field(related_obj_name).related_model.DoesNotExist:
+            pass
+        return '-'
+
+    def weight_valeur_commerciale(self, obj):
+        return self.get_weight_in_axes(obj, 'valeur_commerciale')
+
+    def weight_engagement_topnet(self, obj):
+        return self.get_weight_in_axes(obj, 'engagement_topnet')
+
+    def weight_engagement_client(self, obj):
+        return self.get_weight_in_axes(obj, 'engagement_client')
+
+    def weight_comportement_client(self, obj):
+        return self.get_weight_in_axes(obj, 'comportement_client')
+
+    valeur_commerciale_display.short_description = 'Valeur Commerciale'
+    engagement_topnet_display.short_description = 'Engagement Topnet'
+    engagement_client_display.short_description = 'Engagement Client'
+    comportement_client_display.short_description = 'Comportement Client'
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        # Update the related objects with their corresponding Axes object and weights
+        related_objects = [
+            ('valeur_commerciale', obj.valeur_commerciale, 'weight_valeur_commerciale'),
+            ('engagement_topnet', obj.engagement_topnet, 'weight_engagement_topnet'),
+            ('engagement_client', obj.engagement_client, 'weight_engagement_client'),
+            ('comportement_client', obj.comportement_client, 'weight_comportement_client'),
+
+        ]
 
 
+        for related_obj_name, related_obj, weight_field_name in related_objects:
+            if related_obj:
+                # Remove the existing axes_relation from the related object if it exists
+                if getattr(related_obj, 'axes_relation_id', None) and getattr(related_obj, 'axes_relation_id') != obj.id:
+                    setattr(related_obj, 'axes_relation', None)
+
+                # Assign the new axes_relation and weight to the related object
+                setattr(related_obj, 'axes_relation', obj)
+                setattr(related_obj, 'weight', getattr(obj, weight_field_name))
+                related_obj.save()
+
+        related_objects = [form.cleaned_data.get('valeur_commerciale'),
+                           form.cleaned_data.get('engagement_topnet'),
+                           form.cleaned_data.get('engagement_client'),
+                           form.cleaned_data.get('comportement_client')]
+
+        for related_object in related_objects:
+            if related_object:
+                related_object.client = obj.client
+                related_object.save()
+        
+
+class ValeurCommercialeAdmin(admin.ModelAdmin):
+    list_display = ['categorie_client', 'engagement_contractuel', 'offre', 'debit', 'client', 'get_weight_from_axes']
+
+    def get_weight_from_axes(self, obj):
+        axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            return axes.weight_valeur_commerciale
+        return None
+
+    get_weight_from_axes.short_description = 'Weight from Axes'
 
 admin.site.register(EngagementTopnet, EngagementTopnetAdmin)
 admin.site.register(EngagementClient, EngagementClientAdmin)
 admin.site.register(Client, ClientAdmin)
-admin.site.register(ValeurCommerciale)
+admin.site.register(ValeurCommerciale,ValeurCommercialeAdmin)
 admin.site.register(ComportementClient, ComportementClientAdmin)
-admin.site.register(Axes)
+admin.site.register(Axes,AxesAdmin)
