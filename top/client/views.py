@@ -30,14 +30,14 @@ def login_view(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        if user is not None:
+
+        if user is not None and user.is_superuser:  # Check if the user is a superuser
             login(request, user)
             return redirect('view_tables')
         else:
-            messages.error(request, 'Incorrect username or password. Please try again.')
+            messages.error(request, 'Access restricted. Only Topnet Agent can log in.')
 
     return render(request, 'client/login.html', {'form': form})
-
 def register(request):
     form = UserRegistrationForm()
 
@@ -66,7 +66,7 @@ def view_score(request):
 def view_tables(request):
     # Retrieve clients with their related "ValeurCommerciale" instances
     clients_with_valeur_commerciale = Client.objects.filter(valeur_commerciale__isnull=False)
-
+    
     # Search by Client Username
     search_query = request.GET.get('search')
     if search_query:
@@ -90,6 +90,9 @@ def view_tables(request):
     page_number = request.GET.get('page')
     clients = paginator.get_page(page_number)
 
+    print("Filter Option:", filter_option)
+    print("Clients:", clients)
+    
     return render(request, 'client/view_tables.html', {'clients': clients, 'search_query': search_query, 'filter_option': filter_option})
 
 def calculate_niveau_classe(total_score):

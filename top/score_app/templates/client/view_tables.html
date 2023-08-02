@@ -152,7 +152,7 @@
 
 {% if user.is_authenticated %}
     <!-- Show the header only for authenticated users -->
-    <h1>Valeur Commercial Client</h1>
+    <h1>Valeur Commercial Clients</h1>
 {% endif %}
 
 <!-- Search input -->
@@ -201,8 +201,8 @@
                             <tr>
                                 <td class="px-4">{{ client.phone_number }}</td>
                                 <td class="px-4">
-                                    {% if client.valeur_commerciale %}
-                                        {{ client.valeur_commerciale.get_categorie_client_display }}
+                                    {% if client %}
+                                        {{ client.valeur_commerciale }}
                                     {% else %}
                                         N/A
                                     {% endif %}
