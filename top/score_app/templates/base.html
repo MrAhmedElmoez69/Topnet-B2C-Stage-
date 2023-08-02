@@ -238,6 +238,8 @@
             {% else %}
                 <q>Welcome Dear {{user.username}} ! </q>
                 <a href="/client/view-score/" data-link="view_score">View Score</a>
+                <a href="/client/view_tables/" data-link="view_tables">Valeur Commercial Client</a>
+
             {% endif %}
             
             {% if user.is_authenticated %}
@@ -316,6 +318,7 @@
         });
         window.onload = setTheme;
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </body>
 </html>
