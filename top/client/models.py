@@ -66,9 +66,9 @@ class Client(AbstractUser):
     )
     phone_number = models.CharField(validators=[phone_regex], max_length=17)
     CIN = models.CharField("CIN", max_length=250, validators=[RegexValidator(regex='^[0-9]{8}$', message="Numbers Only!")])
-
-
-
+    def __str__(self):
+            # Assuming you have a field named 'username' in the Client model
+            return self.username if self.username else "N/A"
 class ValeurCommerciale(models.Model):
     CATEGORIE_CHOICES = [
         (None, 'Unspecified'),
@@ -107,11 +107,56 @@ class ValeurCommerciale(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='valeur_commerciale', null=True, blank=True, default=None)
     axes_relation = models.OneToOneField('client.Axes', on_delete=models.CASCADE, related_name='valeur_commerciale_relation', null=True, blank=True)
 
+    poids_offre = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    poids_debit = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    poids_categorie_client = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    poids_engagement_contractuel = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+
+    def calculate_total_weight(self):
+        total_weight = (
+            self.poids_offre +
+            self.poids_debit +
+            self.poids_categorie_client +
+            self.poids_engagement_contractuel
+        )
+        return total_weight
+    
+    def calculate_score_valeur_commerciale(self):
+        axes_queryset = Axes.objects.filter(valeur_commerciale=self)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_valeur_commerciale = axes.weight_valeur_commerciale
+
+            objectif_offre = (self.poids_offre / 100) * (poids_valeur_commerciale / 100)
+            objectif_debit = (self.poids_debit / 100) * (poids_valeur_commerciale / 100)
+            objectif_categorie = (self.poids_categorie_client / 100) * (poids_valeur_commerciale / 100)
+            objectif_engagement = (self.poids_engagement_contractuel / 100) * (poids_valeur_commerciale / 100)
+
+            score_valeur_commerciale = (objectif_offre + objectif_debit + objectif_categorie + objectif_engagement) * poids_valeur_commerciale
+            return score_valeur_commerciale
+        return 0
+
+    def clean(self):
+        total_weight = self.calculate_total_weight()
+        if total_weight > 0 and total_weight != 100:
+            raise ValidationError(
+                'The total weight for this category must be equal to 100% if any weight is assigned.',
+                code='invalid'
+            )
+
+    def save(self, *args, **kwargs):
+        self.calculate_score_valeur_commerciale()
+        self.clean()
+        super().save(*args, **kwargs)
 
 class EngagementClient(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='engagement_client', null=True, blank=True, default=None)
     axes_relation  = models.OneToOneField('client.Axes', on_delete=models.CASCADE, related_name='engagement_client_relation', null=True, blank=True)
-
+    
+    
+    poids_anciennete = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    poids_nombre_suspension = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    poids_montant_en_cours = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     def calculate_anciennete(self):
         if self.client.contrats.exists():  
             today = datetime.date.today()
@@ -143,11 +188,28 @@ class EngagementClient(models.Model):
                 self.montant_en_cours = 0
             else:
                 self.montant_en_cours = 0.5
+    
+    def calculate_total_weight(self):
+        total_weight = (
+            self.poids_nombre_suspension +
+            self.poids_montant_en_cours + 
+            self.poids_anciennete  
+        )
+        return total_weight
+
+    def clean(self):
+        total_weight = self.calculate_total_weight()
+        if total_weight > 0 and total_weight != 100:
+            raise ValidationError(
+                'The total weight for this category must be equal to 100% if any weight is assigned.',
+                code='invalid'
+            )
 
     def save(self, *args, **kwargs):
         self.calculate_anciennete()
         self.calculate_nombre_suspension()
         self.calculate_montant_en_cours()
+        self.clean()
         super().save(*args, **kwargs)
 
 class ComportementClient(models.Model):
@@ -155,6 +217,10 @@ class ComportementClient(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='comportement_client', null=True, blank=True, default=None)
     axes_relation = models.OneToOneField('client.Axes', on_delete=models.CASCADE, related_name='comportement_client_relation', null=True, blank=True)
 
+    poids_delai_moyen_paiement = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    poids_incident_de_paiement = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    poids_contentieux = models.DecimalField(max_digits=5, decimal_places=2, default=0)    
+    
     def calculate_delai_moyen_paiement(self):
         if self.facture and self.facture.contrat.client.contrats.exists():  
             factures = Facture.objects.filter(contrat__in=self.facture.contrat.client.contrats.all(), date_a_payer_avant__year=datetime.date.today().year)
@@ -185,15 +251,38 @@ class ComportementClient(models.Model):
             return f"Client: {self.facture.client.username} - Facture {self.facture.Id_facture}"
         return f"Facture {self.facture.Id_facture} - No Client"
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+    def calculate_total_weight(self):
+        total_weight = (
+            self.poids_delai_moyen_paiement +
+            self.poids_incident_de_paiement + 
+            self.poids_contentieux  
+        )
+        return total_weight
 
+    def clean(self):
+        total_weight = self.calculate_total_weight()
+        if total_weight > 0 and total_weight != 100:
+            raise ValidationError(
+                'The total weight for this category must be equal to 100% if any weight is assigned.',
+                code='invalid'
+            )
+        
+    def save(self, *args, **kwargs):
+        self.incident_de_paiement()
+        self.calculate_delai_moyen_paiement()
+        self.contentieux()
+        self.clean()
+        super().save(*args, **kwargs)
 
 class EngagementTopnet(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='engagement_topnet', null=True, blank=True, default=None)
+    axes_relation = models.OneToOneField('client.Axes', on_delete=models.CASCADE, related_name='engagement_topnet_relation', null=True, blank=True)
+
     nombre_reclamations = models.DecimalField(max_digits=3, decimal_places=1, default=0)
     delai_traitement = models.FloatField(default=0)
-    axes_relation = models.OneToOneField('client.Axes', on_delete=models.CASCADE, related_name='engagement_topnet_relation', null=True, blank=True)
+    poids_nombre_reclamations = models.DecimalField(max_digits=3, decimal_places=1, default=0)
+    poids_delai_traitement = models.DecimalField(max_digits=3, decimal_places=1, default=0)
+    
 
     def calculate_nombre_reclamations(self):
         if self.client and self.client.contrats.exists():
@@ -228,11 +317,26 @@ class EngagementTopnet(models.Model):
             else:
                 self.delai_traitement = 0
 
+    def calculate_total_weight(self):
+        total_weight = (
+            self.poids_nombre_reclamations +
+            self.poids_delai_traitement 
+        )
+        return total_weight
+    
+    def clean(self):
+        total_weight = self.calculate_total_weight()
+        if total_weight > 0 and total_weight != 100:
+            raise ValidationError(
+                'The total weight for this category must be equal to 100% if any weight is assigned.',
+                code='invalid'
+            )
+        
     def save(self, *args, **kwargs):
         self.calculate_nombre_reclamations()
         self.calculate_delai_traitement()
+        self.clean()
         super().save(*args, **kwargs)
-
 
 class Axes(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='Axes')
@@ -246,6 +350,7 @@ class Axes(models.Model):
     weight_engagement_client = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     weight_comportement_client = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
+
     def clean(self):
         total_weight = self.weight_valeur_commerciale + self.weight_engagement_topnet + self.weight_engagement_client + self.weight_comportement_client
 
@@ -258,6 +363,10 @@ class Axes(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
+
+
+
+
 
 @receiver(post_save, sender=ValeurCommerciale)
 @receiver(post_save, sender=EngagementTopnet)

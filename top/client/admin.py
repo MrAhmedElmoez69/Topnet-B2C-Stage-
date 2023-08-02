@@ -62,15 +62,81 @@ class ScoreParametersAdmin(admin.ModelAdmin):
     search_fields = ()
     ordering = ('id',)
 
-admin.site.register(ScoreParameters, ScoreParametersAdmin)
+class ValeurCommercialeAdmin(admin.ModelAdmin):
+    list_display = ['categorie_client', 'engagement_contractuel', 'offre', 'debit', 'client', 'get_weight_from_axes', 'calculate_objectif_offre', 'calculate_objectif_debit', 'calculate_objectif_categorie', 'calculate_objectif_engagement','calculate_score_valeur_commerciale']
 
-# class EngagementTopnetInline(admin.StackedInline):
-#     model = EngagementTopnet
-#     can_delete = False
-#     readonly_fields = ['nombre_reclamation', 'delai_traitement']
+    def get_weight_from_axes(self, obj):
+        axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            return axes.weight_valeur_commerciale
+        return None
+
+    get_weight_from_axes.short_description = 'Weight from Axes'
+
+    def calculate_objectif_offre(self, obj):
+        axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_valeur_commerciale = axes.weight_valeur_commerciale
+            objectif_offre = (obj.poids_offre / 100) * (poids_valeur_commerciale / 100)
+            return f'{objectif_offre:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_objectif_offre.short_description = 'Objectif Offre (%)'
+
+    def calculate_objectif_debit(self, obj):
+        axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_valeur_commerciale = axes.weight_valeur_commerciale
+            objectif_debit = (obj.poids_debit / 100) * (poids_valeur_commerciale / 100)
+            return f'{objectif_debit:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_objectif_debit.short_description = 'Objectif Debit (%)'
+
+    def calculate_objectif_categorie(self, obj):
+        axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_valeur_commerciale = axes.weight_valeur_commerciale
+            objectif_categorie = (obj.poids_categorie_client / 100) * (poids_valeur_commerciale / 100)
+            return f'{objectif_categorie:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_objectif_categorie.short_description = 'Objectif Categorie Client (%)'
+
+    def calculate_objectif_engagement(self, obj):
+        axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_valeur_commerciale = axes.weight_valeur_commerciale
+            objectif_engagement = (obj.poids_engagement_contractuel / 100) * (poids_valeur_commerciale / 100)
+            return f'{objectif_engagement:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_objectif_engagement.short_description = 'Objectif Engagement Contractuel (%)'
+
+    def calculate_score_valeur_commerciale(self, obj):
+        axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_valeur_commerciale = axes.weight_valeur_commerciale
+
+            objectif_offre = (obj.poids_offre / 100) * (poids_valeur_commerciale / 100)
+            objectif_debit = (obj.poids_debit / 100) * (poids_valeur_commerciale / 100)
+            objectif_categorie = (obj.poids_categorie_client / 100) * (poids_valeur_commerciale / 100)
+            objectif_engagement = (obj.poids_engagement_contractuel / 100) * (poids_valeur_commerciale / 100)
+
+            score_valeur_commerciale = (objectif_offre + objectif_debit + objectif_categorie + objectif_engagement) * poids_valeur_commerciale
+            return f'{score_valeur_commerciale:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_score_valeur_commerciale.short_description = 'Objectif Score Valeur Commerciale (%)'
 
 class EngagementClientAdmin(admin.ModelAdmin):
-    list_display = ['client', 'get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours', 'contrat_link', 'get_date_debut_contrat', 'get_date_fin_contrat']
+    list_display = ['client', 'get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours', 'contrat_link', 'get_date_debut_contrat', 'get_date_fin_contrat', 'calculate_objectif1', 'calculate_objectif2', 'calculate_objectif3','calculate_score_engagement_client']
     list_display_links = ['client', 'contrat_link']
     readonly_fields = ['get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours']
 
@@ -136,9 +202,68 @@ class EngagementClientAdmin(admin.ModelAdmin):
             return date_fin_contrat
         return None
     get_date_fin_contrat.short_description = 'Date Fin Contrat'
+    def get_weight_from_axes(self, obj):
+        axes_queryset = Axes.objects.filter(engagement_client=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            return axes.weight_engagement_client
+        return None
+
+    get_weight_from_axes.short_description = 'Weight from Axes'
+
+    def calculate_objectif1(self, obj):
+        axes_queryset = Axes.objects.filter(engagement_client=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_engagement_client = axes.weight_engagement_client
+            objectif1 = (obj.poids_anciennete / 100) * (poids_engagement_client / 100)
+            return f'{objectif1:.2f}'
+        return None
+
+    calculate_objectif1.short_description = 'Objectif Ancienneté (%)'
+
+    def calculate_objectif2(self, obj):
+        axes_queryset = Axes.objects.filter(engagement_client=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_engagement_client = axes.weight_engagement_client
+            objectif2 = (obj.poids_nombre_suspension / 100) * (poids_engagement_client / 100)
+            return f'{objectif2:.2f}'
+        return None
+
+    calculate_objectif2.short_description = 'Objectif Nombre Suspension (%)'
+
+    def calculate_objectif3(self, obj):
+        axes_queryset = Axes.objects.filter(engagement_client=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_engagement_client = axes.weight_engagement_client
+            objectif3 = (obj.poids_montant_en_cours / 100) * (poids_engagement_client / 100)
+            return f'{objectif3:.2f}'
+        return None
+
+    calculate_objectif3.short_description = 'Objectif Montant En Cours (%)'
+    
+    def calculate_score_engagement_client(self, obj):
+        axes_queryset = Axes.objects.filter(engagement_client=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_engagement_client = axes.weight_engagement_client
+
+            objectif_anciennete = (obj.poids_anciennete / 100) * (poids_engagement_client / 100)
+            objectif_montant_en_cours = (obj.poids_montant_en_cours / 100) * (poids_engagement_client / 100)
+            objectif_nombre_suspension = (obj.poids_nombre_suspension / 100) * (poids_engagement_client / 100)
+
+            score_engagement_client = (objectif_anciennete + objectif_montant_en_cours + objectif_nombre_suspension) * poids_engagement_client
+            return f'{score_engagement_client:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_score_engagement_client.short_description = 'Objectif Score Engagement Client (%)'
+
+
 
 class EngagementTopnetAdmin(admin.ModelAdmin):
-    list_display = ['client', 'get_calculated_nombre_reclamations', 'get_delai_traitement']
+    list_display = ['client', 'get_calculated_nombre_reclamations', 'get_delai_traitement','calculate_objectif1', 'calculate_objectif2','calculate_score_engagement_topnet']
     list_display_links = ['client']
 
     def get_calculated_nombre_reclamations(self, obj):
@@ -148,10 +273,54 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
     def get_delai_traitement(self, obj):
         return obj.delai_traitement
     get_delai_traitement.short_description = 'Délai de Traitement'
+    def get_weight_from_axes(self, obj):
+        axes_queryset = Axes.objects.filter(engagement_topnet=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            return axes.weight_engagement_topnet
+        return None
 
+    get_weight_from_axes.short_description = 'Weight from Axes'
+
+    def calculate_objectif1(self, obj):
+        axes_queryset = Axes.objects.filter(engagement_topnet=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_engagement_topnet = axes.weight_engagement_topnet
+            objectif1 = (obj.poids_nombre_reclamations / 100) * (poids_engagement_topnet / 100)
+            return f'{objectif1:.2f}'
+        return None
+
+    calculate_objectif1.short_description = 'Objectif Nombre de Reclamations (%)'
+
+    def calculate_objectif2(self, obj):
+        axes_queryset = Axes.objects.filter(engagement_topnet=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_engagement_topnet = axes.weight_engagement_topnet
+            objectif2 = (obj.poids_delai_traitement / 100) * (poids_engagement_topnet / 100)
+            return f'{objectif2:.2f}'
+        return None
+
+    calculate_objectif2.short_description = 'Objectif Delai de Traitement (%)'
+    
+    def calculate_score_engagement_topnet(self, obj):
+        axes_queryset = Axes.objects.filter(engagement_topnet=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_engagement_topnet = axes.weight_engagement_topnet
+
+            objectif_reclamations = (obj.poids_nombre_reclamations / 100) * (poids_engagement_topnet / 100)
+            objectif_delai = (obj.poids_delai_traitement / 100) * (poids_engagement_topnet / 100)
+
+            score_engagement_topnet = (objectif_reclamations + objectif_delai) * poids_engagement_topnet
+            return f'{score_engagement_topnet:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_score_engagement_topnet.short_description = 'Objectif Score Engagement Topnet (%)'
 
 class ComportementClientAdmin(admin.ModelAdmin):
-    list_display = ['client', 'contrat_link', 'get_date_debut', 'get_date_fin', 'get_delai_moyen_paiement', 'get_incident_de_paiement', 'get_contentieux']
+    list_display = ['client', 'contrat_link', 'get_date_debut', 'get_date_fin', 'get_delai_moyen_paiement', 'get_incident_de_paiement', 'get_contentieux','get_weight_from_axes', 'calculate_objectif_delai_paiement', 'calculate_objectif_incident_paiement', 'calculate_objectif_contentieux','calculate_score_comportement_client']
     list_display_links = ['client', 'contrat_link']
 
    
@@ -187,6 +356,64 @@ class ComportementClientAdmin(admin.ModelAdmin):
     def get_contentieux(self, obj):
         return obj.contentieux()
     get_contentieux.short_description = 'Contentieux'
+
+    def get_weight_from_axes(self, obj):
+        axes_queryset = Axes.objects.filter(comportement_client=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            return axes.weight_comportement_client
+        return None
+
+    get_weight_from_axes.short_description = 'Weight from Axes'
+
+    def calculate_objectif_delai_paiement(self, obj):
+        axes_queryset = Axes.objects.filter(comportement_client=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_comportement_client = axes.weight_comportement_client
+            objectif_delai_paiement = (obj.poids_delai_moyen_paiement / 100) * (poids_comportement_client / 100)
+            return f'{objectif_delai_paiement:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_objectif_delai_paiement.short_description = 'Objectif Delai Paiement (%)'
+
+    def calculate_objectif_incident_paiement(self, obj):
+        axes_queryset = Axes.objects.filter(comportement_client=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_comportement_client = axes.weight_comportement_client
+            objectif_incident_paiement = (obj.poids_incident_de_paiement / 100) * (poids_comportement_client / 100)
+            return f'{objectif_incident_paiement:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_objectif_incident_paiement.short_description = 'Objectif Incident Paiement (%)'
+
+    def calculate_objectif_contentieux(self, obj):
+        axes_queryset = Axes.objects.filter(comportement_client=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_comportement_client = axes.weight_comportement_client
+            objectif_contentieux = (obj.poids_contentieux / 100) * (poids_comportement_client / 100)
+            return f'{objectif_contentieux:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_objectif_contentieux.short_description = 'Objectif Contentieux (%)'
+    
+    def calculate_score_comportement_client(self, obj):
+        axes_queryset = Axes.objects.filter(comportement_client=obj)
+        if axes_queryset.exists():
+            axes = axes_queryset.last()
+            poids_comportement_client = axes.weight_comportement_client
+
+            objectif_delai_paiement = (obj.poids_delai_moyen_paiement / 100) * (poids_comportement_client / 100)
+            objectif_incident_paiement = (obj.poids_incident_de_paiement / 100) * (poids_comportement_client / 100)
+            objectif_contentieux = (obj.poids_contentieux / 100) * (poids_comportement_client / 100)
+
+            score_comportement_client = (objectif_delai_paiement + objectif_incident_paiement + objectif_contentieux) * poids_comportement_client
+            return f'{score_comportement_client:.2f}'  # Display with two decimal places
+        return None
+
+    calculate_score_comportement_client.short_description = 'Objectif Score Comportement Client (%)'
 
 
 class ValeurCommercialeFilter(admin.SimpleListFilter):
@@ -296,7 +523,7 @@ class AxesAdmin(admin.ModelAdmin):
     list_display = ['client', 'valeur_commerciale_display', 'weight_valeur_commerciale', 
                     'engagement_topnet_display', 'weight_engagement_topnet', 
                     'engagement_client_display', 'weight_engagement_client', 
-                    'comportement_client_display', 'weight_comportement_client']
+                    'comportement_client_display', 'weight_comportement_client','calculate_total_score','get_score_level','decision']
 
     def valeur_commerciale_display(self, obj):
         return str(obj.valeur_commerciale) if obj.valeur_commerciale else '-'
@@ -392,21 +619,60 @@ class AxesAdmin(admin.ModelAdmin):
                 related_object.save()
 
 
-class ValeurCommercialeAdmin(admin.ModelAdmin):
-    list_display = ['categorie_client', 'engagement_contractuel', 'offre', 'debit', 'client', 'get_weight_from_axes']
+    def calculate_total_score(self, obj):
+        score_valeur_commerciale = obj.valeur_commerciale.calculate_score_valeur_commerciale()
+        score_engagement_topnet = obj.engagement_topnet.calculate_score_engagement_topnet()
+        score_engagement_client = obj.engagement_client.calculate_score_engagement_client()
+        score_comportement_client = obj.comportement_client.calculate_score_comportement_client()
 
-    def get_weight_from_axes(self, obj):
-        axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
-        if axes_queryset.exists():
-            axes = axes_queryset.last()
-            return axes.weight_valeur_commerciale
-        return None
+        total_score = (score_valeur_commerciale + score_engagement_topnet + score_engagement_client + score_comportement_client)
+        return f'{total_score:.2f}'  # Display with two decimal places
 
-    get_weight_from_axes.short_description = 'Weight from Axes'
+    calculate_total_score.short_description = 'Total Score'
+    def get_score_level(self, obj):
+        total_score_str = self.calculate_total_score(obj)
 
-admin.site.register(EngagementTopnet, EngagementTopnetAdmin)
-admin.site.register(EngagementClient, EngagementClientAdmin)
+        try:
+            total_score = float(total_score_str)
+        except ValueError:
+            return "N/A"  # If the score is not a valid number, return "N/A"
+
+        if total_score <= 20:
+            return "Niveau 4: Signaux clairs de failles."
+        elif total_score <= 40:
+            return "Niveau 3: Quelques alertes ont été remontées."
+        elif total_score <= 70:
+            return "Niveau 2: Bonne santé dans l'ensemble."
+        else:
+            return "Niveau 1: Excellente santé financière."
+
+    get_score_level.short_description = 'Score Level'
+
+    def decision(self, obj):
+        total_score_str = self.calculate_total_score(obj)
+
+        try:
+            total_score = float(total_score_str)
+        except ValueError:
+            return "N/A"  # If the score is not a valid number, return "N/A"
+
+        if total_score <= 20:
+            return "Risque avéré."
+        elif total_score <= 40:
+            return "Risque probable."
+        elif total_score <= 70:
+            return "Risque limité."
+        else:
+            return "Risque très peu probable."
+
+    decision.short_description = 'Decision'
+
+
+
 admin.site.register(Client, ClientAdmin)
 admin.site.register(ValeurCommerciale,ValeurCommercialeAdmin)
 admin.site.register(ComportementClient, ComportementClientAdmin)
+admin.site.register(EngagementTopnet, EngagementTopnetAdmin)
+admin.site.register(EngagementClient, EngagementClientAdmin)
 admin.site.register(Axes,AxesAdmin)
+admin.site.register(ScoreParameters, ScoreParametersAdmin)
