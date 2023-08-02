@@ -5,6 +5,7 @@ from django.db import models
 from .forms import *
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 @login_required
 def enter_score_parameters(request):
@@ -29,14 +30,14 @@ def login_view(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        if user is not None:
+
+        if user is not None and user.is_superuser:  # Check if the user is a superuser
             login(request, user)
-            return redirect('view_score')
+            return redirect('view_tables')
         else:
-            messages.error(request, 'Incorrect username or password. Please try again.')
+            messages.error(request, 'Access restricted. Only Topnet Agent can log in.')
 
     return render(request, 'client/login.html', {'form': form})
-
 def register(request):
     form = UserRegistrationForm()
 
@@ -59,6 +60,40 @@ def view_score(request):
     niveau_classe = calculate_niveau_classe(total_score)
     return render(request, 'client/view_score.html', {'score_parameters': score_parameters, 'total_score': total_score, 'niveau_classe': niveau_classe})
 
+
+
+
+def view_tables(request):
+    # Retrieve clients with their related "ValeurCommerciale" instances
+    clients_with_valeur_commerciale = Client.objects.filter(valeur_commerciale__isnull=False)
+    
+    # Search by Client Username
+    search_query = request.GET.get('search')
+    if search_query:
+        clients_with_valeur_commerciale = clients_with_valeur_commerciale.filter(username__icontains=search_query)
+
+    # Filter by Date Joined
+    filter_option = request.GET.get('filter', 'all')
+    if filter_option == 'today':
+        clients_with_valeur_commerciale = clients_with_valeur_commerciale.filter(date_joined__date=timezone.now().date())
+    elif filter_option == 'past7days':
+        past_week = timezone.now() - timezone.timedelta(days=7)
+        clients_with_valeur_commerciale = clients_with_valeur_commerciale.filter(date_joined__gte=past_week)
+    elif filter_option == 'thismonth':
+        clients_with_valeur_commerciale = clients_with_valeur_commerciale.filter(date_joined__year=timezone.now().year, date_joined__month=timezone.now().month)
+    elif filter_option == 'thisyear':
+        clients_with_valeur_commerciale = clients_with_valeur_commerciale.filter(date_joined__year=timezone.now().year)
+
+    # Update the number of clients per page (change to 2)
+    paginator = Paginator(clients_with_valeur_commerciale, 2)
+
+    page_number = request.GET.get('page')
+    clients = paginator.get_page(page_number)
+
+    print("Filter Option:", filter_option)
+    print("Clients:", clients)
+    
+    return render(request, 'client/view_tables.html', {'clients': clients, 'search_query': search_query, 'filter_option': filter_option})
 
 def calculate_niveau_classe(total_score):
     niveau_classe_mapping = {
