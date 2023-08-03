@@ -15,7 +15,7 @@ Week 1
 Week 2
 
 	
-10/07/2023 : Weekly : Validation Du Travail 
+10/07/2023 : Weekly : Validation Du Travail 1
 	
 11/07/2023 : Correction Des Digaramme De Cas et De Classe / Correction Du Product Backlog
 
@@ -32,7 +32,7 @@ Week 3
 
 17/07/2023 : Fixation Du Presentation 
  
-18/07/2023 : Validation
+18/07/2023 : Validation 2 
 
 19/07/2023 : Schema du projet : preparation des tables
 
@@ -52,7 +52,7 @@ Week 4
 
 26/07/2023 : -project management app : conception du projet 
 
-27/07/2023 : Validation 2 : Sprint 1 
+27/07/2023 : Validation 3 : Sprint 1 
 
 28/07/2023 : -mise a jour de Journale du stage + commancer le rapport du stage 
 
@@ -65,9 +65,9 @@ Week 5
 
 01/08/2023 : configurer l'acces des agents 
 
-02/08/2023 : 
+02/08/2023 : Scoring Et Affichage
 
-03/08/2023 :
+03/08/2023 : Validation 4
  
 04/08/2023 : 
 
@@ -77,15 +77,15 @@ Week 5
 
 Week 6
 
-07/08/2023
+07/08/2023 : 	
 
-08/08/2023
+08/08/2023 :	
+	
+09/08/2023 :
 
-09/08/2023
+10/08/2023 :
 
-10/08/2023
-
-11/08/2023
+11/08/2023 :
 
 
 
@@ -99,7 +99,7 @@ Week 7
 
 16/08/2023
 
-17/08/2023
+17/08/2023 
 
 18/08/2023
 
