@@ -72,3 +72,6 @@ class ComportementClientInlineForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.client:
             self.fields['comportement_client'].queryset = ComportementClient.objects.filter(client=self.instance.client)
+
+class ImportDataForm(forms.Form):
+    excel_file = forms.FileField(label='Select an Excel file', help_text='File format should be xlsx.')

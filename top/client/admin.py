@@ -63,7 +63,7 @@ class ScoreParametersAdmin(admin.ModelAdmin):
     ordering = ('id',)
 
 class ValeurCommercialeAdmin(admin.ModelAdmin):
-    list_display = ['categorie_client', 'engagement_contractuel', 'offre', 'debit', 'client', 'get_weight_from_axes', 'calculate_objectif_offre', 'calculate_objectif_debit', 'calculate_objectif_categorie', 'calculate_objectif_engagement','calculate_score_valeur_commerciale']
+    list_display = ['client','categorie_client', 'calculate_score_categorie_client', 'engagement_contractuel', 'calculate_score_engagement_contractuel', 'offre','calculate_score_offre', 'debit','calculate_score_debit','calculate_total_score']
 
     def get_weight_from_axes(self, obj):
         axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
@@ -136,7 +136,7 @@ class ValeurCommercialeAdmin(admin.ModelAdmin):
     calculate_score_valeur_commerciale.short_description = 'Objectif Score Valeur Commerciale (%)'
 
 class EngagementClientAdmin(admin.ModelAdmin):
-    list_display = ['client', 'get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours', 'contrat_link', 'get_date_debut_contrat', 'get_date_fin_contrat', 'calculate_objectif1', 'calculate_objectif2', 'calculate_objectif3','calculate_score_engagement_client']
+    list_display = ['client', 'get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours', 'contrat_link', 'get_date_debut_contrat', 'get_date_fin_contrat','calculate_total_score']
     list_display_links = ['client', 'contrat_link']
     readonly_fields = ['get_anciennete', 'get_nombre_suspension', 'get_montant_en_cours']
 
@@ -145,30 +145,30 @@ class EngagementClientAdmin(admin.ModelAdmin):
         if obj.client.contrats.exists():  
             last_contrat = obj.client.contrats.latest('date_debut')
             difference = today - last_contrat.date_debut
-            if difference.days >= 730:
-                return 3
-            elif 365 <= difference.days < 730:
-                return 2
-            elif difference.days < 365:
-                return 1
-        return None
+            if difference.days >= 730:  # 2 years or more
+                return "2 ans et plus"
+        elif 365 <= difference.days < 730:  # between 1 year and 2 years (exclusive)
+            return "1 an < a < 2 ans"
+        return "< 1 an"  # less than 1 year or no contract
     get_anciennete.short_description = 'Anciennete'
 
     def get_nombre_suspension(self, obj):
-        if obj.client.contrats.exists():  
-            nombre_suspension = obj.client.contrats.aggregate(models.Max('nombre_suspension'))['nombre_suspension__max']
-            if nombre_suspension < 2:
-                return 1
-            else:
-                return 0
-        return None
+        return obj.calculate_nombre_suspension()
+
     get_nombre_suspension.short_description = 'Nombre Suspension'
 
     def get_montant_en_cours(self, obj):
         if obj.client.contrats.exists():  
-            montant_en_cours = obj.client.contrats.aggregate(models.Sum('montant_en_cours'))['montant_en_cours__sum']
-            return montant_en_cours
+            nombre_facture_impayee = obj.client.contrats.aggregate(models.Sum('nombre_facture_impayee'))['nombre_facture_impayee__sum']
+            if nombre_facture_impayee is not None:
+                if nombre_facture_impayee > 2:
+                    return Decimal('1')
+                elif nombre_facture_impayee == 0:
+                    return Decimal('0')
+                else:
+                    return Decimal('0.5')
         return None
+
     get_montant_en_cours.short_description = 'Montant en cours'
 
     def get_contrat(self, obj):
@@ -263,7 +263,7 @@ class EngagementClientAdmin(admin.ModelAdmin):
 
 
 class EngagementTopnetAdmin(admin.ModelAdmin):
-    list_display = ['client', 'get_calculated_nombre_reclamations', 'get_delai_traitement','calculate_objectif1', 'calculate_objectif2','calculate_score_engagement_topnet']
+    list_display = ['client', 'get_calculated_nombre_reclamations', 'get_delai_traitement','calculate_nombre_reclamations_score','calculate_delai_traitement_score','calculate_total_score']
     list_display_links = ['client']
 
     def get_calculated_nombre_reclamations(self, obj):
@@ -320,7 +320,7 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
     calculate_score_engagement_topnet.short_description = 'Objectif Score Engagement Topnet (%)'
 
 class ComportementClientAdmin(admin.ModelAdmin):
-    list_display = ['client', 'contrat_link', 'get_date_debut', 'get_date_fin', 'get_delai_moyen_paiement', 'get_incident_de_paiement', 'get_contentieux','get_weight_from_axes', 'calculate_objectif_delai_paiement', 'calculate_objectif_incident_paiement', 'calculate_objectif_contentieux','calculate_score_comportement_client']
+    list_display = ['client', 'contrat_link',  'get_delai_moyen_paiement','calculate_delai_moyen_paiement_score', 'get_incident_de_paiement','calculate_incident_de_paiement_score', 'get_contentieux','calculate_contentieux_score','calculate_total_score']
     list_display_links = ['client', 'contrat_link']
 
    
@@ -520,10 +520,10 @@ class AxesAdmin(admin.ModelAdmin):
     raw_id_fields = ['valeur_commerciale', 'engagement_topnet', 'engagement_client', 'comportement_client']
     exclude = ['categorie_client', 'engagement_contractuel', 'offre', 'debit']
 
-    list_display = ['client', 'valeur_commerciale_display', 'weight_valeur_commerciale', 
-                    'engagement_topnet_display', 'weight_engagement_topnet', 
-                    'engagement_client_display', 'weight_engagement_client', 
-                    'comportement_client_display', 'weight_comportement_client','calculate_total_score','get_score_level','decision']
+    list_display = ['client', 'valeur_commerciale_display',
+                    'engagement_topnet_display',
+                    'engagement_client_display', 
+                    'comportement_client_display','calculate_total_score','get_score_level','decision']
 
     def valeur_commerciale_display(self, obj):
         return str(obj.valeur_commerciale) if obj.valeur_commerciale else '-'
@@ -537,114 +537,36 @@ class AxesAdmin(admin.ModelAdmin):
     def comportement_client_display(self, obj):
         return str(obj.comportement_client) if obj.comportement_client else '-'
 
-    def get_weight_in_axes(self, obj, related_obj_name):
-        try:
-            related_obj = getattr(obj, related_obj_name)
-            if related_obj:
-                return f"Weight: {getattr(obj, f'weight_{related_obj_name}'):.2f}"
-        except Axes._meta.get_field(related_obj_name).related_model.DoesNotExist:
-            pass
-        return '-'
 
-    def weight_valeur_commerciale(self, obj):
-        return self.get_weight_in_axes(obj, 'valeur_commerciale')
 
-    def weight_engagement_topnet(self, obj):
-        return self.get_weight_in_axes(obj, 'engagement_topnet')
-
-    def weight_engagement_client(self, obj):
-        return self.get_weight_in_axes(obj, 'engagement_client')
-
-    def weight_comportement_client(self, obj):
-        return self.get_weight_in_axes(obj, 'comportement_client')
-
-    valeur_commerciale_display.short_description = 'Valeur Commerciale'
-    engagement_topnet_display.short_description = 'Engagement Topnet'
-    engagement_client_display.short_description = 'Engagement Client'
-    comportement_client_display.short_description = 'Comportement Client'
-
-    def save_model(self, request, obj, form, change):
-        # Check if related objects belong to the same client
-        related_objects = [
-            ('valeur_commerciale', obj.valeur_commerciale),
-            ('engagement_topnet', obj.engagement_topnet),
-            ('engagement_client', obj.engagement_client),
-            ('comportement_client', obj.comportement_client),
-        ]
-
-        client = obj.client
-        related_objects_with_wrong_client = []
-
-        for related_obj_name, related_obj in related_objects:
-            if related_obj and related_obj.client != client:
-                related_objects_with_wrong_client.append(related_obj_name)
-
-        if related_objects_with_wrong_client:
-            error_message = "The following related objects do not belong to the same client: {}".format(
-                ", ".join(related_objects_with_wrong_client)
-            )
-            messages.error(request, error_message)
-            return
-
-        # Save the main object 'obj'
-        super().save_model(request, obj, form, change)
-
-        # Update the related objects with their corresponding Axes object and weights
-        related_objects = [
-            ('valeur_commerciale', obj.valeur_commerciale, 'weight_valeur_commerciale'),
-            ('engagement_topnet', obj.engagement_topnet, 'weight_engagement_topnet'),
-            ('engagement_client', obj.engagement_client, 'weight_engagement_client'),
-            ('comportement_client', obj.comportement_client, 'weight_comportement_client'),
-        ]
-
-        for related_obj_name, related_obj, weight_field_name in related_objects:
-            if related_obj:
-                # Remove the existing axes_relation from the related object if it exists
-                if getattr(related_obj, 'axes_relation_id', None) and getattr(related_obj, 'axes_relation_id') != obj.id:
-                    setattr(related_obj, 'axes_relation', None)
-
-                # Assign the new axes_relation and weight to the related object
-                setattr(related_obj, 'axes_relation', obj)
-                setattr(related_obj, 'weight', getattr(obj, weight_field_name))
-                related_obj.save()
-
-        related_objects = [form.cleaned_data.get('valeur_commerciale'),
-                           form.cleaned_data.get('engagement_topnet'),
-                           form.cleaned_data.get('engagement_client'),
-                           form.cleaned_data.get('comportement_client')]
-
-        for related_object in related_objects:
-            if related_object:
-                related_object.client = obj.client
-                related_object.save()
 
 
     def calculate_total_score(self, obj):
-        score_valeur_commerciale = obj.valeur_commerciale.calculate_score_valeur_commerciale()
-        score_engagement_topnet = obj.engagement_topnet.calculate_score_engagement_topnet()
-        score_engagement_client = obj.engagement_client.calculate_score_engagement_client()
-        score_comportement_client = obj.comportement_client.calculate_score_comportement_client()
+        score_valeur_commerciale = obj.valeur_commerciale.calculate_total_score()
+        score_engagement_topnet = obj.engagement_topnet.calculate_total_score()
+        score_engagement_client = obj.engagement_client.calculate_total_score()
+        score_comportement_client = obj.comportement_client.calculate_total_score()
 
         total_score = (score_valeur_commerciale + score_engagement_topnet + score_engagement_client + score_comportement_client)
-        return f'{total_score:.2f}'  # Display with two decimal places
+        return total_score
 
     calculate_total_score.short_description = 'Total Score'
     def get_score_level(self, obj):
-        total_score_str = self.calculate_total_score(obj)
-
         try:
-            total_score = float(total_score_str)
-        except ValueError:
-            return "N/A"  # If the score is not a valid number, return "N/A"
+            total_score = self.calculate_total_score(obj)
+            if isinstance(total_score, tuple):
+                total_score = total_score[0]
 
-        if total_score <= 20:
-            return "Niveau 4: Signaux clairs de failles."
-        elif total_score <= 40:
-            return "Niveau 3: Quelques alertes ont été remontées."
-        elif total_score <= 70:
-            return "Niveau 2: Bonne santé dans l'ensemble."
-        else:
-            return "Niveau 1: Excellente santé financière."
+            if total_score <= 20:
+                return "Niveau 4: Signaux clairs de failles."
+            elif total_score <= 40:
+                return "Niveau 3: Quelques alertes ont été remontées."
+            elif total_score <= 70:
+                return "Niveau 2: Bonne santé dans l'ensemble."
+            else:
+                return "Niveau 1: Excellente santé financière."
+        except Exception as e:
+            return f"Error: {str(e)}"
 
     get_score_level.short_description = 'Score Level'
 
@@ -674,5 +596,8 @@ admin.site.register(ValeurCommerciale,ValeurCommercialeAdmin)
 admin.site.register(ComportementClient, ComportementClientAdmin)
 admin.site.register(EngagementTopnet, EngagementTopnetAdmin)
 admin.site.register(EngagementClient, EngagementClientAdmin)
+admin.site.register(AxesWeight)
+admin.site.register(CriteriaWeight)
+
 admin.site.register(Axes,AxesAdmin)
-admin.site.register(ScoreParameters, ScoreParametersAdmin)
+# admin.site.register(ScoreParameters, ScoreParametersAdmin)

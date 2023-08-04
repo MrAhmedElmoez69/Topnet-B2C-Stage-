@@ -6,7 +6,7 @@ from .forms import *
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.core.paginator import Paginator
-
+import pandas as pd
 @login_required
 def enter_score_parameters(request):
     client = request.user
@@ -106,4 +106,78 @@ def calculate_niveau_classe(total_score):
         if lower <= total_score <= upper:
             return niveau_classe
     return None
+
+def import_data_from_excel(request):
+    if request.method == 'POST' and request.FILES['excel_file']:
+        excel_file = request.FILES['excel_file']
+        df = pd.read_excel(excel_file)
+
+        # Import Valeur Commerciale
+        for index, row in df['ValeurCommerciale'].iterrows():
+            valeur_commerciale = ValeurCommerciale.objects.create(
+                categorie_client=row['categorie_client'],
+                engagement_contractuel=row['engagement_contractuel'],
+                offre=row['offre'],
+                debit=row['debit']
+            )
+
+        # Import Engagement Client
+        for index, row in df['EngagementClient'].iterrows():
+            engagement_client = EngagementClient.objects.create(
+                client=Client.objects.get(id=row['client_id']),
+                anciennete=row['anciennete'],
+                nombre_suspension=row['nombre_suspension'],
+                montant_en_cours=row['montant_en_cours']
+            )
+
+        # Import Engagement TOPNET
+        for index, row in df['EngagementTopnet'].iterrows():
+            engagement_topnet = EngagementTopnet.objects.create(
+                client=Client.objects.get(id=row['client_id']),
+                nombre_reclamations=row['nombre_reclamations'],
+                delai_traitement=row['delai_traitement']
+            )
+
+        # Import Comportement Client
+        for index, row in df['ComportementClient'].iterrows():
+            comportement_client = ComportementClient.objects.create(
+                facture=Facture.objects.get(id=row['facture_id']),
+                client=Client.objects.get(id=row['client_id'])
+            )
+
+        # Import AxesWeight
+        axes_weight = AxesWeight.objects.create(
+            valeur_commerciale_weight=df['AxesWeight']['valeur_commerciale_weight'][0],
+            engagement_topnet_weight=df['AxesWeight']['engagement_topnet_weight'][0],
+            engagement_client_weight=df['AxesWeight']['engagement_client_weight'][0],
+            comportement_client_weight=df['AxesWeight']['comportement_client_weight'][0]
+        )
+
+        # Import CriteriaWeight
+        criteria_weight = CriteriaWeight.objects.create(
+            poids_offre=df['CriteriaWeight']['poids_offre'][0],
+            poids_debit=df['CriteriaWeight']['poids_debit'][0],
+            poids_categorie_client=df['CriteriaWeight']['poids_categorie_client'][0],
+            poids_engagement_contractuel=df['CriteriaWeight']['poids_engagement_contractuel'][0],
+            poids_anciennete=df['CriteriaWeight']['poids_anciennete'][0],
+            poids_nombre_suspension=df['CriteriaWeight']['poids_nombre_suspension'][0],
+            poids_montant_en_cours=df['CriteriaWeight']['poids_montant_en_cours'][0],
+            poids_delai_moyen_paiement=df['CriteriaWeight']['poids_delai_moyen_paiement'][0],
+            poids_incident_de_paiement=df['CriteriaWeight']['poids_incident_de_paiement'][0],
+            poids_contentieux=df['CriteriaWeight']['poids_contentieux'][0],
+            poids_nombre_reclamations=df['CriteriaWeight']['poids_nombre_reclamations'][0],
+            poids_delai_traitement=df['CriteriaWeight']['poids_delai_traitement'][0],
+        )
+
+        # Import Axes
+        for index, row in df['Axes'].iterrows():
+            axes = Axes.objects.create(
+                client=Client.objects.get(id=row['client_id']),
+                valeur_commerciale=ValeurCommerciale.objects.get(id=row['valeur_commerciale_id']),
+                engagement_topnet=EngagementTopnet.objects.get(id=row['engagement_topnet_id']),
+                engagement_client=EngagementClient.objects.get(id=row['engagement_client_id']),
+                comportement_client=ComportementClient.objects.get(id=row['comportement_client_id'])
+            )
+
+    return render(request, 'client/import_success.html')
 

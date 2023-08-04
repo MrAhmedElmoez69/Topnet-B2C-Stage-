@@ -11,6 +11,7 @@ urlpatterns = [
     path('enter-score-parameters/', enter_score_parameters, name='enter_score_parameters'),
     path('view-score/', view_score, name='view_score'),
     path('view_tables/', view_tables, name='view_tables'),
+    path('import/', import_data_from_excel, name='excel_file'),
 
 
 ]
