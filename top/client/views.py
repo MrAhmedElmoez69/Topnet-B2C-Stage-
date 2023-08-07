@@ -142,19 +142,6 @@ def view_axes(request):
     return render(request, 'client/view_axes.html', {'axes': axes, 'search_query': search_query, 'filter_option': filter_option})
 
 
-def score_view_front(request):
-    # Fetch Axes objects with related clients, filtering out those with non-null valeur_commerciale
-    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False)
-    
-    # Fetch objects from the Axes model, excluding superusers
-    non_superuser_axes = axes_with_clients.exclude(client__is_superuser=True)
-    
-    context = {
-        'objects': non_superuser_axes,
-    }
-    
-    return render(request, 'client/score_view_front.html', context)
-
 
 def calculate_niveau_classe(total_score):
     niveau_classe_mapping = {

@@ -13,7 +13,6 @@ urlpatterns = [
     path('view_tables/', view_tables, name='view_tables'),
     path('import/', import_data_from_excel, name='excel_file'),
     path('view_axes/', view_axes, name='view_axes'),
-    path('score_view_front/', score_view_front, name='score_view_front'),
     
 
 ]
