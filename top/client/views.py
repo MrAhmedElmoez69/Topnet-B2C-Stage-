@@ -7,6 +7,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.core.paginator import Paginator
 import pandas as pd
+from .models import Axes  # Import the Axes model
+
+
+
 @login_required
 def enter_score_parameters(request):
     client = request.user
@@ -63,9 +67,13 @@ def view_score(request):
 
 
 
+@login_required
 def view_tables(request):
     # Retrieve clients with their related "ValeurCommerciale" instances
     clients_with_valeur_commerciale = Client.objects.filter(valeur_commerciale__isnull=False)
+    
+    # Filter out superusers
+    clients_with_valeur_commerciale = clients_with_valeur_commerciale.exclude(is_superuser=True)
     
     # Search by Client Username
     search_query = request.GET.get('search')
@@ -94,6 +102,59 @@ def view_tables(request):
     print("Clients:", clients)
     
     return render(request, 'client/view_tables.html', {'clients': clients, 'search_query': search_query, 'filter_option': filter_option})
+
+
+
+@login_required
+def view_axes(request):
+    # Retrieve Axes objects with their related Client instances
+    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False)
+    
+    # Filter out superusers
+    axes_with_clients = axes_with_clients.exclude(client__is_superuser=True)
+    
+    # Search by Client Username
+    search_query = request.GET.get('search')
+    if search_query:
+        axes_with_clients = axes_with_clients.filter(client__username__icontains=search_query)
+
+    # Filter by Date Joined
+    filter_option = request.GET.get('filter', 'all')
+    if filter_option == 'today':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__date=timezone.now().date())
+    elif filter_option == 'past7days':
+        past_week = timezone.now() - timezone.timedelta(days=7)
+        axes_with_clients = axes_with_clients.filter(client__date_joined__gte=past_week)
+    elif filter_option == 'thismonth':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year, client__date_joined__month=timezone.now().month)
+    elif filter_option == 'thisyear':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year)
+
+    # Update the number of items per page (change to 2)
+    paginator = Paginator(axes_with_clients, 2)
+
+    page_number = request.GET.get('page')
+    axes = paginator.get_page(page_number)
+
+    # print("Filter Option:", filter_option)
+    # print("Axes:", axes)
+    
+    return render(request, 'client/view_axes.html', {'axes': axes, 'search_query': search_query, 'filter_option': filter_option})
+
+
+def score_view_front(request):
+    # Fetch Axes objects with related clients, filtering out those with non-null valeur_commerciale
+    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False)
+    
+    # Fetch objects from the Axes model, excluding superusers
+    non_superuser_axes = axes_with_clients.exclude(client__is_superuser=True)
+    
+    context = {
+        'objects': non_superuser_axes,
+    }
+    
+    return render(request, 'client/score_view_front.html', context)
+
 
 def calculate_niveau_classe(total_score):
     niveau_classe_mapping = {
