@@ -5,6 +5,29 @@
 <style>
     /* Your existing CSS styles */
 
+    /* Add custom styles for the client scores table */
+    table.client-scores {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    table.client-scores th, table.client-scores td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+
+    table.client-scores th {
+        background-color: #525151;
+    }
+
+    /* Additional styling for responsive design */
+    @media (max-width: 768px) {
+        /* Adjust styles as needed for responsive design */
+    }
+    /* Your existing CSS styles */
+
     /* For dark mode */
     body.dark-mode {
         --background-color: #333; 
@@ -150,7 +173,7 @@
 
 </style>
 
-<h1>Rapport Axes</h1>
+<h1>Client Scores</h1>
 
 <div class="search-container">
     <form method="get" action="">
@@ -172,36 +195,23 @@
     </form>
 </div>
 
-<div class="client-box-container">
-    {% for ax in axes %}
-        <div class="client-box">
-            <h3>{{ ax.client.username }}</h3>
-            <table>
-                <tr>
-                    <th>Client Username</th>
-                    <td>{{ ax.client.username }}</td>
-                </tr>
-                <tr>
-                    <th>Valeur Commerciale</th>
-                    <td>{{ ax.valeur_commerciale }}</td>
-                </tr>
-                <tr>
-                    <th>Engagement Topnet</th>
-                    <td>{{ ax.engagement_topnet }}</td>
-                </tr>
-                <tr>
-                    <th>Engagement Client</th>
-                    <td>{{ ax.engagement_client }}</td>
-                </tr>
-                <tr>
-                    <th>Comportement Client</th>
-                    <td>{{ ax.comportement_client }}</td>
-                 </tr>
-
-            </table>
-        </div>
+<table class="client-scores">
+    <tr>
+        <th>Client</th>
+        <th>Total Score</th>
+        <th>Score Level</th>
+        <th>Decision</th>
+    </tr>
+    {% for client_with_score in clients_with_scores %}
+    <tr>
+        <td>{{ client_with_score.client }}</td>
+        <td>{{ client_with_score.total_score }}</td>
+        <td>{{ client_with_score.score_level }}</td>
+        <td>{{ client_with_score.decision }}</td>
+    </tr>
     {% endfor %}
-</div>
+</table>
+
 
 <div class="pagination">
     <span class="step-links">

@@ -138,8 +138,99 @@ def view_axes(request):
 
     # print("Filter Option:", filter_option)
     # print("Axes:", axes)
+
     
     return render(request, 'client/view_axes.html', {'axes': axes, 'search_query': search_query, 'filter_option': filter_option})
+
+
+
+def client_scores(request):
+    clients_with_scores = []
+
+    search_query = request.GET.get('search')
+    filter_option = request.GET.get('filter', 'all')
+
+    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False).exclude(client__is_superuser=True)
+
+    if search_query:
+        axes_with_clients = axes_with_clients.filter(client__username__icontains=search_query)
+
+    if filter_option == 'today':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__date=timezone.now().date())
+    elif filter_option == 'past7days':
+        past_week = timezone.now() - timezone.timedelta(days=7)
+        axes_with_clients = axes_with_clients.filter(client__date_joined__gte=past_week)
+    elif filter_option == 'thismonth':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year, client__date_joined__month=timezone.now().month)
+    elif filter_option == 'thisyear':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year)
+
+        
+    paginator = Paginator(axes_with_clients, 2)  # Change the number of items per page as needed
+
+    page_number = request.GET.get('page')
+    axes = paginator.get_page(page_number)
+
+    for axis in axes_with_clients:
+        valeur_commerciale_score = axis.valeur_commerciale.calculate_total_score()
+        engagement_topnet_score = axis.engagement_topnet.calculate_total_score()
+        engagement_client_score = axis.engagement_client.calculate_total_score()
+        comportement_client_score = axis.comportement_client.calculate_total_score()
+
+        total_score = (
+            valeur_commerciale_score
+            + engagement_topnet_score
+            + engagement_client_score
+            + comportement_client_score
+        )
+        score_level = get_score_level(total_score)
+        decision = get_decision(total_score)
+
+        client_with_score = {
+            'client': axis.client,
+            'total_score': total_score,
+            'score_level': score_level,
+            'decision': decision,
+        }
+
+        clients_with_scores.append(client_with_score)
+
+    return render(
+        request,
+        'client/client_scores.html',
+        {'clients_with_scores': clients_with_scores,
+         'search_query': search_query,
+            'filter_option': filter_option,},
+        
+    )
+    
+
+def get_score_level(total_score):
+    if total_score <= 20:
+        return "Niveau 4: Signaux clairs de failles."
+    elif total_score <= 40:
+        return "Niveau 3: Quelques alertes ont été remontées."
+    elif total_score <= 70:
+        return "Niveau 2: Bonne santé dans l'ensemble."
+    else:
+        return "Niveau 1: Excellente santé financière."
+
+def get_decision(total_score):
+    if total_score <= 20:
+        return "Risque avéré."
+    elif total_score <= 40:
+        return "Risque probable."
+    elif total_score <= 70:
+        return "Risque limité."
+    else:
+        return "Risque très peu probable."
+
+
+
+
+
+
+
 
 
 
