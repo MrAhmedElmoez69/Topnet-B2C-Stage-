@@ -13,7 +13,8 @@ urlpatterns = [
     path('view_tables/', view_tables, name='view_tables'),
     path('import/', import_data_from_excel, name='excel_file'),
     path('view_axes/', view_axes, name='view_axes'),
-    path('client_scores/', client_scores, name='client_scores'),
+    path('view_all_score/', view_all_score, name='view_all_score'),
+    path('client_scores/<int:client_id>/', client_scores, name='client_scores'),
 
 
 ]

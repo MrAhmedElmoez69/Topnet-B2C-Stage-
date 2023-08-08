@@ -175,7 +175,7 @@
 <div class="client-box-container">
     {% for ax in axes %}
         <div class="client-box">
-            <h3>{{ ax.client.username }}</h3>
+            <h3><a href="{% url 'client_scores' client_id=ax.client.id %}" class="text-decoration-none text-white">{{ ax.client.username }}</a></h3>
             <table>
                 <tr>
                     <th>Client Username</th>
