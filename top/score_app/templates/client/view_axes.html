@@ -148,6 +148,21 @@
         margin-left: 10px;
     }
 
+    /* Add styling for the back button */
+    .back-button-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .back-button {
+        background-color: #007bff;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
 </style>
 
 <h1>Rapport Axes</h1>
@@ -175,7 +190,9 @@
 <div class="client-box-container">
     {% for ax in axes %}
         <div class="client-box">
-            <h3><a href="{% url 'client_scores' client_id=ax.client.id %}" class="text-decoration-none text-white">{{ ax.client.username }}</a></h3>
+            <div class="back-button-container">
+            <h3><a href="{% url 'client_scores' client_id=ax.client.id %}" class="back-button">{{ ax.client.username }}</a></h3>
+            </div> 
             <table>
                 <tr>
                     <th>Client Username</th>
