@@ -37,7 +37,7 @@ def login_view(request):
 
         if user is not None and user.is_superuser:  # Check if the user is a superuser
             login(request, user)
-            return redirect('view_tables')
+            return redirect('view_axes')
         else:
             messages.error(request, 'Access restricted. Only Topnet Agent can log in.')
 
