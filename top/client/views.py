@@ -8,6 +8,9 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 import pandas as pd
 from .models import Axes  # Import the Axes model
+import openpyxl
+from django.http import HttpResponse
+
 
 
 
@@ -224,33 +227,8 @@ def get_decision(total_score):
 
 # --------------------------------View All Scores --------------------------------
 
-
-def view_all_score(request):
+def process_client_scores(axes):
     clients_with_scores = []
-
-    search_query = request.GET.get('search')
-    filter_option = request.GET.get('filter', 'all')
-
-    # Retrieve Axes objects with their related Client instances
-    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False).exclude(client__is_superuser=True)
-
-    if search_query:
-        axes_with_clients = axes_with_clients.filter(client__username__icontains=search_query)
-
-    if filter_option == 'today':
-        axes_with_clients = axes_with_clients.filter(client__date_joined__date=timezone.now().date())
-    elif filter_option == 'past7days':
-        past_week = timezone.now() - timezone.timedelta(days=7)
-        axes_with_clients = axes_with_clients.filter(client__date_joined__gte=past_week)
-    elif filter_option == 'thismonth':
-        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year, client__date_joined__month=timezone.now().month)
-    elif filter_option == 'thisyear':
-        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year)
-
-    paginator = Paginator(axes_with_clients, 100)  # Change the number of items per page as needed
-
-    page_number = request.GET.get('page')
-    axes = paginator.get_page(page_number)
 
     for axis in axes:
         valeur_commerciale_score = axis.valeur_commerciale.calculate_total_score()
@@ -276,6 +254,34 @@ def view_all_score(request):
 
         clients_with_scores.append(client_with_score)
 
+    return clients_with_scores
+
+def view_all_score(request):
+    search_query = request.GET.get('search')
+    filter_option = request.GET.get('filter', 'all')
+
+    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False).exclude(client__is_superuser=True)
+
+    if search_query:
+        axes_with_clients = axes_with_clients.filter(client__username__icontains=search_query)
+
+    if filter_option == 'today':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__date=timezone.now().date())
+    elif filter_option == 'past7days':
+        past_week = timezone.now() - timezone.timedelta(days=7)
+        axes_with_clients = axes_with_clients.filter(client__date_joined__gte=past_week)
+    elif filter_option == 'thismonth':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year, client__date_joined__month=timezone.now().month)
+    elif filter_option == 'thisyear':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year)
+
+    paginator = Paginator(axes_with_clients, 100)  # Change the number of items per page as needed
+
+    page_number = request.GET.get('page')
+    axes = paginator.get_page(page_number)
+
+    clients_with_scores = process_client_scores(axes)
+
     return render(
         request,
         'client/view_all_score.html',
@@ -284,6 +290,49 @@ def view_all_score(request):
          'filter_option': filter_option,}
     )
 
+def download_excel(request):
+    search_query = request.GET.get('search')
+    filter_option = request.GET.get('filter', 'all')
+
+    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False).exclude(client__is_superuser=True)
+
+    if search_query:
+        axes_with_clients = axes_with_clients.filter(client__username__icontains=search_query)
+
+    if filter_option == 'today':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__date=timezone.now().date())
+    elif filter_option == 'past7days':
+        past_week = timezone.now() - timezone.timedelta(days=7)
+        axes_with_clients = axes_with_clients.filter(client__date_joined__gte=past_week)
+    elif filter_option == 'thismonth':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year, client__date_joined__month=timezone.now().month)
+    elif filter_option == 'thisyear':
+        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year)
+
+    clients_with_scores = process_client_scores(axes_with_clients)
+
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    worksheet.title = "Client Scores"
+
+    headers = ['Client', 'Total Score', 'Score Level', 'Decision']
+    worksheet.append(headers)
+
+    for client_score in clients_with_scores:
+        row = [
+            client_score['client'].username,
+            client_score['total_score'],
+            client_score['score_level'],
+            client_score['decision']
+        ]
+        worksheet.append(row)
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=client_scores.xlsx'
+
+    workbook.save(response)
+
+    return response
 
 
 def get_score_level(total_score):

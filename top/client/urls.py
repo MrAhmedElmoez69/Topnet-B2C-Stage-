@@ -15,6 +15,7 @@ urlpatterns = [
     path('view_axes/', view_axes, name='view_axes'),
     path('view_all_score/', view_all_score, name='view_all_score'),
     path('client_scores/<int:client_id>/', client_scores, name='client_scores'),
+    path('download-excel/', download_excel, name='download_excel'),
 
 
 ]
