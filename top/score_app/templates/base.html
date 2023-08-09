@@ -220,6 +220,17 @@
             color: white;
             background-color: #333;
         }
+
+        /* Remove link styles */
+        .navbar-logo a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        /* Optional: Add cursor style to indicate clickable */
+        .navbar-logo a:hover {
+            cursor: pointer;
+        }
     </style>
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
 
@@ -228,7 +239,9 @@
 <body>
     <div class="navbar">
         <div class="navbar-logo">
+            <a href="/user/view_all_score/">
             <img src="{% static "unnamed.png" %}" alt="Logo">
+        </a>
         </div>
         
         <div class="toggle-links"> 
@@ -320,6 +333,12 @@
             setTheme();
         });
         window.onload = setTheme;
+
+
+        document.querySelector('.navbar-logo a').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the default link behavior
+            window.location.href = '/user/view_all_score/'; // Redirect to the desired page
+        });
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
