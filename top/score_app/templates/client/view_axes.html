@@ -173,7 +173,12 @@
         <button type="submit">Search</button>
     </form>
 </div>
-
+<form method="post" action="{% url 'generate_excel' %}">
+    {% csrf_token %}
+    <div class="back-button-container">
+    <button type="submit" class="back-button">Download Excel Clients Report </button>
+    </div>
+</form>
 <div class="filter-container">
     <form method="get" action="">
         <select name="filter">
@@ -186,6 +191,8 @@
         <button type="submit">Filter</button>
     </form>
 </div>
+
+
 
 <div class="client-box-container">
     {% for ax in axes %}

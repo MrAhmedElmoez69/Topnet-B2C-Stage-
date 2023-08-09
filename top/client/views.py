@@ -225,6 +225,62 @@ def get_decision(total_score):
         return "Risque très peu probable."
 
 
+# -------------------------------- Pdf All --------------------------------
+
+
+
+def generate_excel(request):
+    from .models import EngagementClient, ValeurCommerciale, ComportementClient, EngagementTopnet  # Import your models
+    # Query your models to get the data for clients
+    engagement_clients = EngagementClient.objects.all()
+    valeur_commerciales = ValeurCommerciale.objects.all()
+    comportement_clients = ComportementClient.objects.all()
+    engagement_topnets = EngagementTopnet.objects.all()
+
+    # Create a DataFrame with the client data
+    data = []
+    for engagement_client, valeur_commerciale, comportement_client, engagement_topnet in zip(
+        engagement_clients, valeur_commerciales, comportement_clients, engagement_topnets
+    ):
+        total_score_comportement_client = comportement_client.calculate_total_score()
+        total_score_engagement_client = engagement_client.calculate_total_score()  # Add this line
+
+        data.append({
+            'Client Name': engagement_client.client.username,
+            'Anciennete': engagement_client.calculate_anciennete(),
+            'Nombre Suspension': engagement_client.calculate_nombre_suspension(),
+            'Montant en Cours': engagement_client.calculate_montant_en_cours(),
+            'Categorie Client': valeur_commerciale.categorie_client,
+            'Engagement Contractuel': valeur_commerciale.engagement_contractuel,
+            'Offre': valeur_commerciale.offre,
+            'Debit': valeur_commerciale.debit,
+            'Delai Moyen Paiement': comportement_client.calculate_delai_moyen_paiement(),
+            'Incident de Paiement': comportement_client.incident_de_paiement(),
+            'Contentieux': comportement_client.contentieux(),
+            'Delai Moyen Paiement Score': comportement_client.calculate_delai_moyen_paiement_score(),
+            'Incident de Paiement Score': comportement_client.calculate_incident_de_paiement_score(),
+            'Contentieux Score': comportement_client.calculate_contentieux_score(),
+            'Nombre Reclamations': engagement_topnet.nombre_reclamations,
+            'Delai Traitement': engagement_topnet.delai_traitement,
+            'Total Score Comportement Client': total_score_comportement_client,
+            'Total Score Engagement Client': total_score_engagement_client,  # Add this field
+            'Total Score Engagement Topnet': engagement_topnet.calculate_total_score(),  # Add the total score here
+            'Total Score Valeur Commerciale': valeur_commerciale.calculate_total_score(),  # Add the total score for valeur commerciale
+            # Add more fields as needed
+        })
+
+    df = pd.DataFrame(data)
+
+    # Create a response object with Excel content
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="client_data.xlsx"'
+
+    # Write the DataFrame to the response as an Excel file
+    df.to_excel(response, index=False)
+
+    return response
+
+
 # --------------------------------View All Scores --------------------------------
 
 def process_client_scores(axes):
