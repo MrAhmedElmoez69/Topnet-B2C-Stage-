@@ -227,71 +227,63 @@ def get_decision(total_score):
 
 # -------------------------------- Pdf All --------------------------------
 def generate_excel(request):
+    from openpyxl import Workbook
+    from django.http import HttpResponse
+    from django.utils import timezone
     from .models import EngagementClient, ValeurCommerciale, ComportementClient, EngagementTopnet
-    import pandas as pd
 
-    engagement_clients = EngagementClient.objects.all()
-    valeur_commerciales = ValeurCommerciale.objects.all()
-    comportement_clients = ComportementClient.objects.all()
-    engagement_topnets = EngagementTopnet.objects.all()
+    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False).exclude(client__is_superuser=True)
 
-    data = []
-    for engagement_client, valeur_commerciale, comportement_client, engagement_topnet in zip(
-        engagement_clients, valeur_commerciales, comportement_clients, engagement_topnets
-    ):
-      
+    clients_with_scores = process_client_scores(axes_with_clients)
 
-        total_score_comportement_client = comportement_client.calculate_total_score()
-        total_score_engagement_client = engagement_client.calculate_total_score()
-        total_score_engagement_topnet = engagement_topnet.calculate_total_score()
-        total_score_valeur_commerciale = valeur_commerciale.calculate_total_score()
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "Client Scores"
 
-        total_score = (
-            total_score_comportement_client
-            + total_score_engagement_client
-            + total_score_engagement_topnet
-            + total_score_valeur_commerciale
-        )
+    headers = ['Client Name', 'Anciennete', 'Nombre Suspension', 'Montant en Cours', 'Categorie Client', 'Engagement Contractuel', 'Offre', 'Debit', 'Delai Moyen Paiement', 'Incident de Paiement', 'Contentieux', 'Delai Moyen Paiement Score', 'Incident de Paiement Score', 'Contentieux Score', 'Nombre Reclamations', 'Delai Traitement', 'Valeur Commerciale Score', 'Engagement Topnet Score', 'Engagement Client Score', 'Comportement Client Score', 'Score Total', 'Score Level', 'Decision']
+    worksheet.append(headers)
 
-        decision = get_decision(total_score)
-          # Check if any of the objects are None, indicating no data available
-        if not (engagement_client and valeur_commerciale and comportement_client and engagement_topnet and total_score and decision):
-            continue  # Skip this iteration if any data is missing
+    for client_score in clients_with_scores:
+        engagement_client = EngagementClient.objects.get(client=client_score['client'])
+        valeur_commerciale = ValeurCommerciale.objects.get(client=client_score['client'])
+        comportement_client = ComportementClient.objects.get(client=client_score['client'])
+        engagement_topnet = EngagementTopnet.objects.get(client=client_score['client'])
 
-        data.append({
-            'Client Name': engagement_client.client.username,
-            'Anciennete': engagement_client.calculate_anciennete(),
-            'Nombre Suspension': engagement_client.calculate_nombre_suspension(),
-            'Montant en Cours': engagement_client.calculate_montant_en_cours(),
-            'Categorie Client': valeur_commerciale.categorie_client,
-            'Engagement Contractuel': valeur_commerciale.engagement_contractuel,
-            'Offre': valeur_commerciale.offre,
-            'Debit': valeur_commerciale.debit,
-            'Delai Moyen Paiement': comportement_client.calculate_delai_moyen_paiement(),
-            'Incident de Paiement': comportement_client.incident_de_paiement(),
-            'Contentieux': comportement_client.contentieux(),
-            'Delai Moyen Paiement Score': comportement_client.calculate_delai_moyen_paiement_score(),
-            'Incident de Paiement Score': comportement_client.calculate_incident_de_paiement_score(),
-            'Contentieux Score': comportement_client.calculate_contentieux_score(),
-            'Nombre Reclamations': engagement_topnet.nombre_reclamations,
-            'Delai Traitement': engagement_topnet.delai_traitement,
-            'Total Score Comportement Client': total_score_comportement_client,
-            'Total Score Engagement Client': total_score_engagement_client,
-            'Total Score Engagement Topnet': total_score_engagement_topnet,
-            'Total Score Valeur Commerciale': total_score_valeur_commerciale,
-            'Total Score': total_score,  # Added total score
-            'Decision': decision,  # Added decision
-            # Add more fields as needed
-        })
+        row = [
+            client_score['client'].username,
+            engagement_client.calculate_anciennete(),
+            engagement_client.calculate_nombre_suspension(),
+            engagement_client.calculate_montant_en_cours(),
+            valeur_commerciale.categorie_client,
+            valeur_commerciale.engagement_contractuel,
+            valeur_commerciale.offre,
+            valeur_commerciale.debit,
+            comportement_client.calculate_delai_moyen_paiement(),
+            comportement_client.incident_de_paiement(),
+            comportement_client.contentieux(),
+            comportement_client.calculate_delai_moyen_paiement_score(),
+            comportement_client.calculate_incident_de_paiement_score(),
+            comportement_client.calculate_contentieux_score(),
+            engagement_topnet.nombre_reclamations,
+            engagement_topnet.delai_traitement,
+            client_score['valeur_commerciale_score'],
+            client_score['engagement_topnet_score'],
+            client_score['engagement_client_score'],
+            client_score['comportement_client_score'],
+            client_score['total_score'],
+            client_score['score_level'],
+            client_score['decision']
+        ]
+        worksheet.append(row)
 
-    df = pd.DataFrame(data)
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=Rapport_Clients.xlsx'
 
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="client_data.xlsx"'
-
-    df.to_excel(response, index=False)
+    workbook.save(response)
 
     return response
+
+
 
 # --------------------------------View All Scores --------------------------------
 
@@ -315,6 +307,10 @@ def process_client_scores(axes):
 
         client_with_score = {
             'client': axis.client,
+            'valeur_commerciale_score': valeur_commerciale_score,
+            'engagement_topnet_score': engagement_topnet_score,
+            'engagement_client_score': engagement_client_score,
+            'comportement_client_score': comportement_client_score,
             'total_score': total_score,
             'score_level': score_level,
             'decision': decision,

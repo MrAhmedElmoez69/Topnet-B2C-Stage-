@@ -590,14 +590,45 @@ class AxesAdmin(admin.ModelAdmin):
     decision.short_description = 'Decision'
 
 
+class AxesWeightAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',  # Add this line to display the ID
+        'valeur_commerciale_weight',
+        'engagement_topnet_weight',
+        'engagement_client_weight',
+        'comportement_client_weight',
+        'calculate_total_weight',
+    )
+
+    def calculate_total_weight(self, obj):
+        return obj.calculate_total_weight()
+    calculate_total_weight.short_description = 'Total Weight'
+
+
+class CriteriaWeightAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ('Valeur Commercial', {
+            'fields': ('poids_offre', 'poids_debit', 'poids_categorie_client', 'poids_engagement_contractuel'),
+        }),
+        ('EngagementTopnet', {
+            'fields': ('poids_nombre_reclamations', 'poids_delai_traitement'),
+        }),
+        ('Engagement Client', {
+            'fields': ('poids_anciennete', 'poids_nombre_suspension', 'poids_montant_en_cours'),
+        }),
+        ('Comportement Client', {
+            'fields': ('poids_delai_moyen_paiement', 'poids_incident_de_paiement', 'poids_contentieux'),
+        }),
+    )
+
 
 admin.site.register(Client, ClientAdmin)
 admin.site.register(ValeurCommerciale,ValeurCommercialeAdmin)
 admin.site.register(ComportementClient, ComportementClientAdmin)
 admin.site.register(EngagementTopnet, EngagementTopnetAdmin)
 admin.site.register(EngagementClient, EngagementClientAdmin)
-admin.site.register(AxesWeight)
-admin.site.register(CriteriaWeight)
+admin.site.register(AxesWeight , AxesWeightAdmin)
+admin.site.register(CriteriaWeight, CriteriaWeightAdmin)
 
 admin.site.register(Axes,AxesAdmin)
 # admin.site.register(ScoreParameters, ScoreParametersAdmin)
