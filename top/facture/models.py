@@ -4,9 +4,9 @@ from django.core.exceptions import ValidationError
 
 def validate_date_a_payer_avant(value):
     today = timezone.now().date()
-    max_allowed_date = today + timezone.timedelta(days=10)
+    max_allowed_date = today + timezone.timedelta(days=20)
     if value > max_allowed_date:
-        raise ValidationError("La date ne doit pas dépasser 10 jours à partir d'aujourd'hui.")
+        raise ValidationError("La date ne doit pas dépasser 20 jours à partir d'aujourd'hui.")
 
 class Facture(models.Model):
     client = models.ForeignKey('client.Client', on_delete=models.CASCADE, related_name='factures', null=True, blank=True, default=None)

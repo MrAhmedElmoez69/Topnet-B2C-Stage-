@@ -184,7 +184,7 @@ class EngagementClient(models.Model):
 
     def calculate_nombre_suspension(self):
         if self.client.contrats.exists():
-            random_number = Decimal(str(random.randint(0, 1)))
+            random_number = Decimal(str(random.randint(1, 1)))
             return random_number
         return None
 

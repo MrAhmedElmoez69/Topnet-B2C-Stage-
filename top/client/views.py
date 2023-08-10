@@ -226,24 +226,37 @@ def get_decision(total_score):
 
 
 # -------------------------------- Pdf All --------------------------------
-
-
-
 def generate_excel(request):
-    from .models import EngagementClient, ValeurCommerciale, ComportementClient, EngagementTopnet  # Import your models
-    # Query your models to get the data for clients
+    from .models import EngagementClient, ValeurCommerciale, ComportementClient, EngagementTopnet
+    import pandas as pd
+
     engagement_clients = EngagementClient.objects.all()
     valeur_commerciales = ValeurCommerciale.objects.all()
     comportement_clients = ComportementClient.objects.all()
     engagement_topnets = EngagementTopnet.objects.all()
 
-    # Create a DataFrame with the client data
     data = []
     for engagement_client, valeur_commerciale, comportement_client, engagement_topnet in zip(
         engagement_clients, valeur_commerciales, comportement_clients, engagement_topnets
     ):
+      
+
         total_score_comportement_client = comportement_client.calculate_total_score()
-        total_score_engagement_client = engagement_client.calculate_total_score()  # Add this line
+        total_score_engagement_client = engagement_client.calculate_total_score()
+        total_score_engagement_topnet = engagement_topnet.calculate_total_score()
+        total_score_valeur_commerciale = valeur_commerciale.calculate_total_score()
+
+        total_score = (
+            total_score_comportement_client
+            + total_score_engagement_client
+            + total_score_engagement_topnet
+            + total_score_valeur_commerciale
+        )
+
+        decision = get_decision(total_score)
+          # Check if any of the objects are None, indicating no data available
+        if not (engagement_client and valeur_commerciale and comportement_client and engagement_topnet and total_score and decision):
+            continue  # Skip this iteration if any data is missing
 
         data.append({
             'Client Name': engagement_client.client.username,
@@ -263,23 +276,22 @@ def generate_excel(request):
             'Nombre Reclamations': engagement_topnet.nombre_reclamations,
             'Delai Traitement': engagement_topnet.delai_traitement,
             'Total Score Comportement Client': total_score_comportement_client,
-            'Total Score Engagement Client': total_score_engagement_client,  # Add this field
-            'Total Score Engagement Topnet': engagement_topnet.calculate_total_score(),  # Add the total score here
-            'Total Score Valeur Commerciale': valeur_commerciale.calculate_total_score(),  # Add the total score for valeur commerciale
+            'Total Score Engagement Client': total_score_engagement_client,
+            'Total Score Engagement Topnet': total_score_engagement_topnet,
+            'Total Score Valeur Commerciale': total_score_valeur_commerciale,
+            'Total Score': total_score,  # Added total score
+            'Decision': decision,  # Added decision
             # Add more fields as needed
         })
 
     df = pd.DataFrame(data)
 
-    # Create a response object with Excel content
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename="client_data.xlsx"'
 
-    # Write the DataFrame to the response as an Excel file
     df.to_excel(response, index=False)
 
     return response
-
 
 # --------------------------------View All Scores --------------------------------
 
