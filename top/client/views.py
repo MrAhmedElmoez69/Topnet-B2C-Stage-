@@ -231,6 +231,23 @@ def generate_excel(request):
     from django.http import HttpResponse
     from django.utils import timezone
     from .models import EngagementClient, ValeurCommerciale, ComportementClient, EngagementTopnet
+    
+
+
+    if request.method == 'POST':
+        axes_weight_id = request.POST.get('axes_weight_id')
+
+        if axes_weight_id is None:
+            error_message = "Please select an Axes Weight before generating the report."
+            axes_weights = AxesWeight.objects.all()  # Retrieve all AxesWeight instances
+            return render(request, 'client/view_axes.html', {'error_message': error_message, 'axes_weights': axes_weights})
+
+        try:
+            axes_weight = AxesWeight.objects.get(id=axes_weight_id)
+        except AxesWeight.DoesNotExist:
+            error_message = "Selected Axes Weight does not exist."
+            axes_weights = AxesWeight.objects.all()  # Retrieve all AxesWeight instances
+            return render(request, 'client/view_axes.html', {'error_message': error_message, 'axes_weights': axes_weights})
 
     axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False).exclude(client__is_superuser=True)
 

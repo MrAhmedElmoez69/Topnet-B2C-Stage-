@@ -163,9 +163,64 @@
         cursor: pointer;
         font-size: 16px;
     }
+    .styled-select {
+        display: block;
+        width: 100%;
+        max-width: 200px; /* Set a maximum width for the dropdown */
+        margin: 0 auto; /* Center the dropdown */
+        padding: 3px 5px; /* Adjust the padding to make it smaller */
+        font-size: 12px; /* Adjust the font size to make it smaller */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    
+    .styled-select:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    }
+    
+    /* Style for the button */
+    .back-button {
+        padding: 5px 10px;
+        font-size: 14px;
+        border: none;
+        border-radius: 5px;
+        background-color: #3498db;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+    }
+    
+    .back-button:hover {
+        background-color: #258ecd;
+    }
 </style>
 
 <h1>Rapport Axes</h1>
+
+
+    <form method="post" action="{% url 'generate_excel' %}">
+        {% csrf_token %}
+        <div class="back-button-container">
+            <label for="axes_weight_id">Select Axes Weight:</label>
+            <select name="axes_weight_id" id="axes_weight_id" class="styled-select">
+                {% for axes_weight in axes_weights %}
+                    <option value="{{ axes_weight.id }}">{{ axes_weight }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="back-button-container">
+            <button type="submit" class="back-button">Generate Excel Report</button>
+        </div>
+    </form>
+    <div class="back-button-container">
+        {% if error_message %}
+            <p class="error">{{ error_message }}</p>
+        {% endif %}
+    </div>
 
 <div class="search-container">
     <form method="get" action="">
@@ -173,12 +228,6 @@
         <button type="submit">Search</button>
     </form>
 </div>
-<form method="post" action="{% url 'generate_excel' %}">
-    {% csrf_token %}
-    <div class="back-button-container">
-    <button type="submit" class="back-button">Download Excel Clients Report </button>
-    </div>
-</form>
 <div class="filter-container">
     <form method="get" action="">
         <select name="filter">
