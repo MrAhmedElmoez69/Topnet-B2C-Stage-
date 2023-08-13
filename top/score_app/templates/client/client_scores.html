@@ -192,18 +192,7 @@
 <h1> Client Scores </h1>
 
 
-<div class="filter-container">
-    <form method="get" action="">
-        <select name="filter">
-            <option value="all" {% if filter_option == 'all' %}selected{% endif %}>All</option>
-            <option value="today" {% if filter_option == 'today' %}selected{% endif %}>Today</option>
-            <option value="past7days" {% if filter_option == 'past7days' %}selected{% endif %}>Past 7 Days</option>
-            <option value="thismonth" {% if filter_option == 'thismonth' %}selected{% endif %}>This Month</option>
-            <option value="thisyear" {% if filter_option == 'thisyear' %}selected{% endif %}>This Year</option>
-        </select>
-        <button type="submit">Filter</button>
-    </form>
-</div>
+
 
 <div class="back-button-container">
     <a href="/user/view_axes/" class="back-button">Back to Previous Page</a>

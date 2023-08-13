@@ -153,19 +153,9 @@ def client_scores(request, client_id):
 
     axes_with_clients = Axes.objects.select_related('client').filter(client_id=client_id).exclude(client__is_superuser=True)
 
-    if search_query:
-        axes_with_clients = axes_with_clients.filter(client__username__icontains=search_query)
+    
 
-    if filter_option == 'today':
-        axes_with_clients = axes_with_clients.filter(client__date_joined__date=timezone.now().date())
-    elif filter_option == 'past7days':
-        past_week = timezone.now() - timezone.timedelta(days=7)
-        axes_with_clients = axes_with_clients.filter(client__date_joined__gte=past_week)
-    elif filter_option == 'thismonth':
-        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year, client__date_joined__month=timezone.now().month)
-    elif filter_option == 'thisyear':
-        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year)
-
+   
     paginator = Paginator(axes_with_clients, 2)  # Change the number of items per page as needed
 
     page_number = request.GET.get('page')
@@ -234,7 +224,7 @@ def generate_excel(request):
 
     axes_with_clients = Axes.objects.select_related('client').exclude(client__is_superuser=True)
 
-    clients_with_scores = process_client_scores(axes_with_clients)
+    Clients_with_Scores = process_client_scores(axes_with_clients)
 
     workbook = Workbook()
     worksheet = workbook.active
@@ -243,7 +233,7 @@ def generate_excel(request):
     headers = ['Client Name', 'Anciennete', 'Nombre Suspension', 'Montant en Cours', 'Categorie Client', 'Engagement Contractuel', 'Offre', 'Debit', 'Delai Moyen Paiement', 'Incident de Paiement', 'Contentieux', 'Delai Moyen Paiement Score', 'Incident de Paiement Score', 'Contentieux Score', 'Nombre Reclamations', 'Delai Traitement', 'Valeur Commerciale Score', 'Engagement Topnet Score', 'Engagement Client Score', 'Comportement Client Score', 'Score Total', 'Score Level', 'Decision']
     worksheet.append(headers)
 
-    for client_score in clients_with_scores:
+    for client_score in Clients_with_Scores:
         client = client_score['client']
 
         engagement_clients = EngagementClient.objects.filter(client=client)
@@ -291,6 +281,46 @@ def generate_excel(request):
 
     return response
 
+def process_client_Scoress(axes):
+    Clients_with_Scores = {}
+
+    for axis in axes:
+        valeur_commerciale_score = axis.valeur_commerciale.calculate_total_score()
+        engagement_topnet_score = axis.engagement_topnet.calculate_total_score()
+        engagement_client_score = axis.engagement_client.calculate_total_score()
+        comportement_client_score = axis.comportement_client.calculate_total_score()
+
+        total_weight = (
+            axis.valeur_commerciale_weight +
+            axis.engagement_topnet_weight +
+            axis.engagement_client_weight +
+            axis.comportement_client_weight
+        )
+
+        total_score = (
+            valeur_commerciale_score
+            + engagement_topnet_score
+            + engagement_client_score
+            + comportement_client_score
+        )
+        score_level = get_score_level(total_score)
+        decision = get_decision(total_score)
+
+        client_with_score = {
+            'client': axis.client,
+            'valeur_commerciale_score': valeur_commerciale_score,
+            'axes_weight': axis.axes_weight,  # Include the entire AxesWeight object
+            'engagement_topnet_score': engagement_topnet_score,
+            'engagement_client_score': engagement_client_score,
+            'comportement_client_score': comportement_client_score,
+            'total_score': total_score,
+            'score_level': score_level,
+            'decision': decision,
+        }
+
+        Clients_with_Scores[axis.id] = client_with_score  # Store by axis ID
+
+    return Clients_with_Scores
 # --------------------------------View All Scores --------------------------------
 
 def process_client_scores(axes):
