@@ -111,7 +111,7 @@ def view_tables(request):
 @login_required
 def view_axes(request):
     # Retrieve Axes objects with their related Client instances
-    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False)
+    axes_with_clients = Axes.objects.select_related('client')
     
     # Filter out superusers
     axes_with_clients = axes_with_clients.exclude(client__is_superuser=True)
@@ -151,7 +151,7 @@ def client_scores(request, client_id):
     search_query = request.GET.get('search')
     filter_option = request.GET.get('filter', 'all')
 
-    axes_with_clients = Axes.objects.select_related('client').filter(client_id=client_id, client__valeur_commerciale__isnull=False).exclude(client__is_superuser=True)
+    axes_with_clients = Axes.objects.select_related('client').filter(client_id=client_id).exclude(client__is_superuser=True)
 
     if search_query:
         axes_with_clients = axes_with_clients.filter(client__username__icontains=search_query)
@@ -231,25 +231,8 @@ def generate_excel(request):
     from django.http import HttpResponse
     from django.utils import timezone
     from .models import EngagementClient, ValeurCommerciale, ComportementClient, EngagementTopnet
-    
 
-
-    if request.method == 'POST':
-        axes_weight_id = request.POST.get('axes_weight_id')
-
-        if axes_weight_id is None:
-            error_message = "Please select an Axes Weight before generating the report."
-            axes_weights = AxesWeight.objects.all()  # Retrieve all AxesWeight instances
-            return render(request, 'client/view_axes.html', {'error_message': error_message, 'axes_weights': axes_weights})
-
-        try:
-            axes_weight = AxesWeight.objects.get(id=axes_weight_id)
-        except AxesWeight.DoesNotExist:
-            error_message = "Selected Axes Weight does not exist."
-            axes_weights = AxesWeight.objects.all()  # Retrieve all AxesWeight instances
-            return render(request, 'client/view_axes.html', {'error_message': error_message, 'axes_weights': axes_weights})
-
-    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False).exclude(client__is_superuser=True)
+    axes_with_clients = Axes.objects.select_related('client').exclude(client__is_superuser=True)
 
     clients_with_scores = process_client_scores(axes_with_clients)
 
@@ -261,37 +244,45 @@ def generate_excel(request):
     worksheet.append(headers)
 
     for client_score in clients_with_scores:
-        engagement_client = EngagementClient.objects.get(client=client_score['client'])
-        valeur_commerciale = ValeurCommerciale.objects.get(client=client_score['client'])
-        comportement_client = ComportementClient.objects.get(client=client_score['client'])
-        engagement_topnet = EngagementTopnet.objects.get(client=client_score['client'])
+        client = client_score['client']
 
-        row = [
-            client_score['client'].username,
-            engagement_client.calculate_anciennete(),
-            engagement_client.calculate_nombre_suspension(),
-            engagement_client.calculate_montant_en_cours(),
-            valeur_commerciale.categorie_client,
-            valeur_commerciale.engagement_contractuel,
-            valeur_commerciale.offre,
-            valeur_commerciale.debit,
-            comportement_client.calculate_delai_moyen_paiement(),
-            comportement_client.incident_de_paiement(),
-            comportement_client.contentieux(),
-            comportement_client.calculate_delai_moyen_paiement_score(),
-            comportement_client.calculate_incident_de_paiement_score(),
-            comportement_client.calculate_contentieux_score(),
-            engagement_topnet.nombre_reclamations,
-            engagement_topnet.delai_traitement,
-            client_score['valeur_commerciale_score'],
-            client_score['engagement_topnet_score'],
-            client_score['engagement_client_score'],
-            client_score['comportement_client_score'],
-            client_score['total_score'],
-            client_score['score_level'],
-            client_score['decision']
-        ]
-        worksheet.append(row)
+        engagement_clients = EngagementClient.objects.filter(client=client)
+        valeur_commerciales = ValeurCommerciale.objects.filter(client=client)
+        comportement_clients = ComportementClient.objects.filter(client=client)
+        engagement_topnets = EngagementTopnet.objects.filter(client=client)
+
+        if engagement_clients.exists() and valeur_commerciales.exists() and comportement_clients.exists() and engagement_topnets.exists():
+            engagement_client = engagement_clients.first()
+            valeur_commerciale = valeur_commerciales.first()
+            comportement_client = comportement_clients.first()
+            engagement_topnet = engagement_topnets.first()
+
+            row = [
+                client_score['client'].username,
+                engagement_client.calculate_anciennete(),
+                engagement_client.calculate_nombre_suspension(),
+                engagement_client.calculate_montant_en_cours(),
+                valeur_commerciale.categorie_client,
+                valeur_commerciale.engagement_contractuel,
+                valeur_commerciale.offre,
+                valeur_commerciale.debit,
+                comportement_client.calculate_delai_moyen_paiement(),
+                comportement_client.incident_de_paiement(),
+                comportement_client.contentieux(),
+                comportement_client.calculate_delai_moyen_paiement_score(),
+                comportement_client.calculate_incident_de_paiement_score(),
+                comportement_client.calculate_contentieux_score(),
+                engagement_topnet.nombre_reclamations,
+                engagement_topnet.delai_traitement,
+                client_score['valeur_commerciale_score'],
+                client_score['engagement_topnet_score'],
+                client_score['engagement_client_score'],
+                client_score['comportement_client_score'],
+                client_score['total_score'],
+                client_score['score_level'],
+                client_score['decision']
+            ]
+            worksheet.append(row)
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=Rapport_Clients.xlsx'
@@ -299,8 +290,6 @@ def generate_excel(request):
     workbook.save(response)
 
     return response
-
-
 
 # --------------------------------View All Scores --------------------------------
 
@@ -341,7 +330,7 @@ def view_all_score(request):
     search_query = request.GET.get('search')
     filter_option = request.GET.get('filter', 'all')
 
-    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False).exclude(client__is_superuser=True)
+    axes_with_clients = Axes.objects.select_related('client').exclude(client__is_superuser=True)
 
     if search_query:
         axes_with_clients = axes_with_clients.filter(client__username__icontains=search_query)
@@ -375,7 +364,7 @@ def download_excel(request):
     search_query = request.GET.get('search')
     filter_option = request.GET.get('filter', 'all')
 
-    axes_with_clients = Axes.objects.select_related('client').filter(client__valeur_commerciale__isnull=False).exclude(client__is_superuser=True)
+    axes_with_clients = Axes.objects.select_related('client').exclude(client__is_superuser=True)
 
     if search_query:
         axes_with_clients = axes_with_clients.filter(client__username__icontains=search_query)

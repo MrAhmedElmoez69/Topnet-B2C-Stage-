@@ -205,22 +205,10 @@
     <form method="post" action="{% url 'generate_excel' %}">
         {% csrf_token %}
         <div class="back-button-container">
-            <label for="axes_weight_id">Select Axes Weight:</label>
-            <select name="axes_weight_id" id="axes_weight_id" class="styled-select">
-                {% for axes_weight in axes_weights %}
-                    <option value="{{ axes_weight.id }}">{{ axes_weight }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="back-button-container">
             <button type="submit" class="back-button">Generate Excel Report</button>
         </div>
     </form>
-    <div class="back-button-container">
-        {% if error_message %}
-            <p class="error">{{ error_message }}</p>
-        {% endif %}
-    </div>
+   
 
 <div class="search-container">
     <form method="get" action="">
