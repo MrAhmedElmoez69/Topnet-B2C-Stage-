@@ -108,11 +108,10 @@ def view_tables(request):
 
 
 
-@login_required
 def view_axes(request):
     # Retrieve Axes objects with their related Client instances
     axes_with_clients = Axes.objects.select_related('client')
-    
+
     # Filter out superusers
     axes_with_clients = axes_with_clients.exclude(client__is_superuser=True)
     
@@ -323,6 +322,9 @@ def process_client_Scoress(axes):
     return Clients_with_Scores
 # --------------------------------View All Scores --------------------------------
 
+
+
+
 def process_client_scores(axes):
     clients_with_scores = []
 
@@ -382,13 +384,35 @@ def view_all_score(request):
 
     clients_with_scores = process_client_scores(axes)
 
+    sort_param = request.GET.get('sort')
+    if sort_param == 'total_score':
+        clients_with_scores = sorted(clients_with_scores, key=lambda x: x['total_score'], reverse=True)
+    elif sort_param == 'client':
+        clients_with_scores = sorted(clients_with_scores, key=lambda x: x['client'].username)  # Use the appropriate attribute of the Client model for sorting
+    
+    score_ranges = {
+        '0-20': (0, 20),
+        '21-40': (21, 40),
+        '41-71': (41, 71),
+        '72-100': (72, 100),
+    }
+
+    filter_range = request.GET.get('filter_range')
+    if filter_range in score_ranges:
+        min_score, max_score = score_ranges[filter_range]
+        clients_with_scores = [client for client in clients_with_scores if min_score <= client['total_score'] <= max_score]
+
     return render(
         request,
         'client/view_all_score.html',
         {'clients_with_scores': clients_with_scores,
          'search_query': search_query,
-         'filter_option': filter_option,}
+         'filter_option': filter_option,
+         'sort_param': sort_param,
+         'filter_range': filter_range,
+         'score_ranges': score_ranges}
     )
+
 
 def download_excel(request):
     search_query = request.GET.get('search')
@@ -434,6 +458,26 @@ def download_excel(request):
 
     return response
 
+
+
+
+
+from django.shortcuts import get_object_or_404, redirect
+def axes_weight_list(request):  
+    axes_weights = AxesWeight.objects.all()
+
+    if request.method == 'POST':
+        weight_id_to_delete = request.POST.get('delete_weight_id')
+        if weight_id_to_delete:
+            weight_to_delete = get_object_or_404(AxesWeight, id=weight_id_to_delete)
+            weight_to_delete.delete()
+            return redirect('axes_weight_list')  # Redirect back to the list after deletion
+
+    context = {
+        'axes_weights': axes_weights,
+    }
+
+    return render(request, 'client/axes_weight_list.html', context)
 
 def get_score_level(total_score):
     if total_score <= 20:

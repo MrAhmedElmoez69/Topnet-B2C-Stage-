@@ -75,3 +75,4 @@ class ComportementClientInlineForm(forms.ModelForm):
 
 class ImportDataForm(forms.Form):
     excel_file = forms.FileField(label='Select an Excel file', help_text='File format should be xlsx.')
+
