@@ -222,14 +222,16 @@ def generate_excel(request):
     from .models import EngagementClient, ValeurCommerciale, ComportementClient, EngagementTopnet
 
     axes_with_clients = Axes.objects.select_related('client').exclude(client__is_superuser=True)
-
     Clients_with_Scores = process_client_scores(axes_with_clients)
+
+
+    last_axes_weight = AxesWeight.objects.last()  
 
     workbook = Workbook()
     worksheet = workbook.active
     worksheet.title = "Client Scores"
 
-    headers = ['Client Name', 'Anciennete', 'Nombre Suspension', 'Montant en Cours', 'Categorie Client', 'Engagement Contractuel', 'Offre', 'Debit', 'Delai Moyen Paiement', 'Incident de Paiement', 'Contentieux', 'Delai Moyen Paiement Score', 'Incident de Paiement Score', 'Contentieux Score', 'Nombre Reclamations', 'Delai Traitement', 'Valeur Commerciale Score', 'Engagement Topnet Score', 'Engagement Client Score', 'Comportement Client Score', 'Score Total', 'Score Level', 'Decision']
+    headers = ['Client Name', 'Anciennete', 'Nombre Suspension', 'Montant en Cours', 'Categorie Client', 'Engagement Contractuel', 'Offre', 'Debit', 'Delai Moyen Paiement', 'Incident de Paiement', 'Contentieux', 'Delai Moyen Paiement Score', 'Incident de Paiement Score', 'Contentieux Score', 'Nombre Reclamations', 'Delai Traitement', 'Valeur Commerciale Score', 'Engagement Topnet Score', 'Engagement Client Score', 'Comportement Client Score', 'Score Total', 'Score Level', 'Decision' , 'AxeWeight ID']
     worksheet.append(headers)
 
     for client_score in Clients_with_Scores:
@@ -269,7 +271,9 @@ def generate_excel(request):
                 client_score['comportement_client_score'],
                 client_score['total_score'],
                 client_score['score_level'],
-                client_score['decision']
+                client_score['decision'] , 
+                last_axes_weight.id if last_axes_weight else None
+
             ]
             worksheet.append(row)
 
@@ -415,39 +419,27 @@ def view_all_score(request):
 
 
 def download_excel(request):
-    search_query = request.GET.get('search')
-    filter_option = request.GET.get('filter', 'all')
-
     axes_with_clients = Axes.objects.select_related('client').exclude(client__is_superuser=True)
-
-    if search_query:
-        axes_with_clients = axes_with_clients.filter(client__username__icontains=search_query)
-
-    if filter_option == 'today':
-        axes_with_clients = axes_with_clients.filter(client__date_joined__date=timezone.now().date())
-    elif filter_option == 'past7days':
-        past_week = timezone.now() - timezone.timedelta(days=7)
-        axes_with_clients = axes_with_clients.filter(client__date_joined__gte=past_week)
-    elif filter_option == 'thismonth':
-        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year, client__date_joined__month=timezone.now().month)
-    elif filter_option == 'thisyear':
-        axes_with_clients = axes_with_clients.filter(client__date_joined__year=timezone.now().year)
-
     clients_with_scores = process_client_scores(axes_with_clients)
+    
+    last_axes_weight = AxesWeight.objects.last()  
 
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
     worksheet.title = "Client Scores"
 
-    headers = ['Client', 'Total Score', 'Score Level', 'Decision']
+    headers = ['Client', 'Total Score', 'Score Level', 'Decision', 'AxeWeight ID']
     worksheet.append(headers)
 
     for client_score in clients_with_scores:
+        client = client_score['client']
+        
         row = [
-            client_score['client'].username,
+            client.username,
             client_score['total_score'],
             client_score['score_level'],
-            client_score['decision']
+            client_score['decision'],
+            last_axes_weight.id if last_axes_weight else None
         ]
         worksheet.append(row)
 
@@ -457,7 +449,6 @@ def download_excel(request):
     workbook.save(response)
 
     return response
-
 
 
 
