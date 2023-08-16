@@ -490,13 +490,18 @@ def generate_pdf_report(clients_with_scores):
 
     return response
 
+
 def statistics(request):
     axes = Axes.objects.all()  # Retrieve all axes data
 
     clients_with_scores = process_client_scores(axes)
 
-    # Sort clients_with_scores by total_score in descending order
-    clients_with_scores = sorted(clients_with_scores, key=lambda x: x['total_score'], reverse=True)
+    # Get the sorting order from the request GET parameters
+    sort_order = request.GET.get('sort_order', 'desc')  # Default to descending order
+
+    # Sort clients_with_scores by total_score based on the selected sort_order
+    reverse_sort = sort_order == 'asc'
+    clients_with_scores = sorted(clients_with_scores, key=lambda x: x['total_score'], reverse=reverse_sort)
 
     score_ranges = {
         '0-20': (0, 20),
@@ -512,16 +517,14 @@ def statistics(request):
 
     if 'generate_pdf' in request.GET:
         # Generate PDF report and return it as a response
-        return generate_pdf_report(clients_with_scores)
+        pdf_response = generate_pdf_report(clients_with_scores)
+        return pdf_response
 
-        
     context = {
         'clients_with_scores': clients_with_scores,
     }
-    
-  
-    return render(request, 'client/statistics.html', context)
 
+    return render(request, 'client/statistics.html', context)
 
 
 def download_excel(request):
