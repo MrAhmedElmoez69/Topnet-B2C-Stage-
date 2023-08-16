@@ -25,10 +25,11 @@ from io import BytesIO
 import base64
 import matplotlib
 matplotlib.use('Agg') 
-
+from django.shortcuts import get_object_or_404, redirect
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
+from django.contrib import messages
 
 
 @login_required
@@ -46,7 +47,6 @@ def enter_score_parameters(request):
     return render(request, 'client/calculate_score.html', {"form": form})
 
 
-from django.contrib import messages
 
 def login_view(request):
     form = LoginForm()
@@ -504,13 +504,13 @@ def generate_pie_chart(clients_with_scores):
     usernames = [client['client'].username for client in clients_with_scores]
     total_scores = [client['total_score'] for client in clients_with_scores]
 
-    plt.figure(figsize=(8, 6), facecolor="none")  # Set facecolor to "none" for transparent background
+    plt.figure(figsize=(8, 6), facecolor="none") 
     plt.pie(total_scores, labels=usernames, autopct='%1.1f%%', startangle=140)
     plt.title('Distribution of Client Usernames by Total Score')
     plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle
 
     buffer = BytesIO()
-    plt.savefig(buffer, format='png', transparent=True)  # Set transparent=True to make the background transparent
+    plt.savefig(buffer, format='png', transparent=True) 
     buffer.seek(0)
     plt.close()
 
@@ -519,14 +519,12 @@ def generate_pie_chart(clients_with_scores):
 
 
 def statistics(request):
-    axes = Axes.objects.all()  # Retrieve all axes data
+    axes = Axes.objects.all()  
 
     clients_with_scores = process_client_scores(axes)
 
-    # Get the sorting order from the request GET parameters
-    sort_order = request.GET.get('sort_order', 'desc')  # Default to descending order
+    sort_order = request.GET.get('sort_order', 'desc')  
 
-    # Sort clients_with_scores by total_score based on the selected sort_order
     reverse_sort = sort_order == 'asc'
     clients_with_scores = sorted(clients_with_scores, key=lambda x: x['total_score'], reverse=reverse_sort)
 
@@ -594,7 +592,6 @@ def download_excel(request):
 
 
 
-from django.shortcuts import get_object_or_404, redirect
 def axes_weight_list(request):  
     axes_weights = AxesWeight.objects.all()
 

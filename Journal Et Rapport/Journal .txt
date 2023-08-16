@@ -95,14 +95,13 @@ Week 7
 
 14/08/2023 : Build-up Statistique 
 
-15/08/2023 :
+15/08/2023 : Générer des statistiques .
 
-16/08/2023 :
+16/08/2023 :Présenter les statistiques sous forme de graphiques ou de tableaux faciles à comprendre.
 
 17/08/2023 : Validation 6
 
-18/08/2023 :
-
+18/08/2023 :Classer chaque client en fonction des critères de catégorisation spécifiés.
 
 ///////////////////////////////////////////////////
 Week 8
