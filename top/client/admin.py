@@ -520,7 +520,7 @@ class AxesAdmin(admin.ModelAdmin):
     raw_id_fields = ['valeur_commerciale', 'engagement_topnet', 'engagement_client', 'comportement_client']
     exclude = ['categorie_client', 'engagement_contractuel', 'offre', 'debit']
 
-    list_display = ['client', 'valeur_commerciale_display',
+    list_display = ['id','client', 'valeur_commerciale_display',
                     'engagement_topnet_display',
                     'engagement_client_display', 
                     'comportement_client_display','calculate_total_score','get_score_level','decision']

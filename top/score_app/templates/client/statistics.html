@@ -197,86 +197,50 @@
     }
 </style>
 
-<h1>Rapport Axes</h1>
-
-
-    <form method="post" action="{% url 'generate_excel' %}">
-        {% csrf_token %}
-        <div class="back-button-container">
-            <button type="submit" class="back-button">Generate Excel Report</button>
-        </div>
-    </form>
-   
- 
-
-<div class="search-container">
-    <form method="get" action="">
-        <input type="text" name="search" value="{{ search_query }}" placeholder="Search by username">
-        <button type="submit">Search</button>
-    </form>
-</div>
-<div class="filter-container">
-    <form method="get" action="">
-        <select name="filter">
-            <option value="all" {% if filter_option == 'all' %}selected{% endif %}>All</option>
-            <option value="today" {% if filter_option == 'today' %}selected{% endif %}>Today</option>
-            <option value="past7days" {% if filter_option == 'past7days' %}selected{% endif %}>Past 7 Days</option>
-            <option value="thismonth" {% if filter_option == 'thismonth' %}selected{% endif %}>This Month</option>
-            <option value="thisyear" {% if filter_option == 'thisyear' %}selected{% endif %}>This Year</option>
-        </select>
-        <button type="submit">Filter</button>
-    </form>
-</div>
-
-
+<h1>Statistics</h1>
 
 <div class="client-box-container">
-    {% for ax in axes %}
+    {% for client_score in clients_with_scores %}
         <div class="client-box">
             <div class="back-button-container">
-            <h3><a href="{% url 'client_scores' client_id=ax.client.id %}" class="back-button">{{ ax.client.username }}</a></h3>
-
+                <h3><a href="{% url 'client_scores' client_id=client_score.client.id %}" class="back-button">{{ client_score.client.username }}</a></h3>
             </div> 
             <table>
                 <tr>
                     <th>Client Username</th>
-                    <td>{{ ax.client.username }}</td>
+                    <td>{{ client_score.client.username }}</td>
                 </tr>
                 <tr>
-                    <th>Valeur Commerciale</th>
-                    <td>{{ ax.valeur_commerciale }}</td>
+                    <th>Valeur Commerciale Score</th>
+                    <td>{{ client_score.valeur_commerciale_score }}</td>
                 </tr>
                 <tr>
-                    <th>Engagement Topnet</th>
-                    <td>{{ ax.engagement_topnet }}</td>
+                    <th>Engagement Topnet Score</th>
+                    <td>{{ client_score.engagement_topnet_score }}</td>
                 </tr>
                 <tr>
-                    <th>Engagement Client</th>
-                    <td>{{ ax.engagement_client }}</td>
+                    <th>Engagement Client Score</th>
+                    <td>{{ client_score.engagement_client_score }}</td>
                 </tr>
                 <tr>
-                    <th>Comportement Client</th>
-                    <td>{{ ax.comportement_client }}</td>
-                 </tr>
-
+                    <th>Comportement Client Score</th>
+                    <td>{{ client_score.comportement_client_score }}</td>
+                </tr>
+                <tr>
+                    <th>Total Score</th>
+                    <td>{{ client_score.total_score }}</td>
+                </tr>
+                <tr>
+                    <th>Score Level</th>
+                    <td>{{ client_score.score_level }}</td>
+                </tr>
+                <tr>
+                    <th>Decision</th>
+                    <td>{{ client_score.decision }}</td>
+                </tr>
             </table>
         </div>
     {% endfor %}
 </div>
 
-<div class="pagination">
-    <span class="step-links">
-        {% if axes.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ axes.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current-page">{{ axes.number }}</span>
-
-        {% if axes.has_next %}
-            <a href="?page={{ axes.next_page_number }}">next</a>
-            <a href="?page={{ axes.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
-    </span>
-</div>
 {% endblock %}

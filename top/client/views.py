@@ -144,6 +144,10 @@ def view_axes(request):
     
     return render(request, 'client/view_axes.html', {'axes': axes, 'search_query': search_query, 'filter_option': filter_option})
 
+
+
+
+
 def client_scores(request, client_id):
     clients_with_scores = []
 
@@ -416,6 +420,21 @@ def view_all_score(request):
          'filter_range': filter_range,
          'score_ranges': score_ranges}
     )
+
+
+def statistics(request):
+    axes = Axes.objects.all()  # Retrieve all axes data
+
+    clients_with_scores = process_client_scores(axes)
+
+    # Sort clients_with_scores by total_score in descending order
+    clients_with_scores = sorted(clients_with_scores, key=lambda x: x['total_score'], reverse=True)
+
+    context = {
+        'clients_with_scores': clients_with_scores,
+    }
+
+    return render(request, 'client/statistics.html', context)
 
 
 def download_excel(request):

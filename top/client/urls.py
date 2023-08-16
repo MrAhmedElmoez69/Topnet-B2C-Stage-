@@ -18,6 +18,7 @@ urlpatterns = [
     path('download-excel/', download_excel, name='download_excel'),
     path('generate_excel/', generate_excel, name='generate_excel'),
     path('axes_weight_list/', axes_weight_list, name='axes_weight_list'),
+    path('statistics/', statistics, name='statistics'),
 
 
 
