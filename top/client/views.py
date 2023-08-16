@@ -10,8 +10,16 @@ import pandas as pd
 from .models import Axes  # Import the Axes model
 import openpyxl
 from django.http import HttpResponse
-
-
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet
+import datetime
+from reportlab.lib.pagesizes import landscape, letter
+from reportlab.platypus import SimpleDocTemplate, PageTemplate, Frame, Paragraph, Spacer, Image, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+import datetime
 
 
 @login_required
@@ -422,6 +430,66 @@ def view_all_score(request):
     )
 
 
+def generate_pdf_report(clients_with_scores):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="client_scores_report.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=landscape(letter), leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
+    elements = []
+
+    # Create a PageTemplate with a border
+    border_frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='border_frame')
+    border_template = PageTemplate(id='border_template', frames=[border_frame])
+    doc.addPageTemplates([border_template])
+
+    title_style = getSampleStyleSheet()["Title"]
+    title = Paragraph("Score Report", title_style)
+    elements.append(title)
+
+    logo_path = 'C:/Topnet-B2C-Stage-/top/static/unnamed.png' 
+    logo = Image(logo_path, width=100, height=100)
+    elements.append(logo)
+
+    table_data = [
+        ['Client', 'VC Score', 'ET Score', 'EClient Score', 'CC Score', 'Total Score']
+    ]
+    for client in clients_with_scores:
+        table_data.append([
+            client['client'].username,
+            str(client['valeur_commerciale_score']),
+            str(client['engagement_topnet_score']),
+            str(client['engagement_client_score']),
+            str(client['comportement_client_score']),
+            str(client['total_score'])
+        ])
+
+    table = Table(table_data, colWidths=[150, 100, 100, 100, 100, 100])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    elements.append(table)
+
+    elements.append(Spacer(1, 20))
+
+    now = datetime.datetime.now()
+    date_time_style = getSampleStyleSheet()["Normal"]
+    date_time = Paragraph(f"Generated on: {now.strftime('%Y-%m-%d %H:%M:%S')}", date_time_style)
+
+    spacer_height = (doc.height - title.wrap(doc.width, doc.height)[1] - logo.wrap(doc.width, doc.height)[1] - table.wrap(doc.width, doc.height)[1] - date_time.wrap(doc.width, doc.height)[1]) / 2
+    elements.append(Spacer(1, spacer_height))
+    elements.append(date_time)
+
+    doc.build(elements)
+
+    return response
+
 def statistics(request):
     axes = Axes.objects.all()  # Retrieve all axes data
 
@@ -430,11 +498,30 @@ def statistics(request):
     # Sort clients_with_scores by total_score in descending order
     clients_with_scores = sorted(clients_with_scores, key=lambda x: x['total_score'], reverse=True)
 
+    score_ranges = {
+        '0-20': (0, 20),
+        '21-40': (21, 40),
+        '41-71': (41, 71),
+        '72-100': (72, 100),
+    }
+
+    filter_range = request.GET.get('filter_range')
+    if filter_range in score_ranges:
+        min_score, max_score = score_ranges[filter_range]
+        clients_with_scores = [client for client in clients_with_scores if min_score <= client['total_score'] <= max_score]
+
+    if 'generate_pdf' in request.GET:
+        # Generate PDF report and return it as a response
+        return generate_pdf_report(clients_with_scores)
+
+        
     context = {
         'clients_with_scores': clients_with_scores,
     }
-
+    
+  
     return render(request, 'client/statistics.html', context)
+
 
 
 def download_excel(request):

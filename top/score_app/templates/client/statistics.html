@@ -198,12 +198,31 @@
 </style>
 
 <h1>Statistics</h1>
+<div class="filter-container">
+    <form method="get" action="">
+        <select name="filter_range">
+            <option value="">All</option>
+            <option value="0-20">0-20</option>
+            <option value="21-40">21-40</option>
+            <option value="41-71">41-71</option>
+            <option value="72-100">72-100</option>
+        </select>
+        <button type="submit">Apply Score Sorting</button>
+    </form>
+</div>
+
+
+
+
+<div class="back-button-container">
+    <a href="?generate_pdf=true" class="back-button">Generate PDF Report</a>
+</div>
 
 <div class="client-box-container">
     {% for client_score in clients_with_scores %}
         <div class="client-box">
             <div class="back-button-container">
-                <h3><a href="{% url 'client_scores' client_id=client_score.client.id %}" class="back-button">{{ client_score.client.username }}</a></h3>
+                <h3>{{ client_score.client.first_name }}  {{ client_score.client.last_name }}</a></h3>
             </div> 
             <table>
                 <tr>
