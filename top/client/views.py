@@ -20,7 +20,9 @@ from reportlab.platypus import SimpleDocTemplate, PageTemplate, Frame, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 import datetime
-
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
 
 @login_required
 def enter_score_parameters(request):
@@ -491,6 +493,24 @@ def generate_pdf_report(clients_with_scores):
     return response
 
 
+def generate_pie_chart(clients_with_scores):
+    usernames = [client['client'].username for client in clients_with_scores]
+    total_scores = [client['total_score'] for client in clients_with_scores]
+
+    plt.figure(figsize=(8, 6), facecolor="none")  # Set facecolor to "none" for transparent background
+    plt.pie(total_scores, labels=usernames, autopct='%1.1f%%', startangle=140)
+    plt.title('Distribution of Client Usernames by Total Score')
+    plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png', transparent=True)  # Set transparent=True to make the background transparent
+    buffer.seek(0)
+    plt.close()
+
+    pie_chart_data = base64.b64encode(buffer.read()).decode('utf-8')
+    return pie_chart_data
+
+
 def statistics(request):
     axes = Axes.objects.all()  # Retrieve all axes data
 
@@ -520,8 +540,13 @@ def statistics(request):
         pdf_response = generate_pdf_report(clients_with_scores)
         return pdf_response
 
+
+    pie_chart_data = generate_pie_chart(clients_with_scores)
+
     context = {
         'clients_with_scores': clients_with_scores,
+        'pie_chart_data': pie_chart_data,
+
     }
 
     return render(request, 'client/statistics.html', context)

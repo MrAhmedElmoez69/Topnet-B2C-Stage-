@@ -207,7 +207,6 @@
         margin-left: 10px;
     }
 </style>
-
 <h1>Statistics</h1>
 <div class="filter-container">
     <form method="get" action="">
@@ -230,6 +229,10 @@
 
 <div class="back-button-container">
     <a href="?generate_pdf=true" class="back-button">Generate PDF Report</a>
+</div>
+
+<div style="text-align: center;">
+    <img src="data:image/png;base64,{{ pie_chart_data }}" alt="Pie Chart" width="800" height="400" style="background-color: transparent;">
 </div>
 
 <div class="client-box-container">
