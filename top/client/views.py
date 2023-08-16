@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.core.paginator import Paginator
 import pandas as pd
-from .models import Axes  # Import the Axes model
+from .models import Axes 
 import openpyxl
 from django.http import HttpResponse
 from reportlab.lib import colors
@@ -23,6 +23,13 @@ import datetime
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+import matplotlib
+matplotlib.use('Agg') 
+
+import matplotlib.pyplot as plt
+import base64
+from io import BytesIO
+
 
 @login_required
 def enter_score_parameters(request):
