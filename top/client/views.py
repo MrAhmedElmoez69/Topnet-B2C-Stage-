@@ -30,6 +30,7 @@ import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 @login_required
@@ -517,16 +518,22 @@ def generate_pie_chart(clients_with_scores):
     pie_chart_data = base64.b64encode(buffer.read()).decode('utf-8')
     return pie_chart_data
 
-
 def statistics(request):
-    axes = Axes.objects.all()  
+    axes = Axes.objects.all()
 
     clients_with_scores = process_client_scores(axes)
 
-    sort_order = request.GET.get('sort_order', 'desc')  
-
+    sort_order = request.GET.get('sort_order', 'desc')
     reverse_sort = sort_order == 'asc'
     clients_with_scores = sorted(clients_with_scores, key=lambda x: x['total_score'], reverse=reverse_sort)
+
+    # Get the client with the highest score (assuming clients_with_scores is not empty)
+    highest_score_client = clients_with_scores[0]
+    highest_score = highest_score_client['total_score']
+
+    # Mark clients with scores greater than 72 for the green notification
+    for client in clients_with_scores:
+        client['has_highest_score'] = client['total_score'] > 72
 
     score_ranges = {
         '0-20': (0, 20),
@@ -540,18 +547,25 @@ def statistics(request):
         min_score, max_score = score_ranges[filter_range]
         clients_with_scores = [client for client in clients_with_scores if min_score <= client['total_score'] <= max_score]
 
+    paginator = Paginator(clients_with_scores, 100)  # Show 10 clients per page
+    page = request.GET.get('page')
+    try:
+        clients_page = paginator.page(page)
+    except PageNotAnInteger:
+        clients_page = paginator.page(1)
+    except EmptyPage:
+        clients_page = paginator.page(paginator.num_pages)
+
     if 'generate_pdf' in request.GET:
         # Generate PDF report and return it as a response
-        pdf_response = generate_pdf_report(clients_with_scores)
+        pdf_response = generate_pdf_report(clients_page)
         return pdf_response
 
-
-    pie_chart_data = generate_pie_chart(clients_with_scores)
+    pie_chart_data = generate_pie_chart(clients_page)
 
     context = {
-        'clients_with_scores': clients_with_scores,
+        'clients_with_scores': clients_page,
         'pie_chart_data': pie_chart_data,
-
     }
 
     return render(request, 'client/statistics.html', context)

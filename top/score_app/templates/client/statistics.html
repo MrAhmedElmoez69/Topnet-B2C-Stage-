@@ -206,6 +206,13 @@
         font-size: 16px;
         margin-left: 10px;
     }
+    .green-notification {
+        background-color: green;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
 </style>
 <h1>Statistics</h1>
 <div class="filter-container">
@@ -238,8 +245,8 @@
 <div class="client-box-container">
     
     {% for client_score in clients_with_scores %}
-        <div class="client-box">
-            <div class="back-button-container">
+        <div class="client-box {% if client_score.has_highest_score %}green-notification{% endif %}">
+        <div class="back-button-container">
                 <h3>{{ client_score.client.first_name }}  {{ client_score.client.last_name }}</a></h3>
             </div> 
             <table>
@@ -279,5 +286,27 @@
         </div>
     {% endfor %}
 </div>
+
+
+
+
+<div class="pagination">
+    <span class="step-links">
+        {% if clients_with_scores.has_previous %}
+            <a href="?page=1">first</a>
+            <a href="?page={{ clients_with_scores.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current-page">
+            Page {{ clients_with_scores.number }} of {{ clients_with_scores.paginator.num_pages }}.
+        </span>
+
+        {% if clients_with_scores.has_next %}
+            <a href="?page={{ clients_with_scores.next_page_number }}">next</a>
+            <a href="?page={{ clients_with_scores.paginator.num_pages }}">last</a>
+        {% endif %}
+    </span>
+</div>
+
 
 {% endblock %}
