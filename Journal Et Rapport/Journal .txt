@@ -1,138 +1,75 @@
-Week 1
-
-04/07/2023 : Repartition Des Taches/Interpretation et Analyse de La Maquette Scoring 
-
-05/07/2023 : Initiation de Digramme De Classe / Digramme De Cas D'utilisation Generale et Backlogs 
-
-06/07/2023 : Developpement D'un Model De Simulation Pour Tester Qlqs Model en C++  et Python / Preparation Du Product Backlog
-
-07/07/2023 : Répartition des backlogs de sprints / Preparation Du Video Demo Du Simulation Du Model / Preparation Sprintg Backlog  /  Mise en place de PPt et demo Pour la Validation
-
-
-
-///////////////////////////////////////////////////
-
-Week 2
-
-	
-10/07/2023 : Weekly : Validation Du Travail 1
-	
-11/07/2023 : Correction Des Digaramme De Cas et De Classe / Correction Du Product Backlog
-
-12/07/2023 : Correction et Ajouter Plus De Details a Sprint Backlog 
-
-13/07/2023 : Preaparation Du Premier Sprint en detail
-
-14/07/2023 : Correction Du Premier Spirnt + Preparation du Tableau de mesure 
- 
-
-///////////////////////////////////////////////////
-
-Week 3
-
-17/07/2023 : Fixation Du Presentation 
- 
-18/07/2023 : Validation 2 
-
-19/07/2023 : Schema du projet : preparation des tables
-
-20/07/2023 : Developpement Du Authentifcation
-
-21/07/2023 : Fix Authentification
-
-
-///////////////////////////////////////////////////
-
-Week 4
-
-
-24/07/2023 : Developpemnt du L interface Du Site Web Scoring 
-
-25/07/2023 : -Jour Férié : * REPUBLIC DAY *
-
-26/07/2023 : -project management app : conception du projet 
-
-27/07/2023 : Validation 3 : Sprint 1 
-
-28/07/2023 : -mise a jour de Journale du stage + commancer le rapport du stage 
-
-///////////////////////////////////////////////////
-
-Week 5
-
-
-31/07/2023 : configurer les paramateres de projets 
-
-01/08/2023 : configurer l'acces des agents 
-
-02/08/2023 : Scoring Et Affichage
-
-03/08/2023 : Validation 4
- 
-04/08/2023 : configurer les paramters des criteres
-
-
-
-///////////////////////////////////////////////////
-
-Week 6
-
-07/08/2023 : Affichage Score & Decision 
-
-08/08/2023 : Configurer Rapport 
-	
-09/08/2023 : Statistique 
-
-10/08/2023 : Validation 5 
-
-11/08/2023 :Developpement Du Front
-
-
-
-///////////////////////////////////////////////////
-
-Week 7 
-
-14/08/2023 : Build-up Statistique 
-
-15/08/2023 : Générer des statistiques .
-
-16/08/2023 :Présenter les statistiques sous forme de graphiques ou de tableaux faciles à comprendre.
-
-17/08/2023 : Validation 6
-
-18/08/2023 :Classer chaque client en fonction des critères de catégorisation spécifiés.
-
-///////////////////////////////////////////////////
-Week 8
-
-21/08/2023 :
-
-22/08/2023 :
-
-23/08/2023 :
-
-24/08/2023 : Validation 7
-
-25/08/2023 :
-
-
-
-///////////////////////////////////////////////////
-
-Week 9
-
-28/08/2023 : 
-
-29/08/2023 :
-
-30/08/2023 :
-
-31/08/2023 :
-
-01/09/2023 : Validation 8
-
-04/09/2023 : 
-
-///////////////////////////////////////////////////
-
+Semaine 1 : Du 04/07/2023 au 07/07/2023
+
+Répartition des tâches et interprétation de la maquette Scoring.
+Initiation des Diagrammes de Classe, de Cas d'utilisation Générale et des Backlogs.
+Développement d'un Modèle de Simulation en C++ et Python pour Tester des Modèles.
+Préparation du Product Backlog et répartition des Backlogs de Sprints.
+Préparation de la Vidéo de Démo de la Simulation du Modèle.
+Mise en place de la Présentation PowerPoint et de la démo pour la Validation.
+----
+
+Semaine 2 : Du 10/07/2023 au 14/07/2023
+
+Validation du travail de la semaine précédente.
+Correction des Diagrammes de Cas et de Classe, et du Product Backlog.
+Ajout de détails au Sprint Backlog.
+Préparation détaillée du premier Sprint.
+Correction et amélioration du premier Sprint.
+Préparation du Tableau de Mesure.
+----
+
+Semaine 3 : Du 17/07/2023 au 21/07/2023
+
+
+Finalisation de la présentation.
+Validation de l'étape 2.
+Préparation du schéma du projet et des tables.
+Développement de l'authentification.
+Finalisation de l'authentification.
+----
+Semaine 4 : Du 24/07/2023 au 28/07/2023
+
+
+Développement de l'interface du site web Scoring.
+Jour férié (Republic Day) le 25/07.
+Conception du projet avec l'application de gestion de projet.
+Validation du troisième Sprint.
+Mise à jour du Journal de Stage et début du rapport de stage.
+----
+Semaine 5 : Du 31/07/2023 au 04/08/2023
+
+
+Configuration des paramètres du projet.
+Configuration de l'accès des agents.
+Mise en place du scoring et de l'affichage.
+Validation de l'étape 4.
+Configuration des paramètres des critères.
+----
+
+Semaine 6 : Du 07/08/2023 au 11/08/2023
+
+Affichage des scores et prises de décision.
+Configuration du rapport.
+Travail sur les statistiques.
+Validation de l'étape 5.
+Développement de la partie frontale.
+----
+
+Semaine 7 : Du 14/08/2023 au 18/08/2023
+
+Construction des statistiques.
+Génération des statistiques.
+Présentation visuelle des statistiques.
+Validation de l'étape 6.
+Classification des clients en fonction des critères.
+
+----
+Semaine 8 : Du 21/08/2023 au 25/08/2023
+Fixation Du Travail
+Validation de l'étape 7.
+----
+
+Semaine 9 : Du 28/08/2023 au 01/09/2023
+Demo Video Pour Le Projet
+Validation de l'étape 8.
+Fin du projet.
