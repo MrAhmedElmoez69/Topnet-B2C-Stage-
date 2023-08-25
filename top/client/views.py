@@ -253,7 +253,7 @@ def generate_excel(request):
     worksheet = workbook.active
     worksheet.title = "Client Scores"
 
-    headers = ['Client Name', 'Anciennete', 'Nombre Suspension', 'Montant en Cours', 'Categorie Client', 'Engagement Contractuel', 'Offre', 'Debit', 'Delai Moyen Paiement', 'Incident de Paiement', 'Contentieux', 'Delai Moyen Paiement Score', 'Incident de Paiement Score', 'Contentieux Score', 'Nombre Reclamations', 'Delai Traitement', 'Valeur Commerciale Score', 'Engagement Topnet Score', 'Engagement Client Score', 'Comportement Client Score', 'Score Total', 'Score Level', 'Decision' , 'AxeWeight ID']
+    headers = ['Client Name', 'Anciennete', 'Nombre Suspension', 'Montant en Cours', 'Categorie Client', 'Engagement Contractuel', 'Offre', 'Debit', 'Delai Moyen Paiement', 'Incident de Paiement', 'Contentieux', 'Delai Moyen Paiement Score', 'Incident de Paiement Score', 'Contentieux Score', 'Nombre Reclamations', 'Delai Traitement', 'Valeur Commerciale Score', 'Engagement Topnet Score', 'Engagement Client Score', 'Comportement Client Score', 'Score Total', 'Score Level', 'Decision']
     worksheet.append(headers)
 
     for client_score in Clients_with_Scores:
@@ -294,7 +294,6 @@ def generate_excel(request):
                 client_score['total_score'],
                 client_score['score_level'],
                 client_score['decision'] , 
-                last_axes_weight.id if last_axes_weight else None
 
             ]
             worksheet.append(row)
@@ -502,16 +501,16 @@ def generate_pdf_report(clients_with_scores):
 
 
 def generate_pie_chart(clients_with_scores):
-    clients = [client['decision'] for client in clients_with_scores]  # Changed 'usernames' to 'clients'
-    total_scores = [client['total_score'] for client in clients_with_scores]
+    decisions = set(client['decision'] for client in clients_with_scores)
+    decision_scores = {decision: sum(client['total_score'] for client in clients_with_scores if client['decision'] == decision) for decision in decisions}
 
-    plt.figure(figsize=(8, 6), facecolor="none") 
-    plt.pie(total_scores, labels=clients, autopct='%1.1f%%', startangle=140)
-    plt.title('Distribution of Total Score Decision')  # Changed title
-    plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle
+    plt.figure(figsize=(8, 6), facecolor="none")
+    plt.pie(decision_scores.values(), labels=decision_scores.keys(), autopct='%1.1f%%', startangle=140)
+    plt.title('Distribution of Total Score by Decision')
+    plt.axis('equal')
 
     buffer = BytesIO()
-    plt.savefig(buffer, format='png', transparent=True) 
+    plt.savefig(buffer, format='png', transparent=True)
     buffer.seek(0)
     plt.close()
 

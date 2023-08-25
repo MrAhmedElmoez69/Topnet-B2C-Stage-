@@ -484,7 +484,7 @@ class ComportementClientInline(admin.StackedInline):
 
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ['username', 'CIN', 'phone_number', 'first_name', 'last_name', 'is_staff', 'date_joined']
+    list_display = ['id','username', 'CIN', 'phone_number', 'first_name', 'last_name', 'is_staff', 'date_joined']
     search_fields = ['username', 'CIN', 'phone_number']
     list_filter = ['is_staff', 'date_joined']
     actions = ['calculate_and_save_score']
