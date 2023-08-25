@@ -581,7 +581,7 @@ def download_excel(request):
     worksheet = workbook.active
     worksheet.title = "Client Scores"
 
-    headers = ['Client', 'Total Score', 'Score Level', 'Decision', 'AxeWeight ID']
+    headers = ['Client', 'Total Score', 'Score Level', 'Decision']
     worksheet.append(headers)
 
     for client_score in clients_with_scores:
@@ -591,8 +591,7 @@ def download_excel(request):
             client.username,
             client_score['total_score'],
             client_score['score_level'],
-            client_score['decision'],
-            last_axes_weight.id if last_axes_weight else None
+            client_score['decision']
         ]
         worksheet.append(row)
 

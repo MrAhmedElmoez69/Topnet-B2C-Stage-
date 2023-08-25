@@ -68,7 +68,7 @@ class ValeurCommercialeAdmin(admin.ModelAdmin):
     def get_weight_from_axes(self, obj):
         axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             return axes.weight_valeur_commerciale
         return None
 
@@ -77,7 +77,7 @@ class ValeurCommercialeAdmin(admin.ModelAdmin):
     def calculate_objectif_offre(self, obj):
         axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_valeur_commerciale = axes.weight_valeur_commerciale
             objectif_offre = (obj.poids_offre / 100) * (poids_valeur_commerciale / 100)
             return f'{objectif_offre:.2f}'  # Display with two decimal places
@@ -88,7 +88,7 @@ class ValeurCommercialeAdmin(admin.ModelAdmin):
     def calculate_objectif_debit(self, obj):
         axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_valeur_commerciale = axes.weight_valeur_commerciale
             objectif_debit = (obj.poids_debit / 100) * (poids_valeur_commerciale / 100)
             return f'{objectif_debit:.2f}'  # Display with two decimal places
@@ -99,7 +99,7 @@ class ValeurCommercialeAdmin(admin.ModelAdmin):
     def calculate_objectif_categorie(self, obj):
         axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_valeur_commerciale = axes.weight_valeur_commerciale
             objectif_categorie = (obj.poids_categorie_client / 100) * (poids_valeur_commerciale / 100)
             return f'{objectif_categorie:.2f}'  # Display with two decimal places
@@ -110,7 +110,7 @@ class ValeurCommercialeAdmin(admin.ModelAdmin):
     def calculate_objectif_engagement(self, obj):
         axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_valeur_commerciale = axes.weight_valeur_commerciale
             objectif_engagement = (obj.poids_engagement_contractuel / 100) * (poids_valeur_commerciale / 100)
             return f'{objectif_engagement:.2f}'  # Display with two decimal places
@@ -121,7 +121,7 @@ class ValeurCommercialeAdmin(admin.ModelAdmin):
     def calculate_score_valeur_commerciale(self, obj):
         axes_queryset = Axes.objects.filter(valeur_commerciale=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_valeur_commerciale = axes.weight_valeur_commerciale
 
             objectif_offre = (obj.poids_offre / 100) * (poids_valeur_commerciale / 100)
@@ -205,7 +205,7 @@ class EngagementClientAdmin(admin.ModelAdmin):
     def get_weight_from_axes(self, obj):
         axes_queryset = Axes.objects.filter(engagement_client=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             return axes.weight_engagement_client
         return None
 
@@ -214,7 +214,7 @@ class EngagementClientAdmin(admin.ModelAdmin):
     def calculate_objectif1(self, obj):
         axes_queryset = Axes.objects.filter(engagement_client=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_engagement_client = axes.weight_engagement_client
             objectif1 = (obj.poids_anciennete / 100) * (poids_engagement_client / 100)
             return f'{objectif1:.2f}'
@@ -225,7 +225,7 @@ class EngagementClientAdmin(admin.ModelAdmin):
     def calculate_objectif2(self, obj):
         axes_queryset = Axes.objects.filter(engagement_client=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_engagement_client = axes.weight_engagement_client
             objectif2 = (obj.poids_nombre_suspension / 100) * (poids_engagement_client / 100)
             return f'{objectif2:.2f}'
@@ -236,7 +236,7 @@ class EngagementClientAdmin(admin.ModelAdmin):
     def calculate_objectif3(self, obj):
         axes_queryset = Axes.objects.filter(engagement_client=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_engagement_client = axes.weight_engagement_client
             objectif3 = (obj.poids_montant_en_cours / 100) * (poids_engagement_client / 100)
             return f'{objectif3:.2f}'
@@ -247,7 +247,7 @@ class EngagementClientAdmin(admin.ModelAdmin):
     def calculate_score_engagement_client(self, obj):
         axes_queryset = Axes.objects.filter(engagement_client=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_engagement_client = axes.weight_engagement_client
 
             objectif_anciennete = (obj.poids_anciennete / 100) * (poids_engagement_client / 100)
@@ -276,7 +276,7 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
     def get_weight_from_axes(self, obj):
         axes_queryset = Axes.objects.filter(engagement_topnet=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             return axes.weight_engagement_topnet
         return None
 
@@ -285,7 +285,7 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
     def calculate_objectif1(self, obj):
         axes_queryset = Axes.objects.filter(engagement_topnet=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_engagement_topnet = axes.weight_engagement_topnet
             objectif1 = (obj.poids_nombre_reclamations / 100) * (poids_engagement_topnet / 100)
             return f'{objectif1:.2f}'
@@ -296,7 +296,7 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
     def calculate_objectif2(self, obj):
         axes_queryset = Axes.objects.filter(engagement_topnet=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_engagement_topnet = axes.weight_engagement_topnet
             objectif2 = (obj.poids_delai_traitement / 100) * (poids_engagement_topnet / 100)
             return f'{objectif2:.2f}'
@@ -307,7 +307,7 @@ class EngagementTopnetAdmin(admin.ModelAdmin):
     def calculate_score_engagement_topnet(self, obj):
         axes_queryset = Axes.objects.filter(engagement_topnet=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_engagement_topnet = axes.weight_engagement_topnet
 
             objectif_reclamations = (obj.poids_nombre_reclamations / 100) * (poids_engagement_topnet / 100)
@@ -360,7 +360,7 @@ class ComportementClientAdmin(admin.ModelAdmin):
     def get_weight_from_axes(self, obj):
         axes_queryset = Axes.objects.filter(comportement_client=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             return axes.weight_comportement_client
         return None
 
@@ -369,7 +369,7 @@ class ComportementClientAdmin(admin.ModelAdmin):
     def calculate_objectif_delai_paiement(self, obj):
         axes_queryset = Axes.objects.filter(comportement_client=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_comportement_client = axes.weight_comportement_client
             objectif_delai_paiement = (obj.poids_delai_moyen_paiement / 100) * (poids_comportement_client / 100)
             return f'{objectif_delai_paiement:.2f}'  # Display with two decimal places
@@ -380,7 +380,7 @@ class ComportementClientAdmin(admin.ModelAdmin):
     def calculate_objectif_incident_paiement(self, obj):
         axes_queryset = Axes.objects.filter(comportement_client=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_comportement_client = axes.weight_comportement_client
             objectif_incident_paiement = (obj.poids_incident_de_paiement / 100) * (poids_comportement_client / 100)
             return f'{objectif_incident_paiement:.2f}'  # Display with two decimal places
@@ -391,7 +391,7 @@ class ComportementClientAdmin(admin.ModelAdmin):
     def calculate_objectif_contentieux(self, obj):
         axes_queryset = Axes.objects.filter(comportement_client=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_comportement_client = axes.weight_comportement_client
             objectif_contentieux = (obj.poids_contentieux / 100) * (poids_comportement_client / 100)
             return f'{objectif_contentieux:.2f}'  # Display with two decimal places
@@ -402,7 +402,7 @@ class ComportementClientAdmin(admin.ModelAdmin):
     def calculate_score_comportement_client(self, obj):
         axes_queryset = Axes.objects.filter(comportement_client=obj)
         if axes_queryset.exists():
-            axes = axes_queryset.last()
+            axes = axes_queryset
             poids_comportement_client = axes.weight_comportement_client
 
             objectif_delai_paiement = (obj.poids_delai_moyen_paiement / 100) * (poids_comportement_client / 100)
@@ -598,14 +598,17 @@ class AxesWeightAdmin(admin.ModelAdmin):
         'engagement_client_weight',
         'comportement_client_weight',
         'calculate_total_weight',
+        'is_active',
     )
-
+    list_editable = ['is_active'] 
     def calculate_total_weight(self, obj):
         return obj.calculate_total_weight()
     calculate_total_weight.short_description = 'Total Weight'
 
 
 class CriteriaWeightAdmin(admin.ModelAdmin):
+    list_display = ('id', 'active_axes_weight')
+    list_editable = ['active_axes_weight'] 
     fieldsets = (
         ('Valeur Commercial', {
             'fields': ('poids_offre', 'poids_debit', 'poids_categorie_client', 'poids_engagement_contractuel'),
@@ -619,6 +622,7 @@ class CriteriaWeightAdmin(admin.ModelAdmin):
         ('Comportement Client', {
             'fields': ('poids_delai_moyen_paiement', 'poids_incident_de_paiement', 'poids_contentieux'),
         }),
+        
     )
 
 

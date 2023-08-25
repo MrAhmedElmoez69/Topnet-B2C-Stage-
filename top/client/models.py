@@ -107,8 +107,8 @@ class ValeurCommerciale(models.Model):
     axes_relation = models.OneToOneField('client.Axes', on_delete=models.CASCADE, related_name='valeur_commerciale_relation', null=True, blank=True)
 
     def calculate_score_categorie_client(self):
-        poids_categorie_client = CriteriaWeight.objects.last().poids_categorie_client
-        valeur_commerciale_weight = AxesWeight.objects.last().valeur_commerciale_weight
+        poids_categorie_client = CriteriaWeight.objects.get(active_axes_weight=True).poids_categorie_client
+        valeur_commerciale_weight = AxesWeight.objects.get(is_active=True).valeur_commerciale_weight
 
         # Convert categorie_client to a Decimal before performing multiplication
         categorie_client_decimal = Decimal(str(self.categorie_client))
@@ -116,32 +116,32 @@ class ValeurCommerciale(models.Model):
         return categorie_client_decimal * (poids_categorie_client * valeur_commerciale_weight) / Decimal('100')
 
     def calculate_score_debit(self):
-        poids_debit = CriteriaWeight.objects.last().poids_debit
-        valeur_commerciale_weight = AxesWeight.objects.last().valeur_commerciale_weight
+        poids_debit = CriteriaWeight.objects.get(active_axes_weight=True).poids_debit
+        valeur_commerciale_weight = AxesWeight.objects.get(is_active=True).valeur_commerciale_weight
         debit_decimal = Decimal(str(self.categorie_client))
 
         return debit_decimal * (poids_debit * valeur_commerciale_weight) / Decimal('100')
 
     def calculate_score_offre(self):
-        poids_offre = CriteriaWeight.objects.last().poids_offre
-        valeur_commerciale_weight = AxesWeight.objects.last().valeur_commerciale_weight
+        poids_offre = CriteriaWeight.objects.get(active_axes_weight=True).poids_offre
+        valeur_commerciale_weight = AxesWeight.objects.get(is_active=True).valeur_commerciale_weight
         offre_decimal = Decimal(str(self.categorie_client))
 
         return offre_decimal * (poids_offre * valeur_commerciale_weight) / Decimal('100')
 
     def calculate_score_engagement_contractuel(self):
-        poids_engagement_contractuel = CriteriaWeight.objects.last().poids_engagement_contractuel
-        valeur_commerciale_weight = AxesWeight.objects.last().valeur_commerciale_weight
+        poids_engagement_contractuel = CriteriaWeight.objects.get(active_axes_weight=True).poids_engagement_contractuel
+        valeur_commerciale_weight = AxesWeight.objects.get(is_active=True).valeur_commerciale_weight
         engagement_contractuel_decimal = Decimal(str(self.categorie_client))
         
         return engagement_contractuel_decimal * (poids_engagement_contractuel * valeur_commerciale_weight) / Decimal('100')
     
     def calculate_total_score(self):
-        poids_categorie_client = Decimal(str(CriteriaWeight.objects.last().poids_categorie_client))
-        poids_debit = Decimal(str(CriteriaWeight.objects.last().poids_debit))
-        poids_offre = Decimal(str(CriteriaWeight.objects.last().poids_offre))
-        poids_engagement_contractuel = Decimal(str(CriteriaWeight.objects.last().poids_engagement_contractuel))
-        valeur_commerciale_weight = Decimal(str(AxesWeight.objects.last().valeur_commerciale_weight))
+        poids_categorie_client = Decimal(str(CriteriaWeight.objects.get(active_axes_weight=True).poids_categorie_client))
+        poids_debit = Decimal(str(CriteriaWeight.objects.get(active_axes_weight=True).poids_debit))
+        poids_offre = Decimal(str(CriteriaWeight.objects.get(active_axes_weight=True).poids_offre))
+        poids_engagement_contractuel = Decimal(str(CriteriaWeight.objects.get(active_axes_weight=True).poids_engagement_contractuel))
+        valeur_commerciale_weight = Decimal(str(AxesWeight.objects.get(is_active=True).valeur_commerciale_weight))
 
         # Convert fields to Decimal before performing multiplication
         categorie_client_decimal = Decimal(str(self.categorie_client))
@@ -205,8 +205,8 @@ class EngagementClient(models.Model):
 
 
     def calculate_anciennete_score(self):
-        poids_anciennete = CriteriaWeight.objects.last().poids_anciennete
-        engagement_client_weight = AxesWeight.objects.last().engagement_client_weight
+        poids_anciennete = CriteriaWeight.objects.get(active_axes_weight=True).poids_anciennete
+        engagement_client_weight = AxesWeight.objects.get(is_active=True).engagement_client_weight
 
         if self.anciennete is not None:
             anciennete_score = self.anciennete * (poids_anciennete * engagement_client_weight) / 100
@@ -216,8 +216,8 @@ class EngagementClient(models.Model):
         return anciennete_score
 
     def calculate_nombre_suspension_score(self):
-        poids_nombre_suspension = CriteriaWeight.objects.last().poids_nombre_suspension
-        engagement_client_weight = AxesWeight.objects.last().engagement_client_weight
+        poids_nombre_suspension = CriteriaWeight.objects.get(active_axes_weight=True).poids_nombre_suspension
+        engagement_client_weight = AxesWeight.objects.get(is_active=True).engagement_client_weight
 
         if self.nombre_suspension is not None:
             nombre_suspension_score = self.nombre_suspension * (poids_nombre_suspension * engagement_client_weight) / 100
@@ -227,8 +227,8 @@ class EngagementClient(models.Model):
         return nombre_suspension_score
 
     def calculate_montant_en_cours_score(self):
-        poids_montant_en_cours = CriteriaWeight.objects.last().poids_montant_en_cours
-        engagement_client_weight = AxesWeight.objects.last().engagement_client_weight
+        poids_montant_en_cours = CriteriaWeight.objects.get(active_axes_weight=True).poids_montant_en_cours
+        engagement_client_weight = AxesWeight.objects.get(is_active=True).engagement_client_weight
 
         if self.montant_en_cours is not None:
             montant_en_cours_score = self.montant_en_cours * (poids_montant_en_cours * engagement_client_weight) / 100
@@ -238,10 +238,10 @@ class EngagementClient(models.Model):
         return montant_en_cours_score
 
     def calculate_total_score(self):
-        poids_anciennete = CriteriaWeight.objects.last().poids_anciennete
-        poids_nombre_suspension = CriteriaWeight.objects.last().poids_nombre_suspension
-        poids_montant_en_cours = CriteriaWeight.objects.last().poids_montant_en_cours
-        engagement_client_weight = AxesWeight.objects.last().engagement_client_weight
+        poids_anciennete = CriteriaWeight.objects.get(active_axes_weight=True).poids_anciennete
+        poids_nombre_suspension = CriteriaWeight.objects.get(active_axes_weight=True).poids_nombre_suspension
+        poids_montant_en_cours = CriteriaWeight.objects.get(active_axes_weight=True).poids_montant_en_cours
+        engagement_client_weight = AxesWeight.objects.get(is_active=True).engagement_topnet_weight  
 
 
         anciennete_score = self.calculate_anciennete() * (poids_anciennete * engagement_client_weight) / 100
@@ -302,8 +302,8 @@ class ComportementClient(models.Model):
             return f"Client: {self.facture.client.username} - Facture {self.facture.Id_facture}"
         return f"Facture {self.facture.Id_facture} - No Client"
     def calculate_delai_moyen_paiement_score(self):
-        poids_delai_moyen_paiement = CriteriaWeight.objects.last().poids_delai_moyen_paiement
-        comportement_client_weight = AxesWeight.objects.last().comportement_client_weight
+        poids_delai_moyen_paiement = CriteriaWeight.objects.get(active_axes_weight=True).poids_delai_moyen_paiement
+        comportement_client_weight = AxesWeight.objects.get(is_active=True).comportement_client_weight
 
         if self.facture and self.facture.contrat.client.contrats.exists():
             factures = Facture.objects.filter(contrat__in=self.facture.contrat.client.contrats.all(), date_a_payer_avant__year=datetime.date.today().year)
@@ -326,8 +326,8 @@ class ComportementClient(models.Model):
         return delai_moyen_paiement_score * (poids_delai_moyen_paiement * comportement_client_weight) / 100
 
     def calculate_incident_de_paiement_score(self):
-        poids_incident_de_paiement = CriteriaWeight.objects.last().poids_incident_de_paiement
-        comportement_client_weight = AxesWeight.objects.last().comportement_client_weight
+        poids_incident_de_paiement = CriteriaWeight.objects.get(active_axes_weight=True).poids_incident_de_paiement
+        comportement_client_weight = AxesWeight.objects.get(is_active=True).comportement_client_weight
 
         if self.facture:
             incident_de_paiement_score = 1 if self.facture.statut_paiement == Facture.REJET else 0
@@ -337,8 +337,8 @@ class ComportementClient(models.Model):
         return incident_de_paiement_score * (poids_incident_de_paiement * comportement_client_weight) / 100
 
     def calculate_contentieux_score(self):
-        poids_contentieux = CriteriaWeight.objects.last().poids_contentieux
-        comportement_client_weight = AxesWeight.objects.last().comportement_client_weight
+        poids_contentieux = CriteriaWeight.objects.get(active_axes_weight=True).poids_contentieux
+        comportement_client_weight = AxesWeight.objects.get(is_active=True).comportement_client_weight
 
         contentieux_score = 1 if self.facture and self.facture.contentieux else 0
         return contentieux_score * (poids_contentieux * comportement_client_weight) / 100
@@ -407,8 +407,8 @@ class EngagementTopnet(models.Model):
 
 
     def calculate_nombre_reclamations_score(self):
-        poids_nombre_reclamations = CriteriaWeight.objects.last().poids_nombre_reclamations
-        engagement_topnet_weight = AxesWeight.objects.last().engagement_topnet_weight
+        poids_nombre_reclamations = CriteriaWeight.objects.get(active_axes_weight=True).poids_nombre_suspension
+        engagement_topnet_weight = AxesWeight.objects.get(is_active=True).engagement_topnet_weight
 
         if self.client and self.client.contrats.exists():
             current_year = timezone.now().year
@@ -430,8 +430,8 @@ class EngagementTopnet(models.Model):
         return nombre_reclamations_score * (poids_nombre_reclamations * engagement_topnet_weight) / Decimal('100')
 
     def calculate_delai_traitement_score(self):
-        poids_delai_traitement = CriteriaWeight.objects.last().poids_delai_traitement
-        engagement_topnet_weight = AxesWeight.objects.last().engagement_topnet_weight
+        poids_delai_traitement = CriteriaWeight.objects.get(active_axes_weight=True).poids_delai_traitement
+        engagement_topnet_weight = AxesWeight.objects.get(is_active=True).engagement_topnet_weight
 
         if self.client and self.client.contrats.exists():
             reclamations = Reclamation.objects.filter(contrat__in=self.client.contrats.all())
@@ -484,7 +484,7 @@ class AxesWeight(models.Model):
     engagement_topnet_weight = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     engagement_client_weight = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     comportement_client_weight = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-
+    is_active = models.BooleanField(default=False)
     def calculate_total_weight(self):
         total_weight = (
             self.valeur_commerciale_weight +
@@ -504,6 +504,8 @@ class AxesWeight(models.Model):
             )
 
     def save(self, *args, **kwargs):
+        if self.is_active:
+            AxesWeight.objects.exclude(pk=self.pk).update(is_active=False)
         self.calculate_total_weight()
         self.clean()
         super().save(*args, **kwargs)
@@ -525,6 +527,7 @@ class CriteriaWeight(models.Model):
 
     poids_nombre_reclamations = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     poids_delai_traitement = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    active_axes_weight = models.BooleanField(default=False)
 
     def calculate_total_weight_valeur_commerciale(self):
         total_valeur_commerciale= (
@@ -586,6 +589,8 @@ class CriteriaWeight(models.Model):
 
 
     def save(self, *args, **kwargs):
+        if self.active_axes_weight:
+            CriteriaWeight.objects.exclude(pk=self.pk).update(active_axes_weight=False) 
         self.clean()
         super().save(*args, **kwargs)
 
